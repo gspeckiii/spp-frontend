@@ -34,7 +34,7 @@ function ResetPassword() {
       const response = await axios.post("/api/reset-password", { token, newPassword })
       setMessage(response.data.message)
       // Redirect to /home after success
-      setTimeout(() => navigate("/"), 1000) // Delay for user to see success message
+      setTimeout(() => navigate("/"), 0) // Delay for user to see success message
     } catch (e) {
       console.error("Error resetting password:", e) // Detailed error log
       setMessage(e.response ? e.response.data.error : "Error resetting password")
