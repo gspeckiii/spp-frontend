@@ -69,11 +69,7 @@ function AdminCategoryPutSelect() {
           {categories.map(category => (
             <tr key={category.id}>
               <td>{category.cat_name}</td>
-              <td>
-                <Link to={`/admin-product-select?categoryId=${category.id}`} className="btn btn-link p-0">
-                  {category.prod_count || 0}
-                </Link>
-              </td>
+              <td>{category.prod_count || 0}</td>
               <td>
                 <Link to={`/admin-category-put/${category.id}`} className="btn btn-primary btn-sm mr-2">
                   Edit
@@ -83,11 +79,19 @@ function AdminCategoryPutSelect() {
                     Delete
                   </button>
                 )}
+                <Link to={`/admin-product-put-select/${category.id}`} className="btn btn-primary btn-sm mr-2">
+                  Products
+                </Link>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <div className="mb-3 back-button">
+        <Link to="/admin-dashboard" className="btn btn-secondary">
+          Back to Dashboard
+        </Link>
+      </div>
     </div>
   )
 }

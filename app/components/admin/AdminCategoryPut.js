@@ -101,6 +101,11 @@ function AdminCategoryPut() {
           Update Category
         </button>
       </form>
+      <div className="mb-3 back-button">
+        <Link to="/admin-category-put-select" className="btn btn-secondary">
+          Back to Categories
+        </Link>
+      </div>
     </div>
   )
 }

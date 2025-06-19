@@ -68,6 +68,11 @@ function AdminCategoryPost() {
           </p>
         )}
       </form>
+      <div className="mb-3 back-button">
+        <Link to="/admin-category-put-select" className="btn btn-secondary">
+          Back to Dashboard
+        </Link>
+      </div>
     </div>
   )
 }

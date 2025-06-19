@@ -10,6 +10,7 @@ function AdminProductPutSelect() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    console.log("Fetching data for category ID:", id) // Debug
     async function fetchData() {
       try {
         const token = localStorage.getItem("SPPtoken")
@@ -21,23 +22,28 @@ function AdminProductPutSelect() {
 
         // Fetch category name with error handling
         try {
+          console.log("Fetching category with ID:", id) // Debug
           const categoryResponse = await axios.get(`/api/categories/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
           })
+          console.log("Category API Response:", categoryResponse.data) // Debug
           setCategoryName(categoryResponse.data.cat_name || "Unknown Category")
         } catch (categoryError) {
-          console.warn("Category fetch failed for ID:", id, categoryError.message)
+          console.warn("Category fetch failed for ID:", id, categoryError.message, categoryError.response?.status)
           setCategoryName(`Unknown Category (ID: ${id})`) // Fallback with ID for context
         }
 
         // Fetch products
+        console.log("Fetching products for category ID:", id) // Debug
         const productsResponse = await axios.get(`/api/products/category/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
+        console.log("Products API Response:", productsResponse.data) // Debug
         setProducts(productsResponse.data)
         setLoading(false)
       } catch (e) {
         setError(e.response ? e.response.data.error : "Error fetching data")
+        console.error("Fetch error:", e) // Debug
         setLoading(false)
       }
     }
@@ -71,7 +77,7 @@ function AdminProductPutSelect() {
       {/* New Section for Adding Products */}
       <div className="mb-4">
         <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Add New Product</h3>
-        <Link to={`/admin-product-post-${id}`} className="btn btn-success btn-lg">
+        <Link to={`/admin-product-post/${id}`} className="btn btn-success btn-lg">
           Add Product
         </Link>
       </div>
@@ -94,22 +100,31 @@ function AdminProductPutSelect() {
               <td>{product.prod_name}</td>
               <td>{product.img_count || 0}</td>
               <td>
-                <Link to={`/admin-product-put/${product.id}`} className="btn btn-primary btn-sm mr-2">
+                <Link to={`/admin-product-put/${product.id}`} className="btn btn-primary btn-sm mr-2" style={{ marginRight: "10px" }}>
                   Edit
                 </Link>
                 {Number(product.img_count) === 0 && (
-                  <button onClick={() => handleDelete(product.id)} className="btn btn-danger btn-sm mr-2">
+                  <button onClick={() => handleDelete(product.id)} className="btn btn-danger btn-sm mr-2" style={{ marginRight: "10px" }}>
                     Delete
                   </button>
                 )}
-                <Link to={`/admin-product-image-post/${product.id}`} state={{ categoryId: id }} className="btn btn-info btn-sm">
+                <Link to={`/admin-product-image-post/${product.id}`} state={{ categoryId: id }} className="btn btn-info btn-sm mr-2" style={{ marginRight: "10px" }}>
                   Add Images
+                </Link>
+                <Link to={`/admin-product-image-put-select/${product.id}`} state={{ categoryId: id }} className="btn btn-secondary btn-sm">
+                  Manage Images
                 </Link>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {/* Back to Categories Button */}
+      <div className="mb-3">
+        <Link to="/admin-category-put-select" className="btn btn-secondary">
+          Back to Categories
+        </Link>
+      </div>
     </div>
   )
 }
