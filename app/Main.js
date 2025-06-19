@@ -22,6 +22,7 @@ import AdminCategoryPut from "./components/admin/AdminCategoryPut.js"
 import AdminProductPutSelect from "./components/admin/AdminProductPutSelect.js"
 import AdminProductPost from "./components/admin/AdminProductPost.js"
 import AdminProductPut from "./components/admin/AdminProductPut.js"
+import AdminProductImagePost from "./components/admin/AdminProductImagePost.js"
 
 axios.defaults.baseURL = "http://localhost:8080" // Ensure this is set
 function Main() {
@@ -107,6 +108,7 @@ function Main() {
             <Route path="/admin-product-post/:id" element={state.loggedIn && state.user.admin ? <AdminProductPost /> : <HomeGuest />} />
             <Route path="/admin-product-put-select/:id" element={state.loggedIn && state.user.admin ? <AdminProductPutSelect /> : <HomeGuest />} />
             <Route path="/admin-product-put/:id" element={state.loggedIn && state.user.admin ? <AdminProductPut /> : <HomeGuest />} />
+            <Route path="/admin-product-image-post/:id" element={state.loggedIn && state.user.admin ? <AdminProductImagePost /> : <HomeGuest />} />
             <Route path="/about-us" element={<About />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/home" element={state.loggedIn ? <Home /> : <HomeGuest />} />

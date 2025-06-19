@@ -20,7 +20,7 @@ function AdminCategoryPutSelect() {
           headers: { Authorization: `Bearer ${token}` }
         })
         response.data.forEach(cat => {
-          console.log("Category:", cat.cat_name, "prod_count:", cat.prod_count, "img_count:", cat.img_count) // Debug
+          console.log("Category:", cat.cat_name, "prod_count:", cat.prod_count) // Debug
         })
         setCategories(response.data)
         setLoading(false)
@@ -62,7 +62,6 @@ function AdminCategoryPutSelect() {
           <tr>
             <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Category Name</th>
             <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Product Count</th>
-            <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Image Count</th>
             <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Actions</th>
           </tr>
         </thead>
@@ -71,20 +70,15 @@ function AdminCategoryPutSelect() {
             <tr key={category.id}>
               <td>{category.cat_name}</td>
               <td>
-                <Link to={`/admin/product-select?categoryId=${category.id}`} className="btn btn-link p-0">
+                <Link to={`/admin-product-select?categoryId=${category.id}`} className="btn btn-link p-0">
                   {category.prod_count || 0}
-                </Link>
-              </td>
-              <td>
-                <Link to={`/image-category-select?categoryId=${category.id}`} className="btn btn-link p-0">
-                  {category.img_count || 0}
                 </Link>
               </td>
               <td>
                 <Link to={`/admin-category-put/${category.id}`} className="btn btn-primary btn-sm mr-2">
                   Edit
                 </Link>
-                {Number(category.prod_count) === 0 && Number(category.img_count) === 0 && (
+                {Number(category.prod_count) === 0 && (
                   <button onClick={() => handleDelete(category.id)} className="btn btn-danger btn-sm">
                     Delete
                   </button>

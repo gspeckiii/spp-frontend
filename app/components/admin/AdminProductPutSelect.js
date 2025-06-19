@@ -5,7 +5,7 @@ import { useParams, Link } from "react-router-dom"
 function AdminProductPutSelect() {
   const { id } = useParams() // Get category ID from URL
   const [products, setProducts] = useState([])
-  const [categoryName, setCategoryName] = useState("")
+  const [categoryName, setCategoryName] = useState("Unknown Category") // Default to "Unknown" if fetch fails
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -19,11 +19,16 @@ function AdminProductPutSelect() {
           return
         }
 
-        // Fetch category name
-        const categoryResponse = await axios.get(`/api/categories/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        setCategoryName(categoryResponse.data.cat_name)
+        // Fetch category name with error handling
+        try {
+          const categoryResponse = await axios.get(`/api/categories/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          setCategoryName(categoryResponse.data.cat_name || "Unknown Category")
+        } catch (categoryError) {
+          console.warn("Category fetch failed for ID:", id, categoryError.message)
+          setCategoryName(`Unknown Category (ID: ${id})`) // Fallback with ID for context
+        }
 
         // Fetch products
         const productsResponse = await axios.get(`/api/products/category/${id}`, {
@@ -66,7 +71,7 @@ function AdminProductPutSelect() {
       {/* New Section for Adding Products */}
       <div className="mb-4">
         <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Add New Product</h3>
-        <Link to={`/admin-product-post/${id}`} className="btn btn-success btn-lg">
+        <Link to={`/admin-product-post-${id}`} className="btn btn-success btn-lg">
           Add Product
         </Link>
       </div>
@@ -93,10 +98,13 @@ function AdminProductPutSelect() {
                   Edit
                 </Link>
                 {Number(product.img_count) === 0 && (
-                  <button onClick={() => handleDelete(product.id)} className="btn btn-danger btn-sm">
+                  <button onClick={() => handleDelete(product.id)} className="btn btn-danger btn-sm mr-2">
                     Delete
                   </button>
                 )}
+                <Link to={`/admin-product-image-post/${product.id}`} state={{ categoryId: id }} className="btn btn-info btn-sm">
+                  Add Images
+                </Link>
               </td>
             </tr>
           ))}
