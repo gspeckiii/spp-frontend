@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from "react"
-import axios from "axios"
-import { useParams, useNavigate } from "react-router-dom"
+import React, { useState, useEffect, useContext } from "react"
+import Axios from "axios"
+import { useParams, useNavigate, Link } from "react-router-dom"
+import StateContext from "../../StateContext"
+import DispatchContext from "../../DispatchContext"
 
 function AdminProductPost() {
-  const { id } = useParams() // Get category ID from URL
+  const { id } = useParams()
   const navigate = useNavigate()
+  const { user } = useContext(StateContext)
+  const appDispatch = useContext(DispatchContext)
   const [product, setProduct] = useState({ prod_name: "", prod_desc: "", prod_cost: "", cat_fk: id || "" })
   const [categoryName, setCategoryName] = useState("")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [message, setMessage] = useState("")
 
   useEffect(() => {
     async function fetchCategory() {
@@ -20,7 +23,7 @@ function AdminProductPost() {
           setLoading(false)
           return
         }
-        const response = await axios.get(`/categories/${id}`, {
+        const response = await Axios.get(`/categories/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         setCategoryName(response.data.cat_name || "Unknown Category")
@@ -42,18 +45,25 @@ function AdminProductPost() {
     e.preventDefault()
     try {
       const token = localStorage.getItem("SPPtoken")
-      const response = await axios.post("/products", product, {
+      if (!token) {
+        appDispatch({ type: "flashMessage", value: "Please log in as admin to add products" })
+        return
+      }
+      const response = await Axios.post("/products", product, {
         headers: { Authorization: `Bearer ${token}` }
       })
-      setMessage("Product added successfully")
-      setTimeout(() => navigate(`/admin-product-put-select/${id}`), 1000) // Redirect to product list for the category
+      console.log("Create product response:", response.data)
+      appDispatch({ type: "incrementProdCount", data: parseInt(id) })
+      appDispatch({ type: "flashMessage", value: "Product added successfully!" })
+      setProduct({ prod_name: "", prod_desc: "", prod_cost: "", cat_fk: id })
+      navigate(`/admin-product-put-select/${id}`)
     } catch (e) {
-      setError(e.response ? e.response.data.error : "Error adding product")
+      appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error adding product" })
     }
   }
 
   const handleCancel = () => {
-    navigate(`/admin-product-put-select/${id}`) // Cancel and return without saving
+    navigate(`/admin-product-put-select/${id}`)
   }
 
   if (loading) return <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Loading...</p>
@@ -67,11 +77,6 @@ function AdminProductPost() {
   return (
     <div className="container mt-5">
       <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Add Product to {categoryName}</h2>
-      {message && (
-        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }} className="text-success">
-          {message}
-        </p>
-      )}
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         <div className="form-group">
           <label htmlFor="prod_name" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>

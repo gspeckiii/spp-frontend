@@ -50,8 +50,18 @@ function AdminCategoryPutSelect() {
     )
   }
 
+  // Ensure unique categories by cat_id
+  const uniqueCategories = Array.from(new Map(categories.list.map(cat => [cat.cat_id, cat])).values())
+
   return (
     <div className="container mt-5">
+      <div className="mb-4">
+        <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Add New Category</h3>
+        <Link to="/admin-category-post" className="btn btn-success btn-lg">
+          Add Category
+        </Link>
+      </div>
+
       <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "700" }}>Select Category to Edit</h2>
       <table className="table table-striped">
         <thead>
@@ -62,20 +72,20 @@ function AdminCategoryPutSelect() {
           </tr>
         </thead>
         <tbody>
-          {categories.list.map(category => (
-            <tr key={category.id}>
+          {uniqueCategories.map(category => (
+            <tr key={category.cat_id}>
               <td>{category.cat_name}</td>
               <td>{category.prod_count || 0}</td>
               <td>
-                <Link to={`/admin-category-put/${category.id}`} className="btn btn-primary btn-sm mr-2" onClick={() => handleSelectCategory(category)}>
+                <Link to={`/admin-category-put/${category.cat_id}`} className="btn btn-primary btn-sm mr-2" onClick={() => handleSelectCategory(category)}>
                   Edit
                 </Link>
                 {Number(category.prod_count) === 0 && (
-                  <button onClick={() => handleDelete(category.id)} className="btn btn-success btn-sm mr-2">
+                  <button onClick={() => handleDelete(category.cat_id)} className="btn btn-success btn-sm mr-2">
                     Delete
                   </button>
                 )}
-                <Link to={`/admin-product-put-select/${category.id}`} className="btn btn-primary btn-sm mr-2" onClick={() => handleSelectCategory(category)}>
+                <Link to={`/admin-product-put-select/${category.cat_id}`} className="btn btn-primary btn-sm mr-2" onClick={() => handleSelectCategory(category)}>
                   Products
                 </Link>
               </td>

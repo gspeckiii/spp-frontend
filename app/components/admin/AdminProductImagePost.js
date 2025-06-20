@@ -1,38 +1,44 @@
-import React, { useState, useEffect } from "react"
-import axios from "axios"
+import React, { useState, useEffect, useContext } from "react"
+import Axios from "axios"
 import { useParams, useNavigate, useLocation } from "react-router-dom"
+import StateContext from "../../StateContext"
+import DispatchContext from "../../DispatchContext"
 
 function AdminProductImagePost() {
-  const { id } = useParams() // Get the product ID (e.g., "7")
+  const { id } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
+  const { user } = useContext(StateContext)
+  const appDispatch = useContext(DispatchContext)
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [message, setMessage] = useState("")
-  const [productName, setProductName] = useState("")
+  const [product, setProduct] = useState(null)
 
   useEffect(() => {
     async function fetchProduct() {
       try {
         const token = localStorage.getItem("SPPtoken")
         if (!token) {
-          setError("Please log in as admin to add images")
+          appDispatch({ type: "flashMessage", value: "Please log in as admin to add images" })
           setLoading(false)
           return
         }
-        const response = await axios.get(`/products/${id}`, {
+        const response = await Axios.get(`/products/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
-        setProductName(response.data.prod_name || "Unknown Product")
+        setProduct({
+          id: parseInt(id),
+          prod_name: response.data.prod_name || "Unknown Product",
+          cat_fk: response.data.cat_fk
+        })
         setLoading(false)
       } catch (e) {
-        setError(e.response ? e.response.data.error : "Error fetching product")
+        appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error fetching product" })
         setLoading(false)
       }
     }
     fetchProduct()
-  }, [id])
+  }, [id, appDispatch])
 
   const handleFileChange = e => {
     setImages(Array.from(e.target.files))
@@ -41,7 +47,7 @@ function AdminProductImagePost() {
   const handleSubmit = async e => {
     e.preventDefault()
     if (images.length === 0) {
-      setError("Please select at least one image")
+      appDispatch({ type: "flashMessage", value: "Please select at least one image" })
       return
     }
 
@@ -50,38 +56,35 @@ function AdminProductImagePost() {
 
     try {
       const token = localStorage.getItem("SPPtoken")
-      const response = await axios.post(`/images/product/${id}`, formData, {
+      const response = await Axios.post(`/images/product/${id}`, formData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
       })
-      setMessage("Images added successfully")
-      const categoryId = location.state?.categoryId // Get category ID from state
-      setTimeout(() => navigate(`/admin-product-put-select/${categoryId || id}`), 1000) // Fallback to id if state is missing
+      console.log("Add images response:", response.data)
+      appDispatch({
+        type: "incrementImgCount",
+        data: { productId: parseInt(id), count: response.data.count || images.length }
+      })
+      appDispatch({ type: "flashMessage", value: "Images added successfully!" })
+      if (!product?.cat_fk) {
+        console.warn("No cat_fk found, using location.state.categoryId or redirecting to dashboard")
+      }
+      const categoryId = product?.cat_fk || location.state?.categoryId
+      navigate(categoryId ? `/admin-product-put-select/${categoryId}` : "/admin-category-put-select")
     } catch (e) {
-      setError(e.response ? e.response.data.error : "Error adding images")
+      appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error adding images" })
     }
   }
 
   const handleCancel = () => {
-    const categoryId = location.state?.categoryId // Get category ID from state
-    navigate(`/admin-product-put-select/${categoryId || id}`) // Fallback to id if state is missing
+    const categoryId = product?.cat_fk || location.state?.categoryId
+    navigate(categoryId ? `/admin-product-put-select/${categoryId}` : "/admin-category-put-select")
   }
 
   if (loading) return <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Loading...</p>
-  if (error)
-    return (
-      <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }} className="text-danger">
-        {error}
-      </p>
-    )
 
   return (
     <div className="container mt-5">
-      <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Add Images to {productName}</h2>
-      {message && (
-        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }} className="text-success">
-          {message}
-        </p>
-      )}
+      <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Add Images to {product?.prod_name || "Unknown Product"}</h2>
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         <div className="form-group">
           <label htmlFor="images" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>

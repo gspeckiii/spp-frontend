@@ -14,6 +14,12 @@ function AdminCategoryPut() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    if (!id || isNaN(parseInt(id))) {
+      setError("Invalid category ID")
+      setLoading(false)
+      return
+    }
+
     async function fetchCategory() {
       try {
         const token = localStorage.getItem("SPPtoken")
@@ -52,7 +58,8 @@ function AdminCategoryPut() {
       // Find existing category to preserve prod_count
       const existingCategory = categories.list.find(cat => cat.cat_id === parseInt(id))
       const updatedCategory = {
-        ...existingCategory,
+        cat_id: parseInt(id),
+        prod_count: existingCategory ? existingCategory.prod_count : 0,
         ...response.data
       }
       appDispatch({
@@ -60,7 +67,7 @@ function AdminCategoryPut() {
         data: updatedCategory
       })
       appDispatch({ type: "flashMessage", value: "Category updated successfully!" })
-      setTimeout(() => navigate(`/admin-category-put-select`), 1000)
+      navigate("/admin-category-put-select")
     } catch (e) {
       appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error updating category" })
     }

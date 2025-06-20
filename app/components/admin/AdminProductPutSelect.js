@@ -24,6 +24,7 @@ function AdminProductPutSelect() {
     console.log("Fetching data for category ID:", categoryId)
 
     if (!categoryId || isNaN(parseInt(categoryId))) {
+      appDispatch({ type: "flashMessage", value: "Invalid or missing category ID" })
       setError("Invalid or missing category ID")
       setLoading(false)
       return
@@ -45,17 +46,19 @@ function AdminProductPutSelect() {
         })
         console.log("Products response:", productsResponse.data)
         setProducts(productsResponse.data)
+        appDispatch({ type: "setProducts", data: productsResponse.data })
         setLoading(false)
 
         appDispatch({ type: "selectCategory", data: categoryResponse.data })
       } catch (e) {
         console.error("Fetch error:", e)
+        appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error fetching data" })
         setError(e.response ? e.response.data.error : "Error fetching data")
         setLoading(false)
       }
     }
     fetchData()
-  }, [id, user.token])
+  }, [id, user.token, appDispatch])
 
   const handleDelete = async productId => {
     if (window.confirm("Are you sure you want to delete this product?")) {
@@ -64,6 +67,7 @@ function AdminProductPutSelect() {
           headers: { Authorization: `Bearer ${user.token}` }
         })
         setProducts(products.filter(prod => prod.id !== productId))
+        appDispatch({ type: "decrementProdCount", data: parseInt(id) })
         appDispatch({ type: "flashMessage", value: "Product deleted successfully!" })
       } catch (e) {
         appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error deleting product" })

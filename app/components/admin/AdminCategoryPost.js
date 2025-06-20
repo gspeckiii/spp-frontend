@@ -1,38 +1,61 @@
-import React, { useState } from "react"
-import axios from "axios"
-import { useNavigate } from "react-router-dom"
+import React, { useState, useContext } from "react"
+import Axios from "axios"
+import { useNavigate, Link } from "react-router-dom"
+import StateContext from "../../StateContext"
+import DispatchContext from "../../DispatchContext"
 
 function AdminCategoryPost() {
   const [catName, setCatName] = useState("")
   const [catDesc, setCatDesc] = useState("")
   const [catVid, setCatVid] = useState("")
-  const [message, setMessage] = useState("")
   const navigate = useNavigate()
+  const { user } = useContext(StateContext)
+  const appDispatch = useContext(DispatchContext)
 
   async function handleSubmit(e) {
     e.preventDefault()
     try {
       const token = localStorage.getItem("SPPtoken")
       if (!token) {
-        setMessage("Please log in as admin to add categories")
+        appDispatch({ type: "flashMessage", value: "Please log in as admin to add categories" })
         return
       }
-      const response = await axios.post(
-        "/api/categories",
-        { cat_name: catName, cat_desc: catDesc, cat_vid: catVid },
+      const response = await Axios.post(
+        "/categories",
+        { cat_name: catName, cat_desc: catDesc, cat_vid: catVid || null },
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       )
-      setMessage("Category added successfully")
+      console.log("Create category response:", response.data)
+      appDispatch({
+        type: "addCategory",
+        data: {
+          id: response.data.cat_id,
+          cat_id: response.data.cat_id,
+          cat_name: response.data.cat_name,
+          cat_desc: response.data.cat_desc,
+          cat_vid: response.data.cat_vid,
+          prod_count: response.data.prod_count || 0
+        }
+      })
+      appDispatch({ type: "flashMessage", value: "Category added successfully!" })
       setCatName("")
       setCatDesc("")
       setCatVid("")
-      navigate("/admin-dashboard")
+      navigate("/admin-category-put-select")
     } catch (e) {
-      setMessage(e.response ? e.response.data.error : "Error adding category")
+      appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error adding category" })
       console.error("Error adding category:", e)
     }
+  }
+
+  if (!user.token) {
+    return (
+      <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }} className="text-danger">
+        Please log in as admin to add categories
+      </p>
+    )
   }
 
   return (
@@ -62,15 +85,10 @@ function AdminCategoryPost() {
         <button type="submit" className="btn btn-primary btn-lg btn-block mt-4">
           Add Category
         </button>
-        {message && (
-          <p className="mt-2 text-success" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-            {message}
-          </p>
-        )}
       </form>
       <div className="mb-3 back-button">
         <Link to="/admin-category-put-select" className="btn btn-secondary">
-          Back to Dashboard
+          Back to Categories
         </Link>
       </div>
     </div>

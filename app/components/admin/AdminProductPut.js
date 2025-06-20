@@ -1,28 +1,31 @@
-import React, { useState, useEffect } from "react"
-import axios from "axios"
-import { useParams, useNavigate } from "react-router-dom"
+import React, { useState, useEffect, useContext } from "react"
+import Axios from "axios"
+import { useParams, useNavigate, Link } from "react-router-dom"
+import StateContext from "../../StateContext"
+import DispatchContext from "../../DispatchContext"
 
 function AdminProductPut() {
-  const { id } = useParams() // Get product ID from URL
+  const { id } = useParams()
   const navigate = useNavigate()
+  const { user } = useContext(StateContext)
+  const appDispatch = useContext(DispatchContext)
   const [product, setProduct] = useState({ prod_name: "", prod_desc: "", prod_cost: "", cat_fk: "" })
   const [categoryName, setCategoryName] = useState("")
+  const [originalCatFk, setOriginalCatFk] = useState("") // Track original category for potential changes
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [message, setMessage] = useState("")
 
   useEffect(() => {
     async function fetchData() {
       try {
         const token = localStorage.getItem("SPPtoken")
         if (!token) {
-          setError("Please log in as admin to edit products")
+          appDispatch({ type: "flashMessage", value: "Please log in as admin to edit products" })
           setLoading(false)
           return
         }
 
         // Fetch product
-        const productResponse = await axios.get(`/products/${id}`, {
+        const productResponse = await Axios.get(`/products/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         const fetchedProduct = {
@@ -34,21 +37,22 @@ function AdminProductPut() {
 
         // Fetch category name
         if (fetchedProduct.cat_fk) {
-          const categoryResponse = await axios.get(`/categories/${fetchedProduct.cat_fk}`, {
+          const categoryResponse = await Axios.get(`/categories/${fetchedProduct.cat_fk}`, {
             headers: { Authorization: `Bearer ${token}` }
           })
           setCategoryName(categoryResponse.data.cat_name || "Unknown Category")
         }
 
         setProduct(fetchedProduct)
+        setOriginalCatFk(fetchedProduct.cat_fk)
         setLoading(false)
       } catch (e) {
-        setError(e.response ? e.response.data.error : "Error fetching data")
+        appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error fetching data" })
         setLoading(false)
       }
     }
     fetchData()
-  }, [id])
+  }, [id, appDispatch])
 
   const handleChange = e => {
     const { name, value } = e.target
@@ -59,36 +63,31 @@ function AdminProductPut() {
     e.preventDefault()
     try {
       const token = localStorage.getItem("SPPtoken")
-      const response = await axios.put(`/products/${id}`, product, {
+      const response = await Axios.put(`/products/${id}`, product, {
         headers: { Authorization: `Bearer ${token}` }
       })
-      setMessage("Product updated successfully")
-      setTimeout(() => navigate(`/admin-product-put-select/${product.cat_fk}`), 1000) // Redirect to product list for the category
+      console.log("Update product response:", response.data)
+      // Note: If cat_fk becomes editable, dispatch incrementProdCount/decrementProdCount here
+      // if (product.cat_fk !== originalCatFk) {
+      //   appDispatch({ type: "incrementProdCount", data: parseInt(product.cat_fk) });
+      //   appDispatch({ type: "decrementProdCount", data: parseInt(originalCatFk) });
+      // }
+      appDispatch({ type: "flashMessage", value: "Product updated successfully!" })
+      navigate(`/admin-product-put-select/${product.cat_fk}`)
     } catch (e) {
-      setError(e.response ? e.response.data.error : "Error updating product")
+      appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error updating product" })
     }
   }
 
   const handleCancel = () => {
-    navigate(`/admin-product-put-select/${product.cat_fk}`) // Cancel and return without saving
+    navigate(`/admin-product-put-select/${product.cat_fk}`)
   }
 
   if (loading) return <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Loading...</p>
-  if (error)
-    return (
-      <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }} className="text-danger">
-        {error}
-      </p>
-    )
 
   return (
     <div className="container mt-5">
       <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Edit Product in {categoryName}</h2>
-      {message && (
-        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }} className="text-success">
-          {message}
-        </p>
-      )}
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         <div className="form-group">
           <label htmlFor="prod_name" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
@@ -111,7 +110,6 @@ function AdminProductPut() {
           <input type="number" name="prod_cost" value={product.prod_cost} onChange={handleChange} className="form-control form-control-lg" step="0.01" required />
           <div className="invalid-feedback">Please provide a valid cost.</div>
         </div>
-
         <div className="d-flex justify-content-between mt-4">
           <button type="submit" className="btn btn-primary btn-lg">
             Update Product

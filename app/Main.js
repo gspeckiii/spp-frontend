@@ -45,7 +45,8 @@ function Main() {
       selectedCategory: null,
       loading: false,
       error: null
-    }
+    },
+    products: []
   }
 
   function ourReducer(draft, action) {
@@ -64,12 +65,26 @@ function Main() {
         draft.user.token = action.data.token
         return
       case "setCategories":
-        draft.categories.list = action.data
+        // Ensure unique categories and parse prod_count as number
+        draft.categories.list = Array.from(
+          new Map(
+            action.data.map(cat => [
+              cat.cat_id,
+              {
+                ...cat,
+                prod_count: parseInt(cat.prod_count) || 0
+              }
+            ])
+          ).values()
+        )
         draft.categories.loading = false
         draft.categories.error = null
         return
       case "selectCategory":
-        draft.categories.selectedCategory = action.data
+        draft.categories.selectedCategory = {
+          ...action.data,
+          prod_count: parseInt(action.data.prod_count) || 0
+        }
         return
       case "deleteCategory":
         draft.categories.list = draft.categories.list.filter(cat => cat.cat_id !== action.data)
@@ -78,18 +93,53 @@ function Main() {
         }
         return
       case "updateCategory":
-        const index = draft.categories.list.findIndex(cat => cat.cat_id === action.data.cat_id)
-        if (index !== -1) {
-          draft.categories.list[index] = {
-            ...draft.categories.list[index],
-            ...action.data
+        const catIndex = draft.categories.list.findIndex(cat => cat.cat_id === action.data.cat_id)
+        if (catIndex !== -1) {
+          draft.categories.list[catIndex] = {
+            ...action.data,
+            prod_count: parseInt(action.data.prod_count) || 0
           }
+        } else {
+          console.warn("Category not found for update:", action.data.cat_id)
         }
         if (draft.categories.selectedCategory?.cat_id === action.data.cat_id) {
           draft.categories.selectedCategory = {
-            ...draft.categories.selectedCategory,
-            ...action.data
+            ...action.data,
+            prod_count: parseInt(action.data.prod_count) || 0
           }
+        }
+        return
+      case "addCategory":
+        draft.categories.list.push({
+          ...action.data,
+          prod_count: parseInt(action.data.prod_count) || 0
+        })
+        return
+      case "incrementProdCount":
+        const prodIndex = draft.categories.list.findIndex(cat => cat.cat_id === action.data)
+        if (prodIndex !== -1) {
+          draft.categories.list[prodIndex].prod_count = parseInt(draft.categories.list[prodIndex].prod_count || 0) + 1
+        }
+        if (draft.categories.selectedCategory?.cat_id === action.data) {
+          draft.categories.selectedCategory.prod_count = parseInt(draft.categories.selectedCategory.prod_count || 0) + 1
+        }
+        return
+      case "decrementProdCount":
+        const decIndex = draft.categories.list.findIndex(cat => cat.cat_id === action.data)
+        if (decIndex !== -1) {
+          draft.categories.list[decIndex].prod_count = Math.max(parseInt(draft.categories.list[decIndex].prod_count || 0) - 1, 0)
+        }
+        if (draft.categories.selectedCategory?.cat_id === action.data) {
+          draft.categories.selectedCategory.prod_count = Math.max(parseInt(draft.categories.selectedCategory.prod_count || 0) - 1, 0)
+        }
+        return
+      case "setProducts":
+        draft.products = Array.from(new Map(action.data.map(prod => [prod.id, prod])).values())
+        return
+      case "incrementImgCount":
+        const imgIndex = draft.products.findIndex(prod => prod.id === action.data.productId)
+        if (imgIndex !== -1) {
+          draft.products[imgIndex].img_count = (parseInt(draft.products[imgIndex].img_count) || 0) + action.data.count
         }
         return
       case "setCategoryLoading":
