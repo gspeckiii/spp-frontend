@@ -21,7 +21,7 @@ function AdminProductImagePost() {
           setLoading(false)
           return
         }
-        const response = await axios.get(`/api/products/${id}`, {
+        const response = await axios.get(`/products/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         setProductName(response.data.prod_name || "Unknown Product")
@@ -50,7 +50,7 @@ function AdminProductImagePost() {
 
     try {
       const token = localStorage.getItem("SPPtoken")
-      const response = await axios.post(`/api/images/product/${id}`, formData, {
+      const response = await axios.post(`/images/product/${id}`, formData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
       })
       setMessage("Images added successfully")

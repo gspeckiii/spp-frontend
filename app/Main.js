@@ -27,7 +27,7 @@ import AdminProductImagePut from "./components/admin/AdminProductImagePut.js"
 import AdminProductImagePutSelect from "./components/admin/AdminProductImagePutSelect.js"
 
 Axios.defaults.baseURL = "http://localhost:8080/api"
-console.log("Axios baseURL set to:", Axios.defaults.baseURL) // Debug
+console.log("Axios baseURL set to:", Axios.defaults.baseURL)
 
 function Main() {
   const initialState = {
@@ -39,6 +39,12 @@ function Main() {
       avatar: localStorage.getItem("SPPavatar"),
       bio: localStorage.getItem("SPPbio"),
       admin: Boolean(localStorage.getItem("SPPadmin"))
+    },
+    categories: {
+      list: [],
+      selectedCategory: null,
+      loading: false,
+      error: null
     }
   }
 
@@ -56,6 +62,42 @@ function Main() {
         return
       case "refreshToken":
         draft.user.token = action.data.token
+        return
+      case "setCategories":
+        draft.categories.list = action.data
+        draft.categories.loading = false
+        draft.categories.error = null
+        return
+      case "selectCategory":
+        draft.categories.selectedCategory = action.data
+        return
+      case "deleteCategory":
+        draft.categories.list = draft.categories.list.filter(cat => cat.cat_id !== action.data)
+        if (draft.categories.selectedCategory?.cat_id === action.data) {
+          draft.categories.selectedCategory = null
+        }
+        return
+      case "updateCategory":
+        const index = draft.categories.list.findIndex(cat => cat.cat_id === action.data.cat_id)
+        if (index !== -1) {
+          draft.categories.list[index] = {
+            ...draft.categories.list[index],
+            ...action.data
+          }
+        }
+        if (draft.categories.selectedCategory?.cat_id === action.data.cat_id) {
+          draft.categories.selectedCategory = {
+            ...draft.categories.selectedCategory,
+            ...action.data
+          }
+        }
+        return
+      case "setCategoryLoading":
+        draft.categories.loading = true
+        return
+      case "setCategoryError":
+        draft.categories.error = action.data
+        draft.categories.loading = false
         return
     }
   }
@@ -79,6 +121,28 @@ function Main() {
   }, [state.loggedIn, state.user.token, state.user.username, state.user.avatar, state.user.admin, state.user.bio])
 
   useEffect(() => {
+    const ourRequest = Axios.CancelToken.source()
+    async function fetchCategories() {
+      try {
+        dispatch({ type: "setCategoryLoading" })
+        const token = localStorage.getItem("SPPtoken")
+        const response = await Axios.get("/categories", {
+          headers: { Authorization: `Bearer ${token}` },
+          cancelToken: ourRequest.token
+        })
+        console.log("Fetched categories:", response.data)
+        dispatch({ type: "setCategories", data: response.data })
+      } catch (e) {
+        dispatch({ type: "setCategoryError", data: e.response ? e.response.data.error : "Error fetching categories" })
+      }
+    }
+    if (state.user.token) {
+      fetchCategories()
+    }
+    return () => ourRequest.cancel()
+  }, [state.user.token])
+
+  useEffect(() => {
     let refreshInterval
     if (state.loggedIn) {
       refreshInterval = setInterval(async () => {
@@ -89,7 +153,7 @@ function Main() {
         } catch (error) {
           console.error("Token refresh error:", error)
         }
-      }, 30 * 60 * 1000) // Refresh every 30 minutes
+      }, 30 * 60 * 1000)
     }
     return () => clearInterval(refreshInterval)
   }, [state.loggedIn])
@@ -109,8 +173,8 @@ function Main() {
             <Route path="/admin-category-post" element={state.loggedIn && state.user.admin ? <AdminCategoryPost /> : <HomeGuest />} />
             <Route path="/admin-category-put-select" element={state.loggedIn && state.user.admin ? <AdminCategoryPutSelect /> : <HomeGuest />} />
             <Route path="/admin-category-put/:id" element={state.loggedIn && state.user.admin ? <AdminCategoryPut /> : <HomeGuest />} />
-            <Route path="/admin-product-post/:id" element={state.loggedIn && state.user.admin ? <AdminProductPost /> : <HomeGuest />} />
             <Route path="/admin-product-put-select/:id" element={state.loggedIn && state.user.admin ? <AdminProductPutSelect /> : <HomeGuest />} />
+            <Route path="/admin-product-post/:id" element={state.loggedIn && state.user.admin ? <AdminProductPost /> : <HomeGuest />} />
             <Route path="/admin-product-put/:id" element={state.loggedIn && state.user.admin ? <AdminProductPut /> : <HomeGuest />} />
             <Route path="/admin-product-image-post/:id" element={state.loggedIn && state.user.admin ? <AdminProductImagePost /> : <HomeGuest />} />
             <Route path="/admin-product-image-put-select/:id" element={state.loggedIn && state.user.admin ? <AdminProductImagePutSelect /> : <HomeGuest />} />

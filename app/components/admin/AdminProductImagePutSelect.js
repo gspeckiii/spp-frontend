@@ -27,12 +27,12 @@ function AdminProductImagePutSelect() {
           setLoading(false)
           return
         }
-        const response = await axios.get(`/api/images/product/${id}`, {
+        const response = await axios.get(`/images/product/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         console.log("API Response:", response.data) // Debug API data
         setImages(response.data)
-        const productResponse = await axios.get(`/api/products/${id}`, {
+        const productResponse = await axios.get(`/products/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         setProductName(productResponse.data.prod_name || "Unknown Product")
@@ -50,7 +50,7 @@ function AdminProductImagePutSelect() {
     if (window.confirm("Are you sure you want to delete this image?")) {
       try {
         const token = localStorage.getItem("SPPtoken")
-        await axios.delete(`/api/images/${imageId}`, {
+        await axios.delete(`/images/${imageId}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         setImages(images.filter(img => img.id !== imageId))

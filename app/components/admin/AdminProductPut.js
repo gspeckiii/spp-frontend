@@ -22,7 +22,7 @@ function AdminProductPut() {
         }
 
         // Fetch product
-        const productResponse = await axios.get(`/api/products/${id}`, {
+        const productResponse = await axios.get(`/products/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         const fetchedProduct = {
@@ -34,7 +34,7 @@ function AdminProductPut() {
 
         // Fetch category name
         if (fetchedProduct.cat_fk) {
-          const categoryResponse = await axios.get(`/api/categories/${fetchedProduct.cat_fk}`, {
+          const categoryResponse = await axios.get(`/categories/${fetchedProduct.cat_fk}`, {
             headers: { Authorization: `Bearer ${token}` }
           })
           setCategoryName(categoryResponse.data.cat_name || "Unknown Category")
@@ -59,7 +59,7 @@ function AdminProductPut() {
     e.preventDefault()
     try {
       const token = localStorage.getItem("SPPtoken")
-      const response = await axios.put(`/api/products/${id}`, product, {
+      const response = await axios.put(`/products/${id}`, product, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setMessage("Product updated successfully")

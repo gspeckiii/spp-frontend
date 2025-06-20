@@ -21,7 +21,7 @@ function AdminProductImagePut() {
           setLoading(false)
           return
         }
-        const response = await axios.get(`/api/images/${id}`, {
+        const response = await axios.get(`/images/${id}`, {
           // Correct endpoint for single image
           headers: { Authorization: `Bearer ${token}` }
         })
@@ -65,7 +65,7 @@ function AdminProductImagePut() {
     }
     try {
       const token = localStorage.getItem("SPPtoken")
-      const response = await axios.put(`/api/images/${id}`, updatedData, {
+      const response = await axios.put(`/images/${id}`, updatedData, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setMessage("Image updated successfully")

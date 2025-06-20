@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react"
-import axios from "axios"
+import React, { useState, useEffect, useContext } from "react"
+import Axios from "axios"
 import { useParams, useNavigate, Link } from "react-router-dom"
+import StateContext from "../../StateContext"
+import DispatchContext from "../../DispatchContext"
 
 function AdminCategoryPut() {
-  const { id } = useParams() // Get category ID from URL
+  const { id } = useParams()
   const navigate = useNavigate()
+  const { categories } = useContext(StateContext)
+  const appDispatch = useContext(DispatchContext)
   const [category, setCategory] = useState({ cat_name: "", cat_desc: "", cat_vid: "" })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [message, setMessage] = useState("")
 
   useEffect(() => {
     async function fetchCategory() {
@@ -19,9 +22,10 @@ function AdminCategoryPut() {
           setLoading(false)
           return
         }
-        const response = await axios.get(`/api/categories/${id}`, {
+        const response = await Axios.get(`/categories/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
+        console.log("Fetched category:", response.data)
         setCategory(response.data)
         setLoading(false)
       } catch (e) {
@@ -41,13 +45,24 @@ function AdminCategoryPut() {
     e.preventDefault()
     try {
       const token = localStorage.getItem("SPPtoken")
-      const response = await axios.put(`/api/categories/${id}`, category, {
+      const response = await Axios.put(`/categories/${id}`, category, {
         headers: { Authorization: `Bearer ${token}` }
       })
-      setMessage("Category updated successfully")
-      setTimeout(() => navigate(`/admin-category-put-select`), 1000) // Return to category selection after update
+      console.log("Update response:", response.data)
+      // Find existing category to preserve prod_count
+      const existingCategory = categories.list.find(cat => cat.cat_id === parseInt(id))
+      const updatedCategory = {
+        ...existingCategory,
+        ...response.data
+      }
+      appDispatch({
+        type: "updateCategory",
+        data: updatedCategory
+      })
+      appDispatch({ type: "flashMessage", value: "Category updated successfully!" })
+      setTimeout(() => navigate(`/admin-category-put-select`), 1000)
     } catch (e) {
-      setError(e.response ? e.response.data.error : "Error updating category")
+      appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error updating category" })
     }
   }
 
@@ -61,7 +76,6 @@ function AdminCategoryPut() {
 
   return (
     <div className="container mt-5">
-      {/* New Section for Product Management */}
       <div className="mb-4">
         <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Manage Products</h3>
         <Link to={`/admin-product-put-select/${id}`} className="btn btn-secondary btn-lg">
@@ -69,13 +83,7 @@ function AdminCategoryPut() {
         </Link>
       </div>
 
-      {/* Category Edit Section */}
       <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Edit Category</h2>
-      {message && (
-        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }} className="text-success">
-          {message}
-        </p>
-      )}
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         <div className="form-group">
           <label htmlFor="cat_name" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>

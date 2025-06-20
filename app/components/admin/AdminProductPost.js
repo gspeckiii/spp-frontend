@@ -20,7 +20,7 @@ function AdminProductPost() {
           setLoading(false)
           return
         }
-        const response = await axios.get(`/api/categories/${id}`, {
+        const response = await axios.get(`/categories/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         setCategoryName(response.data.cat_name || "Unknown Category")
@@ -42,7 +42,7 @@ function AdminProductPost() {
     e.preventDefault()
     try {
       const token = localStorage.getItem("SPPtoken")
-      const response = await axios.post("/api/products", product, {
+      const response = await axios.post("/products", product, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setMessage("Product added successfully")
