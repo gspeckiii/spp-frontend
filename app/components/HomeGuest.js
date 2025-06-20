@@ -1,23 +1,7 @@
 import React, { useState } from "react"
 import Page from "./Page"
-import axios from "axios" // Changed from Axios to axios to match the package name
-import { Link } from "react-router-dom"
 
 function HomeGuest() {
-  const [username, setUsername] = useState()
-  const [email, setEmail] = useState()
-  const [password, setPassword] = useState()
-
-  async function handleSubmit(e) {
-    e.preventDefault()
-    try {
-      await axios.post("/api/users", { username, email, password })
-      console.log("Registration successful")
-    } catch (e) {
-      console.error("Error in registration:", e.response ? e.response.data.error : e.message)
-    }
-  }
-
   return (
     <Page title="Landing" wide={true}>
       <div className="row align-items-center">

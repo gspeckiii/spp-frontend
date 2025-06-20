@@ -2,7 +2,7 @@ import React, { useState, useReducer, useEffect } from "react"
 import ReactDOM from "react-dom/client"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { useImmerReducer } from "use-immer"
-import axios from "axios"
+import Axios from "axios"
 import StateContext from "./StateContext.js"
 import DispatchContext from "./DispatchContext.js"
 import Header from "./components/Header.js"
@@ -14,7 +14,7 @@ import Terms from "./components/Terms.js"
 import FlashMessages from "./components/FlashMessages.js"
 import RequestPasswordReset from "./components/ResetPasswordRequest"
 import ResetPassword from "./components/ResetPassword"
-import Register from "./components/Register" // New import
+import Register from "./components/Register"
 import AdminCategoryPost from "./components/admin/AdminCategoryPost.js"
 import AdminDashboard from "./components/admin/AdminDashboard.js"
 import AdminCategoryPutSelect from "./components/admin/AdminCategoryPutSelect.js"
@@ -26,7 +26,9 @@ import AdminProductImagePost from "./components/admin/AdminProductImagePost.js"
 import AdminProductImagePut from "./components/admin/AdminProductImagePut.js"
 import AdminProductImagePutSelect from "./components/admin/AdminProductImagePutSelect.js"
 
-axios.defaults.baseURL = "http://localhost:8080" // Ensure this is set
+Axios.defaults.baseURL = "http://localhost:8080/api"
+console.log("Axios baseURL set to:", Axios.defaults.baseURL) // Debug
+
 function Main() {
   const initialState = {
     loggedIn: Boolean(localStorage.getItem("SPPtoken")),
@@ -81,7 +83,7 @@ function Main() {
     if (state.loggedIn) {
       refreshInterval = setInterval(async () => {
         try {
-          const response = await axios.post("/api/refresh")
+          const response = await Axios.post("/refresh")
           dispatch({ type: "refreshToken", data: response.data })
           console.log("Token refreshed")
         } catch (error) {
