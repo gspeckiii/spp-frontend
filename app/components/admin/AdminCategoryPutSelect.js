@@ -54,21 +54,20 @@ function AdminCategoryPutSelect() {
   const uniqueCategories = Array.from(new Map(categories.list.map(cat => [cat.cat_id, cat])).values())
 
   return (
-    <div className="container mt-5">
-      <div className="mb-4">
-        <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Add New Category</h3>
-        <Link to="/admin-category-post" className="btn btn-success btn-lg">
+    <div className="table-select">
+      <div className="table-select__section-heading">
+        <h1 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Categories</h1>
+        <Link to="/admin-category-post" className="table-select__button table-select__button--success table-select__button--large">
           Add Category
         </Link>
       </div>
 
-      <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "700" }}>Select Category to Edit</h2>
-      <table className="table table-striped">
-        <thead>
+      <table className="table-select__table">
+        <thead className="table-select__heading">
           <tr>
-            <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }}>Category Name</th>
-            <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }}>Product Count</th>
-            <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }}>Actions</th>
+            <th>Category Name</th>
+            <th>Product Count</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -77,15 +76,15 @@ function AdminCategoryPutSelect() {
               <td>{category.cat_name}</td>
               <td>{category.prod_count || 0}</td>
               <td>
-                <Link to={`/admin-category-put/${category.cat_id}`} className="btn btn-primary btn-sm mr-2" onClick={() => handleSelectCategory(category)}>
+                <Link to={`/admin-category-put/${category.cat_id}`} className="table-select__button" onClick={() => handleSelectCategory(category)}>
                   Edit
                 </Link>
                 {Number(category.prod_count) === 0 && (
-                  <button onClick={() => handleDelete(category.cat_id)} className="btn btn-success btn-sm mr-2">
+                  <button onClick={() => handleDelete(category.cat_id)} className="table-select__button">
                     Delete
                   </button>
                 )}
-                <Link to={`/admin-product-put-select/${category.cat_id}`} className="btn btn-primary btn-sm mr-2" onClick={() => handleSelectCategory(category)}>
+                <Link to={`/admin-product-put-select/${category.cat_id}`} className="table-select__button" onClick={() => handleSelectCategory(category)}>
                   Products
                 </Link>
               </td>

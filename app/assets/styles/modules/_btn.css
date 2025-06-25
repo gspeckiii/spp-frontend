@@ -1,0 +1,32 @@
+.btn {
+  background-color: $deepRed;
+  color: $softWhite;
+  text-decoration: none;
+  padding: 0.75rem 1.2rem;
+  display: inline-block;
+
+  &--table {
+    font-size: 1.25rem;
+    margin-right: 1rem;
+  }
+  &--orange {
+    background-color: $mainOrange;
+  }
+  &--red {
+    background-color: $darkRed;
+    color: $lightRed;
+  }
+
+  &--green {
+    background-color: $darkGreen;
+    color: $lightRed;
+  }
+
+  &--large {
+    padding: 1.1rem 1.9rem;
+
+    @mixin atSmall {
+      font-size: 1.25rem;
+    }
+  }
+}

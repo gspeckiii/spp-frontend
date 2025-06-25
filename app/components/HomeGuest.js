@@ -1,16 +1,25 @@
-import React, { useState } from "react"
+import React from "react"
 import Page from "./Page"
 
 function HomeGuest() {
   return (
-    <Page title="Landing" wide={true}>
-      <div className="row align-items-center">
-        <div className="col-lg-7 py-3 py-md-5">
-          <h1 className="display-3">Sherman Peck Productions</h1>
-          <p className="lead text-muted">I appreciate you for visiting my website and taking some time to view my work. I have organized my products by categories for your browsing pleasure. I hope you find a treasure or two for yourself or a family member or friend. Sharing is caring and contibuting to an artist will not only benefit my passion but hopfully lighten up your life.</p>
+    <div className="large-hero">
+      <picture>
+        <source srcSet="assets/images/hero--large.jpg 1920w, assets/images/hero--large-hi-dpi.jpg 3840w" media="(min-width: 1380px)" />
+        <source srcSet="assets/images/hero--medium.jpg 1380w, assets/images/hero--medium-hi-dpi.jpg 2760w" media="(min-width: 990px)" />
+        <source srcSet="assets/images/hero--small.jpg 990w, assets/images/hero--small-hi-dpi.jpg 1980w" media="(min-width: 640px)" />
+        <img srcSet="assets/images/hero--smaller.jpg 640w, assets/images/hero--smaller-hi-dpi.jpg 1280w" src="assets/images/hero--smaller.jpg" alt="Coastal view of ocean and mountains" className="large-hero__image" />
+      </picture>
+
+      <div className="large-hero__text-content">
+        <div className="wrapper">
+          <h1 className="large-hero__title">Sherman Peck Productions</h1>
+          <h2 className="large-hero__subtitle">A fusion of Art and Engineering </h2>
+          <p className="large-hero__description">Support my cause and check out the work below</p>
+          <p></p>
         </div>
       </div>
-    </Page>
+    </div>
   )
 }
 

@@ -1,0 +1,150 @@
+.form-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+
+  transition: all 0.3s ease-out;
+  background: transparent !important; /* Remove black box */
+
+  &--is-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  @mixin atMedium {
+    gap: 15px;
+
+    flex-wrap: nowrap;
+  }
+
+  &__group {
+    flex: 1 1 100%;
+    min-width: 0;
+
+    @mixin atMedium {
+      flex: 0 0 auto;
+    }
+
+    &:last-child {
+      flex: 0 0 auto;
+    }
+  }
+
+  &__input {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: $softWhite !important;
+    background: $softBlack !important; /* Fallback: #343a40 */
+    background-color: $softBlack !important;
+    -webkit-background: $softBlack !important;
+    border: none !important;
+    border-radius: 1px;
+    box-sizing: border-box;
+    transition: all 0.15s ease-in-out;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+
+    /* Override Chrome autofill */
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 1000px $softBlack inset !important;
+      -webkit-text-fill-color: $softWhite !important;
+      background: $softBlack !important;
+      background-color: $softBlack !important;
+    }
+
+    &:focus {
+      background: $softBlack !important;
+      background-color: $softBlack !important;
+      -webkit-background: $softBlack !important;
+      color: $softWhite !important;
+    }
+
+    @mixin atMedium {
+      font-size: 14px;
+      padding: 10px 14px;
+    }
+
+    .form-controls--small & {
+      padding: 6px 8px;
+      font-size: 14px;
+      border-radius: 1px;
+
+      @mixin atMedium {
+        font-size: 12px;
+        padding: 5px 5px;
+      }
+    }
+
+    &--dark {
+      background: $softBlack !important;
+      background-color: $softBlack !important;
+      -webkit-background: $softBlack !important;
+      color: $softWhite !important;
+      border: none !important;
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus,
+      &:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 1000px $softBlack inset !important;
+        -webkit-text-fill-color: $softWhite !important;
+        background: $softBlack !important;
+        background-color: $softBlack !important;
+      }
+
+      &:focus {
+        background: $softBlack !important;
+        background-color: $softBlack !important;
+        -webkit-background: $softBlack !important;
+      }
+    }
+  }
+
+  &__button {
+    padding: 8px 16px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: $softWhite !important;
+    background: $deepRed !important;
+    background-color: $deepRed !important;
+    border: none !important;
+    border-radius: 6px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: background-color 0.3s ease-out;
+
+    &:hover {
+      background: $darkRed !important;
+      background-color: $darkRed !important;
+    }
+
+    @mixin atMedium {
+      font-size: 14px;
+      padding: 10px 20px;
+    }
+
+    .form-controls--small & {
+      padding: 6px 12px;
+      font-size: 14px;
+      border-radius: 1px;
+
+      @mixin atMedium {
+        font-size: 12px;
+        padding: 5px 10px;
+      }
+    }
+  }
+
+  &__input--error {
+    border: none !important;
+  }
+}

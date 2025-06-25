@@ -12,25 +12,52 @@ function HeaderLoggedIn(props) {
     window.location = "/"
   }
   return (
-    <div className="flex-row my-3 my-md-0">
-      <a href="#" className="text-white mr-2 header-search-icon">
-        <i className="fas fa-search"></i>
-      </a>
-      <span className="mr-2 header-chat-icon text-white">
-        <i className="fas fa-comment"></i>
-        <span className="chat-count-badge text-white"> </span>
-      </span>
-      <Link to={`/profile/${appState.username}`} className="mr-2">
-        <img className="small-header-avatar" src={appState.user.avatar} />
-      </Link>
-      <Link className="btn btn-sm btn-success mr-2" to="/create-post">
-        Create Post
-      </Link>
-      <button onClick={handleLogOut} className="btn btn-sm btn-secondary">
-        Sign Out
-      </button>
+    <div>
+      <div className="site-header__btn-container">
+        <button onClick={handleLogOut} className="btn open-modal">
+          Sign Out
+        </button>
+      </div>
+
+      <nav className="primary-nav primary-nav--pull-right">
+        <ul>
+          <li>
+            <Link to="/About" id="our-beginning-link">
+              My Story
+            </Link>
+          </li>
+          <li>
+            <Link to="/Categories" id="features-link">
+              Products
+            </Link>
+          </li>
+          <li>
+            <Link to="/Services" id="testimonials-link">
+              Services
+            </Link>
+          </li>
+        </ul>
+      </nav>
     </div>
   )
 }
 
 export default HeaderLoggedIn
+
+/*
+    <div className="form-controls">
+      <Link to={`/profile/${appState.username}`}>
+        <img className="site-header__icon" src={appState.user.avatar} />
+      </Link>
+      <Link to="/orders">
+      Orders
+      </Link>
+     
+      <div className="form-controls__group form-controls__group--dark">
+        <button onClick={handleLogOut} className="form-controls__button form-controls--small">
+          Sign Out
+        </button>
+      </div>
+    </div>
+
+*/

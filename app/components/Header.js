@@ -1,22 +1,28 @@
+// Header.js
 import React, { useState, useContext } from "react"
-import { Link } from "react-router-dom" // Importing Link from react-router-dom for navigation
+import { Link } from "react-router-dom"
 import HeaderLoggedOut from "./HeaderLoggedOut"
 import HeaderLoggedIn from "./HeaderLoggedIn"
 import StateContext from "../StateContext"
-function Header(props) {
-  const appState = useContext(StateContext) // Using useContext to access the global state
-  return (
-    <header className="header-bar bg-primary mb-3">
-      <div className="container d-flex flex-column flex-md-row align-items-center p-3">
-        <h4 className="my-0 mr-md-auto font-weight-normal">
-          <Link to="/" className="text-white">
-            ShermanPeckProductions
-          </Link>
-        </h4>
 
-        {appState.loggedIn ? <HeaderLoggedIn /> : <HeaderLoggedOut />}
+function Header(props) {
+  const appState = useContext(StateContext)
+  return (
+    <header className="site-header">
+      <div className="wrapper">
+        <div className="site-header__logo">
+          <img src="assets/images/icons/spp-logo.svg" alt="SPP Logo"></img>
+        </div>
+
+        <div className="site-header__menu-icon">
+          <div className="site-header__menu-icon__middle"></div>
+        </div>
+
+        {/* FIX: Add site-header__menu-content to this div */}
+        <div className="site-header__menu-content primary-nav primary-nav--pull-right">{appState.loggedIn ? <HeaderLoggedIn /> : <HeaderLoggedOut />}</div>
       </div>
     </header>
   )
 }
+
 export default Header

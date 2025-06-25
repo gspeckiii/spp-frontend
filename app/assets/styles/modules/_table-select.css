@@ -1,0 +1,162 @@
+.table-select {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-top: 100px;
+  color: $softWhite;
+
+  @mixin atSmall {
+    max-width: 540px;
+  }
+  @mixin atMedium {
+    max-width: 720px;
+  }
+  @mixin atLarge {
+    max-width: 960px;
+  }
+
+  &__section-heading {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: $pureWhite;
+  }
+
+  &__info-message {
+    font-weight: 400;
+    color: $deepRed;
+  }
+
+  &__loading-message {
+    font-weight: 400;
+    color: $softWhite;
+  }
+
+  &__table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+
+  &__table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: $softWhite;
+    border-collapse: collapse;
+
+    thead {
+      th {
+        vertical-align: bottom;
+        border-bottom: 2px solid darken($softWhite, 30%);
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 2px solid $pureWhite;
+        font-size: 2rem;
+      }
+    }
+
+    tbody {
+      td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid darken($softWhite, 20%);
+        border-top: 1px solid $pureWhite;
+      }
+
+      tr {
+        &:nth-of-type(odd) {
+          background-color: rgba($pureWhite, 0.05);
+        }
+      }
+    }
+  }
+
+  &__button {
+    display: inline-block;
+    font-weight: 400;
+    color: $pureWhite;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    background-color: $deepRed;
+    border: 1px solid $deepRed;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    text-decoration: none;
+    cursor: pointer;
+    margin-right: 0.5rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &:hover {
+      background-color: $darkRed;
+      border-color: $darkRed;
+    }
+
+    &:focus {
+      outline: 0;
+      box-shadow: 0 0 0 0.2rem rgba($deepRed, 0.5);
+    }
+
+    &--success {
+      background-color: $deepRed;
+      border-color: $deepRed;
+
+      &:hover {
+        background-color: $darkRed;
+        border-color: $darkRed;
+      }
+    }
+
+    &--secondary {
+      background-color: darken($pureBlack, 5%);
+      border-color: darken($pureBlack, 5%);
+      color: $softWhite;
+
+      &:hover {
+        background-color: darken($pureBlack, 10%);
+        border-color: darken($pureBlack, 10%);
+      }
+    }
+
+    &--custom {
+      color: $softWhite;
+      border-color: $softWhite;
+      background-color: transparent;
+      margin-right: 0.5rem;
+
+      &:hover {
+        color: $pureWhite;
+        border-color: $pureWhite;
+      }
+    }
+
+    &--delete {
+      color: $deepRed;
+      border-color: $deepRed;
+      background-color: transparent;
+      margin-right: 0.5rem;
+
+      &:hover {
+        color: $darkRed;
+        border-color: $darkRed;
+      }
+    }
+
+    &--large {
+      padding: 0.5rem 1rem;
+      font-size: 1.25rem;
+      line-height: 1.5;
+      border-radius: 0.3rem;
+    }
+  }
+
+  &__back-button-container {
+    margin-bottom: 1rem;
+  }
+}

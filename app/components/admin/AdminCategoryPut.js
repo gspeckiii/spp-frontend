@@ -82,42 +82,40 @@ function AdminCategoryPut() {
     )
 
   return (
-    <div className="container mt-5">
-      <div className="mb-4">
-        <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Manage Products</h3>
+    <div className="form form--container">
+      <div className="form__heading">
+        <h1>Manage Products</h1>
         <Link to={`/admin-product-put-select/${id}`} className="btn btn-secondary btn-lg">
           View/Manage Products
         </Link>
       </div>
 
-      <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Edit Category</h2>
+      <h2>Edit Category</h2>
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         <div className="form-group">
-          <label htmlFor="cat_name" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
+          <label htmlFor="cat_name" className="form__label" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
             Category Name
           </label>
-          <input type="text" name="cat_name" value={category.cat_name} onChange={handleChange} className="form-control form-control-lg" required />
-          <div className="invalid-feedback">Please provide a category name.</div>
+          <input type="text" name="cat_name" value={category.cat_name} onChange={handleChange} className="form__input" required />
         </div>
         <div className="form-group">
-          <label htmlFor="cat_desc" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
+          <label htmlFor="cat_desc" className="form__label" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
             Description
           </label>
-          <input type="text" name="cat_desc" value={category.cat_desc} onChange={handleChange} className="form-control form-control-lg" required />
-          <div className="invalid-feedback">Please provide a description.</div>
+          <input type="text" name="cat_desc" value={category.cat_desc} onChange={handleChange} className="form__input" required />
         </div>
         <div className="form-group">
-          <label htmlFor="cat_vid" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
+          <label htmlFor="cat_vid" className="form__label" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
             Video Link
           </label>
-          <input type="url" name="cat_vid" value={category.cat_vid || ""} onChange={handleChange} className="form-control form-control-lg" />
+          <input type="url" name="cat_vid" value={category.cat_vid || ""} onChange={handleChange} className="form__input" />
         </div>
-        <button type="submit" className="btn btn-primary btn-lg btn-block mt-4">
+        <button type="submit" className="form__button">
           Update Category
         </button>
       </form>
-      <div className="mb-3 back-button">
-        <Link to="/admin-category-put-select" className="btn btn-secondary">
+      <div className="form__back-button-container">
+        <Link to="/admin-category-put-select" className="form__back-button">
           Back to Categories
         </Link>
       </div>
