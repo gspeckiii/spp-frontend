@@ -1,5 +1,6 @@
 import React from "react"
 import Page from "./Page"
+import { Link } from "react-router-dom"
 
 function HomeGuest() {
   return (
@@ -16,6 +17,9 @@ function HomeGuest() {
           <h1 className="large-hero__title">Sherman Peck Productions</h1>
           <h2 className="large-hero__subtitle">A fusion of Art and Engineering </h2>
           <p className="large-hero__description">Support my cause and check out the work below</p>
+          <button className="btn btn--large">
+            <Link to="/register">Register</Link>
+          </button>
           <p></p>
         </div>
       </div>

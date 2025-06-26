@@ -79,42 +79,33 @@ function AdminProductImagePutSelect() {
     })
   }
 
-  if (loading) return <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Loading...</p>
+  if (loading) return <p>Loading...</p>
   if (!product)
     return (
-      <div className="container mt-5">
-        <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Manage Images</h2>
-        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }} className="text-danger">
-          Product not found
-        </p>
-        <Link to="/admin-category-put-select" className="btn btn-secondary mt-3">
+      <div className="wrapper">
+        <h2>Manage Images</h2>
+        <p className="text-danger">Product not found</p>
+        <Link to="/admin-category-put-select" className="form__button">
           Back to Categories
         </Link>
       </div>
     )
 
   return (
-    <div className="container mt-5">
-      <div className="mb-4">
-        <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Add New Images</h3>
-        <Link to={`/admin-product-image-post/${id}`} state={{ categoryId: product?.cat_fk || location.state?.categoryId }} className="btn btn-success btn-lg">
-          Add Images
-        </Link>
-      </div>
-
-      <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Manage Images for {product.prod_name}</h2>
+    <div className="table-select">
+      <h2>Manage Images for {product.prod_name}</h2>
       {images.length === 0 ? (
-        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>No images available.</p>
+        <p>No images available.</p>
       ) : (
-        <table className="table table-striped">
+        <table className="table-select__table">
           <thead>
             <tr>
-              <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Thumbnail</th>
-              <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Image Name</th>
-              <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Description</th>
-              <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Order</th>
-              <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Media Type</th>
-              <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Actions</th>
+              <th>Thumbnail</th>
+              <th>Image Name</th>
+              <th>Description</th>
+              <th>Order</th>
+              <th>Media Type</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -138,11 +129,11 @@ function AdminProductImagePutSelect() {
                 <td>{image.img_order}</td>
                 <td>{image.img_media}</td>
                 <td>
-                  <button onClick={() => handleEdit(image.id)} className="btn btn-primary btn-sm mr-2">
+                  <button onClick={() => handleEdit(image.id)} className="table-select__button">
                     Edit
                   </button>
-                  <button onClick={() => handleDelete(image.id)} className="btn btn-danger btn-sm">
-                    Delete
+                  <button onClick={() => handleDelete(image.id)} className="table-select__button">
+                    Del
                   </button>
                 </td>
               </tr>
@@ -150,11 +141,12 @@ function AdminProductImagePutSelect() {
           </tbody>
         </table>
       )}
-      <div className="mb-3 back-button">
-        <Link to={`/admin-product-put-select/${product?.cat_fk || location.state?.categoryId || id}`} className="btn btn-secondary">
-          Back to Products
-        </Link>
-      </div>
+      <Link to={`/admin-product-image-post/${id}`} state={{ categoryId: product?.cat_fk || location.state?.categoryId }} className="form__button">
+        Add Images
+      </Link>
+      <Link to={`/admin-product-put-select/${product?.cat_fk || location.state?.categoryId || id}`} className="form__button">
+        Back to Products
+      </Link>
     </div>
   )
 }

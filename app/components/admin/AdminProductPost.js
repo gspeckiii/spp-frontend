@@ -75,46 +75,42 @@ function AdminProductPost() {
     )
 
   return (
-    <div className="container mt-5">
-      <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Add Product to {categoryName}</h2>
-      <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-        <div className="form-group">
-          <label htmlFor="prod_name" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-            Product Name
-          </label>
-          <input type="text" name="prod_name" value={product.prod_name} onChange={handleChange} className="form-control form-control-lg" required />
-          <div className="invalid-feedback">Please provide a product name.</div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="prod_desc" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-            Description
-          </label>
-          <input type="text" name="prod_desc" value={product.prod_desc} onChange={handleChange} className="form-control form-control-lg" required />
-          <div className="invalid-feedback">Please provide a description.</div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="prod_cost" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-            Cost
-          </label>
-          <input type="number" name="prod_cost" value={product.prod_cost} onChange={handleChange} className="form-control form-control-lg" step="0.01" required />
-          <div className="invalid-feedback">Please provide a valid cost.</div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="cat_fk" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-            Category ID
-          </label>
-          <input type="number" name="cat_fk" value={product.cat_fk} readOnly className="form-control form-control-lg" required />
-          <div className="invalid-feedback">Category ID is pre-set.</div>
-        </div>
-        <div className="d-flex justify-content-between mt-4">
-          <button type="submit" className="btn btn-primary btn-lg">
-            Add Product
-          </button>
-          <button type="button" className="btn btn-secondary btn-lg" onClick={handleCancel}>
-            Cancel
-          </button>
-        </div>
-      </form>
+    <div className="wrapper">
+      <div className="form">
+        <h2>Add Product to {categoryName}</h2>
+        <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+          <div className="form__group">
+            <label htmlFor="prod_name" className="form_label">
+              Product Name
+            </label>
+            <input type="text" name="prod_name" value={product.prod_name} onChange={handleChange} className="form__input" required />
+            <div className="invalid-feedback">Please provide a product name.</div>
+          </div>
+          <div className="form__group">
+            <label htmlFor="prod_desc" className="form_label">
+              Description
+            </label>
+            <input type="text" name="prod_desc" value={product.prod_desc} onChange={handleChange} className="form__input" required />
+            <div className="invalid-feedback">Please provide a description.</div>
+          </div>
+          <div className="form__group">
+            <label htmlFor="prod_cost" className="form_label">
+              Cost
+            </label>
+            <input type="number" name="prod_cost" value={product.prod_cost} onChange={handleChange} className="form__input" step="0.01" required />
+            <div className="invalid-feedback">Please provide a valid cost.</div>
+          </div>
+
+          <div className="d-flex justify-content-between mt-4">
+            <button type="submit" className="form__button">
+              Add Product
+            </button>
+            <button type="button" className="form__button" onClick={handleCancel}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

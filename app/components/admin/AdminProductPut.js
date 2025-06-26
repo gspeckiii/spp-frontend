@@ -83,42 +83,44 @@ function AdminProductPut() {
     navigate(`/admin-product-put-select/${product.cat_fk}`)
   }
 
-  if (loading) return <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Loading...</p>
+  if (loading) return <p>Loading...</p>
 
   return (
-    <div className="container mt-5">
-      <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Edit Product in {categoryName}</h2>
-      <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-        <div className="form-group">
-          <label htmlFor="prod_name" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-            Product Name
-          </label>
-          <input type="text" name="prod_name" value={product.prod_name} onChange={handleChange} className="form-control form-control-lg" required />
-          <div className="invalid-feedback">Please provide a product name.</div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="prod_desc" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-            Description
-          </label>
-          <input type="text" name="prod_desc" value={product.prod_desc} onChange={handleChange} className="form-control form-control-lg" required />
-          <div className="invalid-feedback">Please provide a description.</div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="prod_cost" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-            Cost
-          </label>
-          <input type="number" name="prod_cost" value={product.prod_cost} onChange={handleChange} className="form-control form-control-lg" step="0.01" required />
-          <div className="invalid-feedback">Please provide a valid cost.</div>
-        </div>
-        <div className="d-flex justify-content-between mt-4">
-          <button type="submit" className="btn btn-primary btn-lg">
-            Update Product
-          </button>
-          <button type="button" className="btn btn-secondary btn-lg" onClick={handleCancel}>
-            Cancel
-          </button>
-        </div>
-      </form>
+    <div className="wrapper">
+      <div className="form">
+        <h1 className="form__heading">Edit Product in {categoryName}</h1>
+        <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+          <div className="form__group">
+            <label className="form__label" htmlFor="prod_name">
+              Product Name
+            </label>
+            <input type="text" name="prod_name" value={product.prod_name} onChange={handleChange} className="form__input" required />
+            <div className="invalid-feedback">Please provide a product name.</div>
+          </div>
+          <div className="form__group">
+            <label className="form__label" htmlFor="prod_desc">
+              Description
+            </label>
+            <input type="text" name="prod_desc" value={product.prod_desc} onChange={handleChange} className="form__input" required />
+            <div className="invalid-feedback">Please provide a description.</div>
+          </div>
+          <div className="form__group">
+            <label className="form__label" htmlFor="prod_cost">
+              Cost
+            </label>
+            <input type="number" name="prod_cost" value={product.prod_cost} onChange={handleChange} className="form__input" step="0.01" required />
+            <div className="invalid-feedback">Please provide a valid cost.</div>
+          </div>
+          <div className="d-flex justify-content-between mt-4">
+            <button type="submit" className="form__button">
+              Update Product
+            </button>
+            <button type="button" className="form__button" onClick={handleCancel}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

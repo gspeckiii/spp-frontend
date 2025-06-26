@@ -3,6 +3,8 @@ import Axios from "axios"
 import { useParams, useNavigate, useLocation } from "react-router-dom"
 import StateContext from "../../StateContext"
 import DispatchContext from "../../DispatchContext"
+import { CSSTransition } from "react-transition-group"
+import FlashMessages from "../FlashMessages"
 
 function AdminProductImagePost() {
   const { id } = useParams()
@@ -13,6 +15,7 @@ function AdminProductImagePost() {
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(true)
   const [product, setProduct] = useState(null)
+  const [validationError, setValidationError] = useState(null)
 
   useEffect(() => {
     async function fetchProduct() {
@@ -41,13 +44,29 @@ function AdminProductImagePost() {
   }, [id, appDispatch])
 
   const handleFileChange = e => {
-    setImages(Array.from(e.target.files))
+    const files = Array.from(e.target.files)
+    if (files.length === 0) {
+      setValidationError("Please select at least one image.")
+    } else {
+      const validTypes = ["image/jpeg", "image/png", "image/gif"]
+      const maxSize = 1 * 1024 * 1024 // 1MB
+      const invalidFiles = files.filter(file => !validTypes.includes(file.type) || file.size > maxSize)
+      if (invalidFiles.length > 0) {
+        setValidationError("All images must be JPEG, PNG, or GIF and less than 1MB.")
+      } else {
+        setValidationError(null)
+      }
+    }
+    setImages(files)
   }
 
   const handleSubmit = async e => {
     e.preventDefault()
     if (images.length === 0) {
-      appDispatch({ type: "flashMessage", value: "Please select at least one image" })
+      setValidationError("Please select at least one image.")
+      return
+    }
+    if (validationError) {
       return
     }
 
@@ -59,15 +78,11 @@ function AdminProductImagePost() {
       const response = await Axios.post(`/images/product/${id}`, formData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
       })
-      console.log("Add images response:", response.data)
       appDispatch({
         type: "incrementImgCount",
         data: { productId: parseInt(id), count: response.data.count || images.length }
       })
       appDispatch({ type: "flashMessage", value: "Images added successfully!" })
-      if (!product?.cat_fk) {
-        console.warn("No cat_fk found, using location.state.categoryId or redirecting to dashboard")
-      }
       const categoryId = product?.cat_fk || location.state?.categoryId
       navigate(categoryId ? `/admin-product-put-select/${categoryId}` : "/admin-category-put-select")
     } catch (e) {
@@ -83,25 +98,30 @@ function AdminProductImagePost() {
   if (loading) return <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Loading...</p>
 
   return (
-    <div className="container mt-5">
-      <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Add Images to {product?.prod_name || "Unknown Product"}</h2>
-      <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-        <div className="form-group">
-          <label htmlFor="images" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-            Product Images
-          </label>
-          <input type="file" name="images" onChange={handleFileChange} className="form-control-file" multiple />
-          <small className="form-text text-muted">Select multiple images (JPEG, PNG, GIF, max 1MB each)</small>
-        </div>
-        <div className="d-flex justify-content-between mt-4">
-          <button type="submit" className="btn btn-primary btn-lg" disabled={images.length === 0}>
-            Add Images
-          </button>
-          <button type="button" className="btn btn-secondary btn-lg" onClick={handleCancel}>
-            Cancel
-          </button>
-        </div>
-      </form>
+    <div className="wrapper">
+      <div className="form">
+        <h2>Add Images to {product?.prod_name || "Unknown Product"}</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form__group">
+            <label htmlFor="images" className="form__label">
+              Product Images
+            </label>
+            <input type="file" name="images" onChange={handleFileChange} className="form__input" id="images" multiple />
+            <small style={{ color: "$softWhite", opacity: 0.7 }}>Select multiple images (JPEG, PNG, GIF, max 1MB each)</small>
+            <CSSTransition in={!!validationError} timeout={330} classNames="flash-messages" unmountOnExit>
+              <FlashMessages messages={[validationError]} />
+            </CSSTransition>
+          </div>
+          <div className="form__group">
+            <button type="submit" className="form__button" disabled={!!validationError || images.length === 0}>
+              Add Images
+            </button>
+            <button type="button" className="form__button" onClick={handleCancel}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

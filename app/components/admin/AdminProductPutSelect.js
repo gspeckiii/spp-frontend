@@ -96,22 +96,15 @@ function AdminProductPutSelect() {
   }
 
   return (
-    <div className="container mt-5">
-      <div className="mb-4">
-        <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Add New Product</h3>
-        <Link to={`/admin-product-post/${id}`} className="btn btn-success btn-lg">
-          Add Product
-        </Link>
-      </div>
-
-      <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "700" }}>Products in Category: {category ? category.cat_name : "Unknown"}</h2>
-      <table className="table table-striped">
-        <thead>
+    <div className="table-select">
+      <h2>Products in Category: {category ? category.cat_name : "Unknown"}</h2>
+      <table className="table-select__table">
+        <thead className="table-select__heading">
           <tr>
             <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }}>Product Name</th>
             <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }}>Price</th>
             <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }}>Image Count</th>
-            <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }}>Actions</th>
+            <th style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }}>Image & Edit Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -121,29 +114,30 @@ function AdminProductPutSelect() {
               <td>${product.prod_cost || 0}</td>
               <td>{product.img_count || 0}</td>
               <td>
-                <Link to={`/admin-product-put/${product.id}`} className="btn btn-primary btn-sm mr-2" style={{ marginRight: "10px" }}>
+                <Link to={`/admin-product-put/${product.id}`} className="table-select__button">
                   Edit
                 </Link>
                 {Number(product.img_count) === 0 && (
-                  <button onClick={() => handleDelete(product.id)} className="btn btn-success btn-sm mr-2" style={{ marginRight: "10px" }}>
-                    Delete
+                  <button onClick={() => handleDelete(product.id)} className="table-select__button">
+                    Del
                   </button>
                 )}
-                <Link to={`/admin-product-image-post/${product.id}`} state={{ categoryId: id }} className="btn btn-info btn-sm mr-2" style={{ marginRight: "10px" }}>
-                  Add Images
+                <Link to={`/admin-product-image-post/${product.id}`} state={{ categoryId: id }} className="table-select__button">
+                  + Img
                 </Link>
-                <Link to={`/admin-product-image-put-select/${product.id}`} state={{ categoryId: id }} className="btn btn-secondary btn-sm">
-                  Manage Images
+                <Link to={`/admin-product-image-put-select/${product.id}`} state={{ categoryId: id }} className="table-select__button">
+                  Img Mgt
                 </Link>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div className="mb-3 back-button">
-        <Link to="/admin-category-put-select" className="btn btn-secondary">
-          Back to Categories
-        </Link>
+      <div className="btn btn--large">
+        <Link to="/admin-category-put-select">Back to Categories</Link>
+      </div>
+      <div className="btn btn--large">
+        <Link to={`/admin-product-post/${id}`}>Add Product</Link>
       </div>
     </div>
   )

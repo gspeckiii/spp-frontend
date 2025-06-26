@@ -83,45 +83,47 @@ function AdminProductImagePut() {
     navigate(productId ? `/admin-product-image-put-select/${productId}` : "/admin-category-put-select")
   }
 
-  if (loading) return <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>Loading...</p>
+  if (loading) return <p>Loading...</p>
 
   return (
-    <div className="container mt-5">
-      <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Editing: {image.img_path}</h2>
-      {image.img_path && (
-        <div className="mb-4">
-          <img src={`http://localhost:8080/${image.img_path}`} alt={image.img_desc || "Image"} style={{ maxWidth: "300px", maxHeight: "300px", objectFit: "contain" }} />
-        </div>
-      )}
-      <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-        <div className="form-group">
-          <label htmlFor="img_desc" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-            Image Description
-          </label>
-          <input type="text" name="img_desc" value={image.img_desc} onChange={handleChange} className="form-control form-control-lg" required />
-          <div className="invalid-feedback">Please provide an image description.</div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="img_order" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-            Image Order
-          </label>
-          <input type="number" name="img_order" value={image.img_order} onChange={handleChange} className="form-control form-control-lg" min="0" required />
-        </div>
-        <div className="form-group">
-          <label htmlFor="img_media" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-            Media Type
-          </label>
-          <input type="number" name="img_media" value={image.img_media} onChange={handleChange} className="form-control form-control-lg" min="0" required />
-        </div>
-        <div className="d-flex justify-content-between mt-4">
-          <button type="submit" className="btn btn-primary btn-lg">
-            Update Image
-          </button>
-          <button type="button" className="btn btn-secondary btn-lg" onClick={handleCancel}>
-            Cancel
-          </button>
-        </div>
-      </form>
+    <div className="wrapper">
+      <div className="form">
+        <h2>Editing: {image.img_path}</h2>
+        {image.img_path && (
+          <div>
+            <img src={`http://localhost:8080/${image.img_path}`} alt={image.img_desc || "Image"} />
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+          <div className="form__group">
+            <label className="form__label" htmlFor="img_desc">
+              Image Description
+            </label>
+            <input type="text" name="img_desc" value={image.img_desc} onChange={handleChange} className="form__input" required />
+            <div className="invalid-feedback">Please provide an image description.</div>
+          </div>
+          <div className="form__group">
+            <label className="form__label" htmlFor="img_order">
+              Image Order
+            </label>
+            <input type="number" name="img_order" value={image.img_order} onChange={handleChange} className="form__input" min="0" required />
+          </div>
+          <div className="form__group">
+            <label className="form__label" htmlFor="img_media">
+              Media Type
+            </label>
+            <input type="number" name="img_media" value={image.img_media} onChange={handleChange} className="form__input" min="0" required />
+          </div>
+          <div className="d-flex justify-content-between mt-4">
+            <button type="submit" className="form__button">
+              Update Image
+            </button>
+            <button type="button" className="form__button" onClick={handleCancel}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

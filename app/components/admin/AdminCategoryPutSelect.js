@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useState } from "react"
 import Axios from "axios"
 import { Link } from "react-router-dom"
 import StateContext from "../../StateContext"
@@ -7,18 +7,23 @@ import DispatchContext from "../../DispatchContext"
 function AdminCategoryPutSelect() {
   const { categories, user } = useContext(StateContext)
   const appDispatch = useContext(DispatchContext)
+  const [deletingId, setDeletingId] = useState(null)
 
   const handleDelete = async id => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
+        setDeletingId(id)
         const token = user.token
-        await Axios.delete(`/categories/${id}`, {
+        await Axios.delete(`/api/categories/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         appDispatch({ type: "deleteCategory", data: id })
         appDispatch({ type: "flashMessage", value: "Category deleted successfully!" })
       } catch (e) {
-        appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error deleting category" })
+        console.error("Delete category error:", e.response?.data || e.message)
+        appDispatch({ type: "flashMessage", value: e.response?.data?.error || "Error deleting category" })
+      } finally {
+        setDeletingId(null)
       }
     }
   }
@@ -28,35 +33,41 @@ function AdminCategoryPutSelect() {
     appDispatch({ type: "selectCategory", data: category })
   }
 
-  console.log("Categories list:", categories.list)
-
   if (!user.token) {
-    return (
-      <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }} className="text-danger">
-        Please log in as admin to view categories
-      </p>
-    )
+    return <p className="text-danger">Please log in as admin to view categories</p>
   }
 
   if (categories.loading) {
-    return <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }}>Loading...</p>
+    return <p>Loading categories...</p>
   }
 
   if (categories.error) {
+    return <p className="text-danger">{categories.error}</p>
+  }
+
+  if (!categories.list || !Array.isArray(categories.list) || categories.list.length === 0) {
     return (
-      <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }} className="text-danger">
-        {categories.error}
-      </p>
+      <div className="table-select">
+        <div className="table-select__section-heading">
+          <h1>Categories</h1>
+          <Link to="/admin-category-post" className="table-select__button table-select__button--success table-select__button--large">
+            Add Category
+          </Link>
+        </div>
+        <p>No categories available</p>
+        <Link to="/admin-dashboard" className="form__button">
+          Back to Dashboard
+        </Link>
+      </div>
     )
   }
 
-  // Ensure unique categories by cat_id
   const uniqueCategories = Array.from(new Map(categories.list.map(cat => [cat.cat_id, cat])).values())
 
   return (
     <div className="table-select">
       <div className="table-select__section-heading">
-        <h1 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Categories</h1>
+        <h1>Categories</h1>
         <Link to="/admin-category-post" className="table-select__button table-select__button--success table-select__button--large">
           Add Category
         </Link>
@@ -67,36 +78,52 @@ function AdminCategoryPutSelect() {
           <tr>
             <th>Category Name</th>
             <th>Product Count</th>
+            <th>Image</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {uniqueCategories.map(category => (
             <tr key={category.cat_id}>
-              <td>{category.cat_name}</td>
+              <td>{category.cat_name || "Unknown"}</td>
               <td>{category.prod_count || 0}</td>
+              <td>
+                {category.cat_img_path && (
+                  <img
+                    src={`http://localhost:8080/${category.cat_img_path}`}
+                    alt={`Thumbnail for ${category.cat_name || "category"}`}
+                    style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "contain" }}
+                    onError={e => {
+                      e.target.style.display = "none"
+                      console.log("Thumbnail load failed:", category.cat_img_path)
+                    }}
+                  />
+                )}
+              </td>
               <td>
                 <Link to={`/admin-category-put/${category.cat_id}`} className="table-select__button" onClick={() => handleSelectCategory(category)}>
                   Edit
                 </Link>
-                {Number(category.prod_count) === 0 && (
-                  <button onClick={() => handleDelete(category.cat_id)} className="table-select__button">
-                    Delete
+                {(category.prod_count || 0) === 0 && (
+                  <button onClick={() => handleDelete(category.cat_id)} className="table-select__button" disabled={deletingId === category.cat_id}>
+                    {deletingId === category.cat_id ? "Deleting..." : "Delete"}
                   </button>
                 )}
                 <Link to={`/admin-product-put-select/${category.cat_id}`} className="table-select__button" onClick={() => handleSelectCategory(category)}>
                   Products
+                </Link>
+                <Link to={`/admin-category-image-post/${category.cat_id}`} className="table-select__button" onClick={() => handleSelectCategory(category)}>
+                  Upload Img
                 </Link>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div className="mb-3 back-button">
-        <Link to="/admin-dashboard" className="btn btn-secondary">
-          Back to Dashboard
-        </Link>
-      </div>
+
+      <Link to="/admin-dashboard" className="form__button">
+        Back to Dashboard
+      </Link>
     </div>
   )
 }

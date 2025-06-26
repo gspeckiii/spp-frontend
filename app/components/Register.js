@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from "react"
-import Page from "./Page"
 import Axios from "axios"
 import { useImmerReducer } from "use-immer"
-import { CSSTransition } from "react-transition-group"
+import { CSSTransition, TransitionGroup } from "react-transition-group"
 import DispatchContext from "../DispatchContext"
+import FlashMessages from "./FlashMessages"
 
 function Register() {
   const usernameRef = useRef(null)
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
-
   const appDispatch = useContext(DispatchContext)
 
   const initialState = {
@@ -59,7 +58,6 @@ function Register() {
         }
         return
       case "usernameUniqueResults":
-        console.log("Username unique results:", action.value)
         if (action.value) {
           draft.username.hasErrors = true
           draft.username.isUnique = false
@@ -84,7 +82,6 @@ function Register() {
         }
         return
       case "emailUniqueResults":
-        console.log("Email unique results:", action.value)
         if (action.value) {
           draft.email.hasErrors = true
           draft.email.isUnique = false
@@ -98,7 +95,7 @@ function Register() {
       case "passwordImmediately":
         draft.password.hasErrors = false
         draft.password.value = action.value
-        if (draft.password.length > 50) {
+        if (draft.password.value.length > 50) {
           draft.password.hasErrors = true
           draft.password.message = "Password cannot exceed 50 characters."
         }
@@ -110,17 +107,8 @@ function Register() {
         }
         return
       case "submitForm":
-        console.log("Submitting form with state:", draft)
         if (!draft.username.hasErrors && draft.username.isUnique && !draft.email.hasErrors && draft.email.isUnique && !draft.password.hasErrors) {
           draft.submitCount++
-        } else {
-          console.log("Form submission blocked:", {
-            usernameErrors: draft.username.hasErrors,
-            usernameUnique: draft.username.isUnique,
-            emailErrors: draft.email.hasErrors,
-            emailUnique: draft.email.isUnique,
-            passwordErrors: draft.password.hasErrors
-          })
         }
         return
     }
@@ -154,12 +142,9 @@ function Register() {
       const ourRequest = Axios.CancelToken.source()
       async function fetchResults() {
         try {
-          console.log(`Checking username: ${state.username.value}`)
           const response = await Axios.post("/users/checkRegUsername", { username: state.username.value }, { cancelToken: ourRequest.token })
-          console.log(`Username check response: ${JSON.stringify(response.data)}`)
           dispatch({ type: "usernameUniqueResults", value: response.data })
         } catch (e) {
-          console.log("Username check error:", e.message, e.response ? e.response.data : "No response")
           appDispatch({ type: "flashMessage", value: "Error checking username availability. Please try again." })
         }
       }
@@ -173,12 +158,9 @@ function Register() {
       const ourRequest = Axios.CancelToken.source()
       async function fetchResults() {
         try {
-          console.log(`Checking email: ${state.email.value}`)
           const response = await Axios.post("/users/checkRegEmail", { email: state.email.value }, { cancelToken: ourRequest.token })
-          console.log(`Email check response: ${JSON.stringify(response.data)}`)
           dispatch({ type: "emailUniqueResults", value: response.data })
         } catch (e) {
-          console.log("Email check error:", e.message, e.response ? e.response.data : "No response")
           appDispatch({ type: "flashMessage", value: "Error checking email availability. Please try again." })
         }
       }
@@ -192,17 +174,10 @@ function Register() {
       const ourRequest = Axios.CancelToken.source()
       async function fetchResults() {
         try {
-          console.log("Submitting registration:", {
-            username: state.username.value,
-            email: state.email.value,
-            password: state.password.value
-          })
           const response = await Axios.post("/users", { username: state.username.value, email: state.email.value, password: state.password.value }, { cancelToken: ourRequest.token })
-          console.log("Registration response:", JSON.stringify(response.data))
           appDispatch({ type: "login", data: response.data })
           appDispatch({ type: "flashMessage", value: "Congrats! Welcome to your new account." })
         } catch (e) {
-          console.log("Registration error:", e.message, e.response ? e.response.data : "No response")
           appDispatch({ type: "flashMessage", value: "Registration failed. Please try again." })
         }
       }
@@ -211,13 +186,8 @@ function Register() {
     }
   }, [state.submitCount])
 
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault()
-    console.log("Form submitted with values:", {
-      username: state.username.value,
-      email: state.email.value,
-      password: state.password.value
-    })
     dispatch({ type: "usernameImmediately", value: state.username.value })
     dispatch({ type: "usernameAfterDelay", value: state.username.value, noRequest: true })
     dispatch({ type: "emailImmediately", value: state.email.value })
@@ -228,54 +198,42 @@ function Register() {
   }
 
   return (
-    <Page title="Welcome!" wide={true}>
-      <div className="row align-items-center">
-        <div className="col-lg-7 py-3 py-md-5">
-          <h1 className="display-3">Remember Writing?</h1>
-          <p className="lead text-muted">Are you sick of short tweets and impersonal “shared” posts that are reminiscent of the late 90’s email forwards? We believe getting back to actually writing is the key to enjoying the internet again.</p>
-        </div>
-        <div className="col-lg-5 pl-lg-5 pb-3 py-lg-5">
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="username-register" className="text-muted mb-1">
-                <small>Username</small>
-              </label>
-              <input onChange={e => dispatch({ type: "usernameImmediately", value: e.target.value })} id="username-register" name="username" className="form-control" type="text" placeholder="Pick a username" autoComplete="off" />
-              <CSSTransition nodeRef={usernameRef} in={state.username.hasErrors} timeout={330} classNames="liveValidateMessage" unmountOnExit>
-                <div ref={usernameRef} className="alert alert-danger small liveValidateMessage">
-                  {state.username.message}
-                </div>
-              </CSSTransition>
-            </div>
-            <div className="form-group">
-              <label htmlFor="email-register" className="text-muted mb-1">
-                <small>Email</small>
-              </label>
-              <input onChange={e => dispatch({ type: "emailImmediately", value: e.target.value })} id="email-register" name="email" className="form-control" type="text" placeholder="you@example.com" autoComplete="off" />
-              <CSSTransition nodeRef={emailRef} in={state.email.hasErrors} timeout={330} classNames="liveValidateMessage" unmountOnExit>
-                <div ref={emailRef} className="alert alert-danger small liveValidateMessage">
-                  {state.email.message}
-                </div>
-              </CSSTransition>
-            </div>
-            <div className="form-group">
-              <label htmlFor="password-register" className="text-muted mb-1">
-                <small>Password</small>
-              </label>
-              <input onChange={e => dispatch({ type: "passwordImmediately", value: e.target.value })} id="password-register" name="password" className="form-control" type="password" placeholder="Create a password" />
-              <CSSTransition nodeRef={passwordRef} in={state.password.hasErrors} timeout={330} classNames="liveValidateMessage" unmountOnExit>
-                <div ref={passwordRef} className="alert alert-danger small liveValidateMessage">
-                  {state.password.message}
-                </div>
-              </CSSTransition>
-            </div>
-            <button type="submit" className="py-3 mt-4 btn btn-lg btn-success btn-block">
-              Sign up for ComplexApp
-            </button>
-          </form>
-        </div>
+    <div className="wrapper wrapper--wide">
+      <div className="form">
+        <form className="form" onSubmit={handleSubmit}>
+          <div className="form__group">
+            <label htmlFor="username-register" className="form__label">
+              <small>Username</small>
+            </label>
+            <input onChange={e => dispatch({ type: "usernameImmediately", value: e.target.value })} id="username-register" name="username" className="form__input" type="text" placeholder="Pick a username" autoComplete="off" />
+            <CSSTransition nodeRef={usernameRef} in={state.username.hasErrors} timeout={330} classNames="flash-messages" unmountOnExit>
+              <FlashMessages messages={[state.username.message]} />
+            </CSSTransition>
+          </div>
+          <div className="form__group">
+            <label htmlFor="email-register" className="form__label">
+              <small>Email</small>
+            </label>
+            <input onChange={e => dispatch({ type: "emailImmediately", value: e.target.value })} id="email-register" name="email" className="form__input" type="text" placeholder="you@example.com" autoComplete="off" />
+            <CSSTransition nodeRef={emailRef} in={state.email.hasErrors} timeout={330} classNames="flash-messages" unmountOnExit>
+              <FlashMessages messages={[state.email.message]} />
+            </CSSTransition>
+          </div>
+          <div className="form__group">
+            <label htmlFor="password-register" className="form__label">
+              <small>Password</small>
+            </label>
+            <input onChange={e => dispatch({ type: "passwordImmediately", value: e.target.value })} id="password-register" name="password" className="form__input" type="password" placeholder="Create a password" />
+            <CSSTransition nodeRef={passwordRef} in={state.password.hasErrors} timeout={330} classNames="flash-messages" unmountOnExit>
+              <FlashMessages messages={[state.password.message]} />
+            </CSSTransition>
+          </div>
+          <button type="submit" className="form__button">
+            Sign up for ComplexApp
+          </button>
+        </form>
       </div>
-    </Page>
+    </div>
   )
 }
 

@@ -14,6 +14,7 @@
   border: 1px solid transparent;
   border-radius: 0.25rem;
   text-align: center; /* Based on your component's 'text-center' */
+  display: block !important;
 }
 
 /* Modifier: flash-messages__alert--success */

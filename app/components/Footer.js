@@ -19,10 +19,6 @@ function Footer() {
         <Link to="/terms" className="mx-1 white-font">
           Terms
         </Link>
-        {" | "}
-        <Link to="/register" className="mx-1 white-font">
-          User Registration
-        </Link>
         {state.loggedIn && state.user.admin && (
           <>
             {" | "}

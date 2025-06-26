@@ -5,10 +5,7 @@
   margin-right: auto;
   margin-left: auto;
   margin-top: 3rem;
-
-  &--container {
-    padding-top: 100px;
-  }
+  padding-top: 100px;
 
   @mixin atSmall {
     max-width: 540px;
@@ -17,9 +14,8 @@
     max-width: 720px;
   }
   @mixin atLarge {
-    max-width: 960px;
+    max-width: 1200px;
   }
-
   &__heading {
     font-weight: 700;
     margin-bottom: 1rem;
@@ -28,7 +24,8 @@
 
   &__group {
     margin-bottom: 1rem;
-    color: $pureWhite;
+    background-color: $softBlack;
+    color: $softWhite;
   }
 
   &__label {
@@ -37,14 +34,17 @@
     margin-bottom: 0.5rem;
     color: $softWhite;
   }
-
+  &__input[type="file"] {
+    background: $softBlack !important;
+    color: $softWhite !important;
+  }
   &__input {
     display: block;
     width: 100%;
     padding: 0.5rem 1rem;
     font-size: 1.25rem;
     line-height: 1.5;
-    color: $softWhite;
+    color: $pureBlack;
     background-color: darken($pureBlack, 5%);
     background-clip: padding-box;
     border: 1px solid darken($softWhite, 20%);
@@ -57,7 +57,7 @@
     }
 
     &:focus {
-      color: $softWhite;
+      color: $pureBlack;
       background-color: darken($pureBlack, 10%);
       border-color: rgba($pureWhite, 0.25);
       outline: 0;
@@ -74,16 +74,33 @@
     }
   }
 
-  &__feedback {
-    display: none;
+  &__validation-message {
     width: 100%;
     margin-top: 0.25rem;
     font-size: 80%;
     color: $deepRed;
+
+    &.liveValidateMessage-enter {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    &.liveValidateMessage-enter-active {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 330ms ease-out, transform 330ms ease-out;
+    }
+    &.liveValidateMessage-exit {
+      opacity: 1;
+    }
+    &.liveValidateMessage-exit-active {
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 330ms ease-in, transform 330ms ease-in;
+    }
   }
 
-  &.was-validated &__input:invalid + &__feedback,
-  &__input.is-invalid + &__feedback {
+  &.was-validated &__input:invalid + &__validation-message,
+  &__input.is-invalid + &__validation-message {
     display: block;
   }
 
@@ -112,40 +129,6 @@
     &:focus {
       outline: 0;
       box-shadow: 0 0 0 0.2rem rgba($deepRed, 0.5);
-    }
-  }
-
-  &__back-button-container {
-    margin-bottom: 1rem;
-    margin-top: 1.5rem;
-    background-color: $deepRed;
-  }
-
-  &__back-button {
-    display: inline-block;
-    font-weight: 400;
-    color: $softWhite;
-    text-align: center;
-    vertical-align: middle;
-    user-select: none;
-    background-color: darken($pureBlack, 5%);
-    border: 1px solid darken($pureBlack, 5%);
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    border-radius: 0.25rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    text-decoration: none;
-    cursor: pointer;
-
-    &:hover {
-      background-color: darken($pureBlack, 10%);
-      border-color: darken($pureBlack, 10%);
-    }
-
-    &:focus {
-      outline: 0;
-      box-shadow: 0 0 0 0.2rem rgba($softWhite, 0.25);
     }
   }
 }

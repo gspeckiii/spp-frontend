@@ -51,47 +51,37 @@ function AdminCategoryPost() {
   }
 
   if (!user.token) {
-    return (
-      <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: "400" }} className="text-danger">
-        Please log in as admin to add categories
-      </p>
-    )
+    return <p className="text-danger">Please log in as admin to add categories</p>
   }
 
   return (
-    <div className="form form--container">
-      <h1 className="form__heading">Add New Category</h1> {/* BEM Element */}
-      <form onSubmit={handleSubmit} className="form" noValidate>
-        <div className="form__group">
-          <label htmlFor="cat-name" className="form__label">
-            Category Name
-          </label>
-          <input value={catName} onChange={e => setCatName(e.target.value)} id="cat-name" className="form__input" type="text" placeholder="Enter category name" required /> {/* BEM Element */}
-        </div>
-        <div className="form__group">
-          <label htmlFor="cat-desc" className="form__label">
-            Description
-          </label>
-          <input value={catDesc} onChange={e => setCatDesc(e.target.value)} id="cat-desc" className="form__input" type="text" placeholder="Enter description" required />
-        </div>
-        <div className="form__group">
-          <label htmlFor="cat-vid" className="form__label">
-            Video Link
-          </label>
-          <input value={catVid} onChange={e => setCatVid(e.target.value)} id="cat-vid" className="form__input" type="url" placeholder="Enter video URL (optional)" />
-        </div>
-        <button type="submit" className="form__button">
-          {" "}
-          {/* BEM Element */}
-          Add Category
-        </button>
-      </form>
-      <div className="form__back-button-container">
-        {" "}
-        {/* BEM Element */}
-        <Link to="/admin-category-put-select" className="form__back-button">
-          {" "}
-          {/* BEM Element */}
+    <div className="wrapper">
+      <div className="form">
+        <h1 className="form__heading">Add New Category</h1> {/* BEM Element */}
+        <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+          <div className="form__group">
+            <label htmlFor="cat-name" className="form__label">
+              Category Name
+            </label>
+            <input value={catName} onChange={e => setCatName(e.target.value)} id="cat-name" className="form__input" type="text" placeholder="Enter category name" required /> {/* BEM Element */}
+          </div>
+          <div className="form__group">
+            <label htmlFor="cat-desc" className="form__label">
+              Description
+            </label>
+            <input value={catDesc} onChange={e => setCatDesc(e.target.value)} id="cat-desc" className="form__input" type="text" placeholder="Enter description" required />
+          </div>
+          <div className="form__group">
+            <label htmlFor="cat-vid" className="form__label">
+              Video Link
+            </label>
+            <input value={catVid} onChange={e => setCatVid(e.target.value)} id="cat-vid" className="form__input" type="url" placeholder="Enter video URL (optional)" />
+          </div>
+          <button type="submit" className="form__button">
+            Add Category
+          </button>
+        </form>
+        <Link to="/admin-category-put-select" className="form__button">
           Back to Categories
         </Link>
       </div>

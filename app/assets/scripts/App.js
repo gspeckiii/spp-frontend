@@ -25,6 +25,7 @@ import AdminProductPut from "../../components/admin/AdminProductPut.js"
 import AdminProductImagePost from "../../components/admin/AdminProductImagePost.js"
 import AdminProductImagePut from "../../components/admin/AdminProductImagePut.js"
 import AdminProductImagePutSelect from "../../components/admin/AdminProductImagePutSelect.js"
+import AdminCategoryImagePost from "../../components/admin/AdminCategoryImagePost"
 import "../styles/styles.css"
 import "lazysizes"
 
@@ -32,7 +33,7 @@ import "lazysizes"
 import MobileMenu from "./modules/MobileMenu"
 import RevealOnScroll from "./modules/RevealOnScroll"
 import StickyHeader from "./modules/StickyHeader"
-
+import ValidateImages from "./modules/ValidateImages"
 // Error Boundary Class
 class ErrorBoundary extends Component {
   state = { hasError: false }
@@ -284,6 +285,7 @@ function Main() {
               <Route path="/admin-category-post" element={state.loggedIn && state.user.admin ? <AdminCategoryPost /> : <HomeGuest />} />
               <Route path="/admin-category-put-select" element={state.loggedIn && state.user.admin ? <AdminCategoryPutSelect /> : <HomeGuest />} />
               <Route path="/admin-category-put/:id" element={state.loggedIn && state.user.admin ? <AdminCategoryPut /> : <HomeGuest />} />
+              <Route path="/admin-category-image-post/:id" element={state.loggedIn && state.user.admin ? <AdminCategoryImagePost /> : <HomeGuest />} />
               <Route path="/admin-product-put-select/:id" element={state.loggedIn && state.user.admin ? <AdminProductPutSelect /> : <HomeGuest />} />
               <Route path="/admin-product-post/:id" element={state.loggedIn && state.user.admin ? <AdminProductPost /> : <HomeGuest />} />
               <Route path="/admin-product-put/:id" element={<AdminProductPut />} />
