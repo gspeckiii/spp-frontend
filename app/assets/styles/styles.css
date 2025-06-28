@@ -1,4 +1,6 @@
 @import "normalize";
+@import "swiper.css";
+@import "navigation.css";
 @import "base/_variables";
 @import "base/_mixins";
 @import "base/_global";
@@ -24,3 +26,4 @@
 @import "modules/_dashboard";
 @import "modules/_table-select";
 @import "modules/_form";
+@import "modules/_swiper-styles";

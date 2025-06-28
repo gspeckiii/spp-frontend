@@ -19,6 +19,7 @@
     "react-tooltip": "^5.28.0",
     "react-transition-group": "^4.4.5",
     "socket.io-client": "^4.8.1",
+    "swiper": "^11.1.14",
     "use-immer": "^0.11.0"
   },
   "devDependencies": {
@@ -42,6 +43,8 @@
     "postcss-mixins": "^7.0.3",
     "postcss-nested": "^5.0.6",
     "postcss-simple-vars": "^6.0.3",
+    "sass": "^1.89.2",
+    "sass-loader": "^16.0.5",
     "style-loader": "^2.0.0",
     "webpack": "^5.99.9",
     "webpack-cli": "^5.1.4",

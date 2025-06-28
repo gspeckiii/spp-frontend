@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react"
-import axios from "axios"
+import Axios from "axios"
 import DispatchContext from "../DispatchContext"
 import { useNavigate } from "react-router-dom"
 
@@ -13,7 +13,7 @@ function HeaderLoggedOut(props) {
     e.preventDefault()
     try {
       console.log("Attempting login with:", { username, password })
-      const response = await axios.post("/users/login", { username, password })
+      const response = await Axios.post("/users/login", { username, password })
       console.log("Login response:", response.data)
       if (response.data.token) {
         appDispatch({ type: "logIn", data: response.data })

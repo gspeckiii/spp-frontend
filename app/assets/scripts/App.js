@@ -26,15 +26,14 @@ import AdminProductImagePost from "../../components/admin/AdminProductImagePost.
 import AdminProductImagePut from "../../components/admin/AdminProductImagePut.js"
 import AdminProductImagePutSelect from "../../components/admin/AdminProductImagePutSelect.js"
 import AdminCategoryImagePost from "../../components/admin/AdminCategoryImagePost"
+import Settings from "../../components/Settings.js"
 import "../styles/styles.css"
 import "lazysizes"
-
-// Import your plain JavaScript modules here
 import MobileMenu from "./modules/MobileMenu"
 import RevealOnScroll from "./modules/RevealOnScroll"
 import StickyHeader from "./modules/StickyHeader"
 import ValidateImages from "./modules/ValidateImages"
-// Error Boundary Class
+
 class ErrorBoundary extends Component {
   state = { hasError: false }
 
@@ -66,7 +65,9 @@ function Main() {
       username: localStorage.getItem("SPPusername"),
       avatar: localStorage.getItem("SPPavatar"),
       bio: localStorage.getItem("SPPbio"),
-      admin: Boolean(localStorage.getItem("SPPadmin"))
+      admin: Boolean(localStorage.getItem("SPPadmin")),
+      user_id: parseInt(localStorage.getItem("SPPuser_id")) || null,
+      refresh_interval: parseInt(localStorage.getItem("SPPrefreshInterval")) || 30 * 60 * 1000
     },
     categories: {
       list: [],
@@ -81,7 +82,12 @@ function Main() {
     switch (action.type) {
       case "logIn":
         draft.loggedIn = true
-        draft.user = action.data
+        draft.user = {
+          ...action.data,
+          user_id: action.data.user_id,
+          refresh_interval: action.data.refresh_interval || draft.user.refresh_interval
+        }
+        console.log("User logged in, user_id:", action.data.user_id, "username:", action.data.username)
         return
       case "logOut":
         draft.loggedIn = false
@@ -91,6 +97,10 @@ function Main() {
         return
       case "refreshToken":
         draft.user.token = action.data.token
+        draft.user.refresh_interval = action.data.refreshInterval || draft.user.refresh_interval
+        return
+      case "setRefreshInterval":
+        draft.user.refresh_interval = action.data
         return
       case "setCategories":
         draft.categories.list = Array.from(new Map(action.data.map(cat => [cat.cat_id, { ...cat, prod_count: parseInt(cat.prod_count) || 0 }])).values())
@@ -171,6 +181,36 @@ function Main() {
 
   const [state, dispatch] = useImmerReducer(ourReducer, initialState)
 
+  const updateRefreshInterval = async newInterval => {
+    try {
+      console.log("updateRefreshInterval called with:", newInterval, "user_id:", state.user.user_id)
+      if (!state.user.user_id) {
+        throw new Error("User ID not available")
+      }
+      const token = localStorage.getItem("SPPtoken")
+      if (!token) {
+        throw new Error("No token available")
+      }
+      const response = await Axios.put(
+        `/users/${state.user.user_id}/refresh-interval`,
+        { refreshInterval: newInterval },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      )
+      dispatch({ type: "setRefreshInterval", data: newInterval })
+      console.log("Refresh interval updated:", response.data)
+      return response
+    } catch (error) {
+      console.error("Error updating refresh interval:", error.response ? error.response.data : error.message)
+      if (error.response?.status === 401) {
+        dispatch({ type: "flashMessage", value: "Session expired. Please log in again." })
+        dispatch({ type: "logOut" })
+      }
+      throw error
+    }
+  }
+
   useEffect(() => {
     if (state.loggedIn) {
       localStorage.setItem("SPPtoken", state.user.token)
@@ -178,14 +218,19 @@ function Main() {
       localStorage.setItem("SPPavatar", state.user.avatar)
       localStorage.setItem("SPPadmin", state.user.admin)
       localStorage.setItem("SPPbio", state.user.bio)
+      localStorage.setItem("SPPuser_id", state.user.user_id?.toString())
+      localStorage.setItem("SPPrefreshInterval", state.user.refresh_interval.toString())
+      console.log("localStorage updated, SPPuser_id:", state.user.user_id, "SPPusername:", state.user.username)
     } else {
       localStorage.removeItem("SPPtoken")
       localStorage.removeItem("SPPusername")
       localStorage.removeItem("SPPavatar")
       localStorage.removeItem("SPPadmin")
       localStorage.removeItem("SPPbio")
+      localStorage.removeItem("SPPuser_id")
+      localStorage.removeItem("SPPrefreshInterval")
     }
-  }, [state.loggedIn, state.user.token, state.user.username, state.user.avatar, state.user.admin, state.user.bio])
+  }, [state.loggedIn, state.user])
 
   useEffect(() => {
     const ourRequest = Axios.CancelToken.source()
@@ -200,6 +245,7 @@ function Main() {
         console.log("Fetched categories:", response.data)
         dispatch({ type: "setCategories", data: response.data })
       } catch (e) {
+        console.error("Fetch categories error:", e.response ? e.response.data : e.message)
         dispatch({ type: "setCategoryError", data: e.response ? e.response.data.error : "Error fetching categories" })
       }
     }
@@ -210,35 +256,43 @@ function Main() {
   }, [state.user.token])
 
   useEffect(() => {
-    let refreshInterval
+    let refreshIntervalId
     if (state.loggedIn) {
-      refreshInterval = setInterval(async () => {
+      console.log("Starting token refresh with interval:", state.user.refresh_interval, "user_id:", state.user.user_id)
+      refreshIntervalId = setInterval(async () => {
         try {
-          const response = await Axios.post("/refresh")
+          const token = localStorage.getItem("SPPtoken")
+          const response = await Axios.post(
+            "/refresh",
+            { refreshInterval: state.user.refresh_interval },
+            {
+              headers: { Authorization: `Bearer ${token}` }
+            }
+          )
           dispatch({ type: "refreshToken", data: response.data })
-          console.log("Token refreshed")
+          console.log("Token refreshed, new interval:", response.data.refreshInterval || state.user.refresh_interval)
+          if (response.data.refreshInterval) {
+            dispatch({ type: "setRefreshInterval", data: response.data.refreshInterval })
+          }
         } catch (error) {
-          console.error("Token refresh error:", error)
+          console.error("Token refresh error:", error.response ? error.response.data : error.message)
+          dispatch({ type: "flashMessage", value: "Session expired. Please log in again." })
+          dispatch({ type: "logOut" })
         }
-      }, 30 * 60 * 1000)
+      }, state.user.refresh_interval)
     }
-    return () => clearInterval(refreshInterval)
-  }, [state.loggedIn])
+    return () => clearInterval(refreshIntervalId)
+  }, [state.loggedIn, state.user.refresh_interval])
 
-  // THIS IS THE CRUCIAL useEffect FOR INITIALIZING PLAIN JS MODULES
   useEffect(() => {
-    let modalInstance // Renamed to avoid confusion with the global `modal` variable
-    // Initialize your plain JavaScript modules here.
-    // They will now run after React has rendered the Header and other components.
+    let modalInstance
     new StickyHeader()
     new RevealOnScroll(document.querySelectorAll(".feature-item"), 75)
     new RevealOnScroll(document.querySelectorAll(".testimonial"), 60)
-    new MobileMenu() // This will now find .site-header__menu-icon
+    new MobileMenu()
 
-    // Setup for modal
     document.querySelectorAll(".open-modal").forEach(el => {
       const clickHandler = e => {
-        // Define clickHandler to allow removal later
         e.preventDefault()
         if (typeof modalInstance === "undefined") {
           import(/* webpackChunkName: "modal" */ "./modules/Modal")
@@ -252,30 +306,21 @@ function Main() {
         }
       }
       el.addEventListener("click", clickHandler)
-      // Cleanup function to remove event listener when component unmounts
       return () => el.removeEventListener("click", clickHandler)
     })
 
-    // Return a cleanup function for useEffect to prevent memory leaks
-    // For modules like MobileMenu, StickyHeader, RevealOnScroll, if they add global
-    // event listeners, you should add cleanup for them here too.
-    // However, if they only operate on elements present on mount,
-    // and don't add continuous listeners that need removal, it might be less critical.
-    // For example, MobileMenu attaches its listener to this.menuIcon once.
-    return () => {
-      // If MobileMenu had a public method to remove its listeners, you'd call it here.
-      // E.g., if MobileMenu had a 'destroy' method:
-      // if (mobileMenuInstance) mobileMenuInstance.destroy();
-    }
-  }, []) // Empty dependency array means this runs once after the initial render
+    return () => {}
+  }, [])
+
+  console.log("StateContext value:", { ...state, updateRefreshInterval })
 
   return (
     <ErrorBoundary>
-      <StateContext.Provider value={state}>
+      <StateContext.Provider value={{ ...state, updateRefreshInterval }}>
         <DispatchContext.Provider value={dispatch}>
           <BrowserRouter>
             <FlashMessages messages={state.flashMessages} />
-            <Header /> {/* Header component, containing the menu icon, is rendered here */}
+            <Header />
             <Routes>
               <Route path="/" element={state.loggedIn ? <Home /> : <HomeGuest />} />
               <Route path="/request-password-reset" element={<RequestPasswordReset />} />
@@ -292,6 +337,7 @@ function Main() {
               <Route path="/admin-product-image-post/:id" element={state.loggedIn && state.user.admin ? <AdminProductImagePost /> : <HomeGuest />} />
               <Route path="/admin-product-image-put-select/:id" element={state.loggedIn && state.user.admin ? <AdminProductImagePutSelect /> : <HomeGuest />} />
               <Route path="/admin-product-image-put/:id" element={state.loggedIn && state.user.admin ? <AdminProductImagePut /> : <HomeGuest />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="/about-us" element={<About />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/home" element={state.loggedIn ? <Home /> : <HomeGuest />} />

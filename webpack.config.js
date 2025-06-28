@@ -8,7 +8,20 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 const HtmlWebpackHarddiskPlugin = require("html-webpack-harddisk-plugin")
 const fse = require("fs-extra")
 
-const postCSSPlugins = [require("postcss-import"), require("postcss-mixins"), require("postcss-simple-vars"), require("postcss-nested"), require("autoprefixer")]
+const postCSSPlugins = [
+  require("postcss-import", {
+    resolve: (id, basedir, importOptions) => {
+      if (id.startsWith("swiper/")) {
+        return path.resolve(__dirname, "node_modules", id)
+      }
+      return path.resolve(basedir, id)
+    }
+  }),
+  require("postcss-mixins"),
+  require("postcss-simple-vars"),
+  require("postcss-nested"),
+  require("autoprefixer")
+]
 
 class RunAfterCompile {
   apply(compiler) {
@@ -22,19 +35,19 @@ class RunAfterCompile {
 let cssConfig = {
   test: /\.css$/i,
   use: [
-    "style-loader", // Move style-loader here for dev to ensure HMR
+    "style-loader",
     {
       loader: "css-loader",
       options: {
-        url: false, // Keep url=false as per your config
-        sourceMap: true, // Enable source maps for debugging
-        importLoaders: 1 // Ensure postcss-loader processes @import
+        url: true,
+        sourceMap: true,
+        importLoaders: 1
       }
     },
     {
       loader: "postcss-loader",
       options: {
-        sourceMap: true, // Enable source maps
+        sourceMap: true,
         postcssOptions: { plugins: postCSSPlugins }
       }
     }
@@ -43,7 +56,7 @@ let cssConfig = {
 
 const htmlPlugin = new HtmlWebpackPlugin({
   filename: "index.html",
-  template: "./app/index-template.html", // Ensure this file exists
+  template: "./app/index-template.html",
   alwaysWriteToDisk: true
 })
 
@@ -77,7 +90,11 @@ const config = {
     filename: "bundled.js",
     path: path.resolve(__dirname, "app")
   },
-  mode: "development"
+  mode: "development",
+  resolve: {
+    modules: ["node_modules"],
+    extensions: [".js", ".jsx", ".css"]
+  }
 }
 
 if (currentTask === "dev" || currentTask === "webpackDev") {
@@ -90,28 +107,11 @@ if (currentTask === "dev" || currentTask === "webpackDev") {
     hot: true,
     liveReload: false,
     historyApiFallback: { index: "index.html" },
-    watchFiles: ["app/**/*.js", "app/**/*.css"] // Watch CSS files explicitly
+    watchFiles: ["app/**/*.js", "app/**/*.css"]
   }
 }
 
 if (currentTask === "build" || currentTask === "webpackBuild") {
-  cssConfig.use = [
-    MiniCssExtractPlugin.loader, // Replace style-loader for production
-    {
-      loader: "css-loader",
-      options: {
-        url: false,
-        sourceMap: true
-      }
-    },
-    {
-      loader: "postcss-loader",
-      options: {
-        sourceMap: true,
-        postcssOptions: { plugins: postCSSPlugins }
-      }
-    }
-  ]
   config.mode = "production"
   config.output = {
     filename: "[name].[chunkhash].js",

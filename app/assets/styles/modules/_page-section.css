@@ -1,11 +1,10 @@
 .page-section {
   padding: 1.2rem 0;
- 
 
   @mixin atMedium {
     padding: 4.5rem 0;
   }
-  
+
   &--no-b-padding-until-medium {
     padding-bottom: 0;
 
@@ -24,20 +23,18 @@
 
   &--green {
     background-color: $medGreen;
-    color: #FFF;
+    color: #fff;
   }
   &--greenDark {
     background-color: $darkGreen;
-    color: #FFF;
+    color: #fff;
   }
 
   &--testimonials {
     background-color: $darkRed;
 
     @mixin atLarge {
-      background: url('assets/images/testimonials-bg.jpg') top center no-repeat;
       background-size: cover;
     }
   }
-
 }
