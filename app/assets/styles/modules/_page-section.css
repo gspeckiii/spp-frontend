@@ -1,5 +1,5 @@
 .page-section {
-  padding: 1.2rem 0;
+  padding: 1.2rem;
 
   @mixin atMedium {
     padding: 4.5rem 0;
@@ -30,11 +30,17 @@
     color: #fff;
   }
 
-  &--testimonials {
-    background-color: $darkRed;
-
+  &--background {
     @mixin atLarge {
+      background: url("http://localhost:3000/assets/images/background-tree-bg.jpg") top center no-repeat;
       background-size: cover;
+      height: 100%;
+      overflow: hidden;
+      padding-bottom: 2rem;
     }
+  }
+  &--pull-down {
+    transform: translateY(100px);
+    overflow: hidden;
   }
 }

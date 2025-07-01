@@ -8,25 +8,12 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 const HtmlWebpackHarddiskPlugin = require("html-webpack-harddisk-plugin")
 const fse = require("fs-extra")
 
-const postCSSPlugins = [
-  require("postcss-import", {
-    resolve: (id, basedir, importOptions) => {
-      if (id.startsWith("swiper/")) {
-        return path.resolve(__dirname, "node_modules", id)
-      }
-      return path.resolve(basedir, id)
-    }
-  }),
-  require("postcss-mixins"),
-  require("postcss-simple-vars"),
-  require("postcss-nested"),
-  require("autoprefixer")
-]
+const postCSSPlugins = [require("postcss-import"), require("postcss-mixins"), require("postcss-simple-vars"), require("postcss-nested"), require("autoprefixer")]
 
 class RunAfterCompile {
   apply(compiler) {
     compiler.hooks.done.tap("Copy files", () => {
-      fse.copySync("./app/main.css", "./dist/main.css")
+      fse.copySync("./app/assets/styles/main.css", "./dist/main.css")
       fse.copySync("./app/assets/images", "./dist/assets/images")
     })
   }
@@ -35,11 +22,10 @@ class RunAfterCompile {
 let cssConfig = {
   test: /\.css$/i,
   use: [
-    "style-loader",
+    currentTask === "build" || currentTask === "webpackBuild" ? MiniCssExtractPlugin.loader : "style-loader",
     {
       loader: "css-loader",
       options: {
-        url: true,
         sourceMap: true,
         importLoaders: 1
       }
@@ -48,7 +34,9 @@ let cssConfig = {
       loader: "postcss-loader",
       options: {
         sourceMap: true,
-        postcssOptions: { plugins: postCSSPlugins }
+        postcssOptions: {
+          plugins: postCSSPlugins
+        }
       }
     }
   ]
@@ -65,7 +53,7 @@ const config = {
   plugins: [
     new Dotenv({
       path: path.resolve(__dirname, ".env"),
-      debug: true
+      systemvars: true
     }),
     htmlPlugin,
     new HtmlWebpackHarddiskPlugin()
@@ -74,8 +62,15 @@ const config = {
     rules: [
       cssConfig,
       {
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        type: "asset/resource",
+        generator: {
+          filename: "assets/images/[name][ext][query]"
+        }
+      },
+      {
         test: /\.js$/,
-        exclude: /(node_modules)/,
+        exclude: /node_modules/,
         use: {
           loader: "babel-loader",
           options: {
@@ -88,7 +83,8 @@ const config = {
   output: {
     publicPath: "/",
     filename: "bundled.js",
-    path: path.resolve(__dirname, "app")
+    path: path.resolve(__dirname, "app"),
+    clean: true
   },
   mode: "development",
   resolve: {
@@ -102,21 +98,24 @@ if (currentTask === "dev" || currentTask === "webpackDev") {
   config.devServer = {
     port: 3000,
     static: {
-      directory: path.join(__dirname, "app")
+      directory: path.join(__dirname, "app"),
+      publicPath: "/"
     },
-    hot: true,
-    liveReload: false,
-    historyApiFallback: { index: "index.html" },
-    watchFiles: ["app/**/*.js", "app/**/*.css"]
+    hot: false, // Disable HMR to avoid sign-in/out issue
+    liveReload: true,
+    historyApiFallback: { index: "/index.html" },
+    watchFiles: ["app/**/*.js", "app/**/*.jsx", "app/**/*.css"]
   }
 }
 
 if (currentTask === "build" || currentTask === "webpackBuild") {
   config.mode = "production"
   config.output = {
+    publicPath: "/",
     filename: "[name].[chunkhash].js",
     chunkFilename: "[name].[chunkhash].js",
-    path: path.resolve(__dirname, "dist")
+    path: path.resolve(__dirname, "dist"),
+    clean: true
   }
   config.optimization = {
     splitChunks: { chunks: "all" },

@@ -55,7 +55,7 @@ function AdminCategoryPost() {
   }
 
   return (
-    <div className="wrapper">
+    <div className="page-section--background">
       <div className="form">
         <h1 className="form__heading">Add New Category</h1> {/* BEM Element */}
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>

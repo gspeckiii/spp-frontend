@@ -12,6 +12,8 @@ body {
   text-align: left;
   background: $softBlack !important; /* Override Bootstrap/user agent */
   background-color: $softBlack !important;
+  height: 100%;
+  margin: 0;
 }
 
 img {
@@ -25,4 +27,7 @@ img {
 
 a {
   color: $pureWhite;
+}
+html,
+body {
 }

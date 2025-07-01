@@ -8,8 +8,9 @@ function Footer() {
   return (
     <footer className="site-footer">
       <p>
-        <Link to="/" className="mx-1 white-font">
-          Home
+        <Link to="/" className="text-muted white-font">
+          {" "}
+          Sherman Peck Productions{" "}
         </Link>{" "}
         |{" "}
         <Link to="/about-us" className="mx-1 white-font">
@@ -19,22 +20,16 @@ function Footer() {
         <Link to="/terms" className="mx-1 white-font">
           Terms
         </Link>
+        {" | "}
         {state.loggedIn && state.user.admin && (
           <>
-            {" | "}
             <Link to="/admin-dashboard" className="mx-1 white-font">
               Admin Dashboard
             </Link>
+            {" | "}
           </>
         )}
-      </p>
-      <p className="m-0 white-font">
-        Copyright © {new Date().getFullYear()}
-        <Link to="/" className="text-muted white-font">
-          {" "}
-          Sherman Peck Productions{" "}
-        </Link>
-        . All rights reserved.
+        All rights reserved. Copyright © {new Date().getFullYear()}
       </p>
     </footer>
   )

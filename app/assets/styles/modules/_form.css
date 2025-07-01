@@ -4,8 +4,12 @@
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
-  margin-top: 3rem;
+  margin-top: 5rem;
+  margin-bottom: 2rem;
   padding-top: 100px;
+  background-color: $pureBlack;
+  padding-bottom: 2rem;
+  border-radius: 10px;
 
   @mixin atSmall {
     max-width: 540px;
@@ -24,7 +28,7 @@
 
   &__group {
     margin-bottom: 1rem;
-    background-color: $softBlack;
+    background-color: $pureBlack;
     color: $softWhite;
   }
 

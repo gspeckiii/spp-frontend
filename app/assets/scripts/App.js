@@ -26,6 +26,7 @@ import AdminProductImagePost from "../../components/admin/AdminProductImagePost.
 import AdminProductImagePut from "../../components/admin/AdminProductImagePut.js"
 import AdminProductImagePutSelect from "../../components/admin/AdminProductImagePutSelect.js"
 import AdminCategoryImagePost from "../../components/admin/AdminCategoryImagePost"
+import ProductSlider from "../../components/ProductSlider"
 import Settings from "../../components/Settings.js"
 import "../styles/styles.css"
 import "lazysizes"
@@ -338,6 +339,7 @@ function Main() {
               <Route path="/admin-product-image-put-select/:id" element={state.loggedIn && state.user.admin ? <AdminProductImagePutSelect /> : <HomeGuest />} />
               <Route path="/admin-product-image-put/:id" element={state.loggedIn && state.user.admin ? <AdminProductImagePut /> : <HomeGuest />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/category/:id/products" element={<ProductSlider />} />
               <Route path="/about-us" element={<About />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/home" element={state.loggedIn ? <Home /> : <HomeGuest />} />
