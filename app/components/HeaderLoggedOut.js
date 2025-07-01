@@ -38,7 +38,7 @@ function HeaderLoggedOut({ closeModal }) {
         <input onChange={e => setPassword(e.target.value)} name="password" className="form-controls__input" type="password" placeholder="Password" value={password} />
       </div>
       <div className="form-controls__group form-controls__group--dark">
-        <button type="submit" className="btn">
+        <button type="submit" className="form-controls__button">
           Sign In
         </button>
       </div>

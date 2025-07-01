@@ -30,10 +30,6 @@ import ProductSlider from "../../components/ProductSlider"
 import Settings from "../../components/Settings.js"
 import "../styles/styles.css"
 import "lazysizes"
-import MobileMenu from "./modules/MobileMenu"
-import RevealOnScroll from "./modules/RevealOnScroll"
-import StickyHeader from "./modules/StickyHeader"
-import ValidateImages from "./modules/ValidateImages"
 
 class ErrorBoundary extends Component {
   state = { hasError: false }
@@ -284,34 +280,6 @@ function Main() {
     }
     return () => clearInterval(refreshIntervalId)
   }, [state.loggedIn, state.user.refresh_interval])
-
-  useEffect(() => {
-    let modalInstance
-    new StickyHeader()
-    new RevealOnScroll(document.querySelectorAll(".feature-item"), 75)
-    new RevealOnScroll(document.querySelectorAll(".testimonial"), 60)
-    new MobileMenu()
-
-    document.querySelectorAll(".open-modal").forEach(el => {
-      const clickHandler = e => {
-        e.preventDefault()
-        if (typeof modalInstance === "undefined") {
-          import(/* webpackChunkName: "modal" */ "./modules/Modal")
-            .then(x => {
-              modalInstance = new x.default()
-              setTimeout(() => modalInstance.openTheModal(), 20)
-            })
-            .catch(() => console.log("There was a problem importing the modal."))
-        } else {
-          modalInstance.openTheModal()
-        }
-      }
-      el.addEventListener("click", clickHandler)
-      return () => el.removeEventListener("click", clickHandler)
-    })
-
-    return () => {}
-  }, [])
 
   console.log("StateContext value:", { ...state, updateRefreshInterval })
 

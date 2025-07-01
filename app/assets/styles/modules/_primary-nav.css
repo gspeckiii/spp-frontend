@@ -1,10 +1,4 @@
 .primary-nav {
-  padding-top: 10px;
-
-  @mixin atMedium {
-    padding-top: 0;
-  }
-
   &--pull-right {
     @mixin atMedium {
       float: right;
@@ -14,43 +8,74 @@
   ul {
     margin: 0;
     padding: 0;
+    list-style: none;
   }
 
   li {
-    list-style: none;
-    display: inline-block;
-    padding-right: 7px;
-    @mixin atMedium {
-      padding-right: 20px;
-      float: left;
-      display: block;
-    }
+    padding: 10px 0;
   }
 
-  li:last-child {
-    padding-right: 0;
-    @mixin atMedium {
-      padding-right: 20px;
-    }
-  }
-
-  a {
+  &__link {
     color: #fff;
-    font-weight: 300;
     text-decoration: none;
+    font-size: 1rem;
     display: block;
-    padding: 5px 8px;
-    font-size: 0.8rem;
-    background-color: rgba(47, 85, 114, 0.5);
+    padding: 8px 20px;
+    transition: background-color 0.3s ease-out;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
 
     @mixin atMedium {
-      font-size: 1rem;
-      padding: 12px 0;
-      background-color: transparent;
+      display: inline-block;
+      padding: 8px 15px;
+    }
+  }
 
-      &.is-current-link {
-        color: $lightBeige;
+  &__link--button {
+    background-color: #fff;
+    color: $pureBlack;
+    border-radius: 5px;
+    padding: 10px 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+
+    &:hover {
+      background-color: #e0e0e0;
+    }
+
+    @mixin atMedium {
+      width: auto;
+      max-width: none;
+      padding: 8px 15px;
+    }
+  }
+
+  &__form {
+    margin: 0;
+    padding: 0;
+  }
+
+  &__group {
+    margin-bottom: 15px;
+
+    &--dark {
+      input,
+      button {
+        background-color: $pureBlack;
+        color: #fff;
+        border: 1px solid #fff;
       }
     }
+  }
+
+  &__input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
   }
 }

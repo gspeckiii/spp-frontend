@@ -13,31 +13,21 @@ function HeaderLoggedIn(props) {
   }
   return (
     <div>
-      <div className="site-header__btn-container">
-        <button onClick={handleLogOut} className="btn open-modal">
-          Sign Out
-        </button>
-      </div>
-
       <nav className="primary-nav primary-nav--pull-right">
         <ul>
           <li>
-            <Link to="/About" id="our-beginning-link">
-              My Story
-            </Link>
+            <Link to="/orders">Orders</Link>
           </li>
           <li>
-            <Link to="/Categories" id="features-link">
-              Products
-            </Link>
-          </li>
-          <li>
-            <Link to="/Services" id="testimonials-link">
-              Services
-            </Link>
+            <Link to="/history">History</Link>
           </li>
         </ul>
       </nav>
+      <div className="site-header__btn-container">
+        <button onClick={handleLogOut} className="form-controls__button">
+          Sign Out
+        </button>
+      </div>
     </div>
   )
 }
