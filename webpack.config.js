@@ -13,8 +13,13 @@ const postCSSPlugins = [require("postcss-import"), require("postcss-mixins"), re
 class RunAfterCompile {
   apply(compiler) {
     compiler.hooks.done.tap("Copy files", () => {
-      fse.copySync("./app/assets/styles/main.css", "./dist/main.css")
-      fse.copySync("./app/assets/images", "./dist/assets/images")
+      // Only copy to dist/ in build mode
+      if (currentTask === "build" || currentTask === "webpackBuild") {
+        fse.copySync("./app/assets/styles/styles.css", "./dist/assets/styles/styles.css")
+        fse.copySync("./app/assets/styles/modules", "./dist/assets/styles/modules")
+        fse.copySync("./app/assets/styles/base", "./dist/assets/styles/base")
+        fse.copySync("./app/assets/images", "./dist/assets/images")
+      }
     })
   }
 }
@@ -56,7 +61,8 @@ const config = {
       systemvars: true
     }),
     htmlPlugin,
-    new HtmlWebpackHarddiskPlugin()
+    new HtmlWebpackHarddiskPlugin(),
+    new RunAfterCompile()
   ],
   module: {
     rules: [
@@ -69,7 +75,7 @@ const config = {
         }
       },
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
@@ -88,7 +94,7 @@ const config = {
   },
   mode: "development",
   resolve: {
-    modules: ["node_modules"],
+    modules: ["node_modules", "app/assets/styles", "app/assets/styles/base", "app/assets/styles/modules"],
     extensions: [".js", ".jsx", ".css"]
   }
 }
@@ -97,13 +103,22 @@ if (currentTask === "dev" || currentTask === "webpackDev") {
   config.devtool = "source-map"
   config.devServer = {
     port: 3000,
-    static: {
-      directory: path.join(__dirname, "app"),
-      publicPath: "/"
-    },
-    hot: false, // Disable HMR to avoid sign-in/out issue
+    static: [
+      {
+        directory: path.join(__dirname, "app"),
+        publicPath: "/"
+      },
+      {
+        directory: path.join(__dirname, "app/assets"),
+        publicPath: "/assets"
+      }
+    ],
+    hot: false,
     liveReload: true,
-    historyApiFallback: { index: "/index.html" },
+    historyApiFallback: {
+      index: "/index.html",
+      rewrites: [{ from: /^\/assets\/styles\/([^.]+)$/, to: context => `/assets/styles/${context.match[1]}.css` }]
+    },
     watchFiles: ["app/**/*.js", "app/**/*.jsx", "app/**/*.css"]
   }
 }
@@ -122,7 +137,7 @@ if (currentTask === "build" || currentTask === "webpackBuild") {
     minimize: true,
     minimizer: ["...", new CssMinimizerPlugin()]
   }
-  config.plugins.push(new CleanWebpackPlugin(), new MiniCssExtractPlugin({ filename: "styles.[chunkhash].css" }), new RunAfterCompile())
+  config.plugins.push(new CleanWebpackPlugin(), new MiniCssExtractPlugin({ filename: "styles.[chunkhash].css" }))
 }
 
 module.exports = config

@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useContext } from "react"
+import React, { useState, useContext } from "react"
 import Axios from "axios"
 import DispatchContext from "../DispatchContext"
 import { useNavigate } from "react-router-dom"
 
-function HeaderLoggedOut(props) {
+function HeaderLoggedOut({ closeModal }) {
   const appDispatch = useContext(DispatchContext)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
@@ -18,7 +18,8 @@ function HeaderLoggedOut(props) {
       if (response.data.token) {
         appDispatch({ type: "logIn", data: response.data })
         appDispatch({ type: "flashMessage", value: "You have successfully logged in!" })
-        navigate("/") // Redirect to homepage
+        navigate("/")
+        closeModal() // Close modal on successful login
       } else {
         appDispatch({ type: "flashMessage", value: "Incorrect username or password." })
       }
