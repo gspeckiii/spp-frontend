@@ -10,8 +10,8 @@ body {
   line-height: 1.5;
   color: $softWhite !important;
   text-align: left;
-  background: $softBlack !important; /* Override Bootstrap/user agent */
-  background-color: $softBlack !important;
+
+  background-color: $softBlack;
   height: 100%;
   margin: 0;
 }

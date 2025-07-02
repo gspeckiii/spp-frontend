@@ -1,0 +1,94 @@
+/* Mobile-first styles */
+.page-content {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-image: url("/home/sherman/Documents/spp-frontend/app/assets/images/bark-background-mobile.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #fff;
+  background-color: #333; /* Fallback color */
+
+  &__content {
+    padding: 10px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 10px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  &__intro {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0 0 15px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Responsive adjustments */
+@mixin atSmall {
+  .page-content {
+    background-image: url("/home/sherman/Documents/spp-frontend/app/assets/images/bark-background-tablet-portrait.png");
+  }
+
+  &__content {
+    padding: 15px;
+  }
+
+  &__title {
+    font-size: 1.75rem;
+  }
+
+  &__intro {
+    font-size: 1.125rem;
+  }
+}
+@mixin atMedium {
+  .page-content {
+    background-image: url("/home/sherman/Documents/spp-frontend/app/assets/images/bark-background-tablet-landscape.png");
+  }
+
+  &__content {
+    padding: 20px;
+  }
+
+  &__title {
+    font-size: 2rem;
+  }
+
+  &__intro {
+    font-size: 1.25rem;
+  }
+}
+
+@mixin atLarge {
+  .page-content {
+    background-image: url("/home/sherman/Documents/spp-frontend/app/assets/images/bark-background-laptop.png");
+  }
+
+  &__content {
+    padding: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__title {
+    font-size: 2.25rem;
+  }
+
+  &__intro {
+    font-size: 1.375rem;
+  }
+}

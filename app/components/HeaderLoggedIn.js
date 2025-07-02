@@ -13,16 +13,6 @@ function HeaderLoggedIn(props) {
   }
   return (
     <div>
-      <nav className="primary-nav primary-nav--pull-right">
-        <ul>
-          <li>
-            <Link to="/orders">Orders</Link>
-          </li>
-          <li>
-            <Link to="/history">History</Link>
-          </li>
-        </ul>
-      </nav>
       <div className="site-header__btn-container">
         <button onClick={handleLogOut} className="form-controls__button">
           Sign Out

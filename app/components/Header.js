@@ -19,7 +19,7 @@ function Header() {
 
   const toggleMenu = () => {
     if (!appState.loggedIn) {
-      setIsModalOpen(true) // Open login modal directly for logged-out users
+      setIsModalOpen(true) // Open login modal for logged-out users on mobile
     } else {
       setIsMenuOpen(!isMenuOpen) // Toggle mobile menu for logged-in users
     }
@@ -48,6 +48,23 @@ function Header() {
           <div className={`site-header__menu-icon ${isMenuOpen ? "site-header__menu-icon--close-x" : ""}`} onClick={toggleMenu}>
             <div className="site-header__menu-icon__middle"></div>
           </div>
+
+          <nav className="primary-nav primary-nav--desktop">
+            <ul>
+              <li>
+                <Link to="/home" className="primary-nav__link">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/about-us" className="primary-nav__link">
+                  About
+                </Link>
+              </li>
+
+              <li>{appState.loggedIn ? <HeaderLoggedIn /> : <HeaderLoggedOut closeModal={closeModal} />}</li>
+            </ul>
+          </nav>
         </div>
       </header>
 

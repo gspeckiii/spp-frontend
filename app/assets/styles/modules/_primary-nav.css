@@ -5,6 +5,15 @@
     }
   }
 
+  &--desktop {
+    display: none;
+
+    @mixin atMedium {
+      display: block;
+      float: right;
+    }
+  }
+
   ul {
     margin: 0;
     padding: 0;
@@ -13,6 +22,12 @@
 
   li {
     padding: 10px 0;
+
+    @mixin atMedium {
+      display: inline-block;
+      padding: 0 10px;
+      vertical-align: middle;
+    }
   }
 
   &__link {
@@ -24,7 +39,7 @@
     transition: background-color 0.3s ease-out;
 
     &:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: $pureBlack;
     }
 
     @mixin atMedium {
@@ -35,7 +50,7 @@
 
   &__link--button {
     background-color: #fff;
-    color: $pureBlack;
+    color: #000;
     border-radius: 5px;
     padding: 10px 20px;
     text-align: center;
@@ -45,6 +60,15 @@
 
     &:hover {
       background-color: #e0e0e0;
+    }
+
+    &[type="submit"] {
+      background-color: $deepRed;
+      color: #fff;
+
+      &:hover {
+        background-color: darken($deepRed, 10%);
+      }
     }
 
     @mixin atMedium {
@@ -57,15 +81,25 @@
   &__form {
     margin: 0;
     padding: 0;
+
+    @mixin atMedium {
+      display: inline-flex;
+      align-items: center;
+    }
   }
 
   &__group {
     margin-bottom: 15px;
 
+    @mixin atMedium {
+      margin-bottom: 0;
+      margin-right: 10px;
+    }
+
     &--dark {
       input,
       button {
-        background-color: $pureBlack;
+        background-color: #000;
         color: #fff;
         border: 1px solid #fff;
       }
@@ -77,5 +111,11 @@
     padding: 10px;
     font-size: 1rem;
     border-radius: 5px;
+
+    @mixin atMedium {
+      width: 120px;
+      padding: 8px;
+      font-size: 0.9rem;
+    }
   }
 }

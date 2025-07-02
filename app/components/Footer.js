@@ -10,7 +10,7 @@ function Footer() {
       <p>
         <Link to="/" className="text-muted white-font">
           {" "}
-          Sherman Peck Productions{" "}
+          SPP{" "}
         </Link>{" "}
         |{" "}
         <Link to="/about-us" className="mx-1 white-font">
