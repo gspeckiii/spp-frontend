@@ -34,7 +34,7 @@
     -webkit-transform: translateX(-50%) scale(0.8);
     -moz-transform: translateX(-50%) scale(0.8);
     transform-origin: 50% 0;
-    background-color: $pureBlack;
+    background-color: $softBlack;
     padding: 25px 36px;
 
     &--large {
@@ -78,7 +78,7 @@
       left: 0;
       width: 20px;
       height: 3px;
-      background-color: $pureBlack;
+      background-color: $pureWhite;
       transform-origin: 0 0;
       -webkit-transform-origin: 0 0;
       -moz-transform-origin: 0 0;
@@ -91,7 +91,7 @@
       left: 0;
       width: 20px;
       height: 3px;
-      background-color: $pureBlack;
+      background-color: $pureWhite;
       transition: all 0.3s ease-out;
       transform-origin: 0 50%;
       -webkit-transform-origin: 0 50%;
@@ -105,7 +105,7 @@
       left: 0;
       width: 20px;
       height: 3px;
-      background-color: $pureBlack;
+      background-color: $pureWhite;
       transform-origin: 0 100%;
       -webkit-transform-origin: 0 100%;
       -moz-transform-origin: 0 100%;
@@ -141,13 +141,8 @@
 
 .mobile-menu {
   position: absolute;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-20px);
-  -webkit-transform: translateX(-50%) translateY(-20px);
-  -moz-transform: translateX(-50%) translateY(-20px);
-  width: 90%;
-  max-width: 300px;
+  top: 100px;
+  width: 100%;
   background-color: $pureBlack;
   z-index: 1;
   opacity: 0;

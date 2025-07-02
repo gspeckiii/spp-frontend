@@ -9,13 +9,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: auto;
-  min-width: 200px; /* Match card width */
 }
 
 .category-slide__card {
-  width: 200px; /* Fixed width */
-  height: 150px; /* Fixed height */
   position: relative;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

@@ -10,7 +10,7 @@ function Footer() {
       <p>
         <Link to="/" className="text-muted white-font">
           {" "}
-          SPP{" "}
+          Home{" "}
         </Link>{" "}
         |{" "}
         <Link to="/about-us" className="mx-1 white-font">
@@ -26,11 +26,10 @@ function Footer() {
             <Link to="/admin-dashboard" className="mx-1 white-font">
               Admin Dashboard
             </Link>
-            {" | "}
           </>
         )}
-        All rights reserved. Copyright © {new Date().getFullYear()}
       </p>
+      <p>All rights reserved. Copyright © {new Date().getFullYear()}</p>
     </footer>
   )
 }
