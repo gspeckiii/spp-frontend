@@ -12,6 +12,8 @@
 }
 
 .category-slide__card {
+  width: 480px;
+  height: 480px;
   position: relative;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -63,7 +65,7 @@
 .category-slide__title {
   color: #fff;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 500;
   margin: 0;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
@@ -73,7 +75,7 @@
   color: #ddd;
   text-align: center;
   font-weight: 400;
-  font-size: 0.75rem;
+  font-size: 1.25rem;
   margin: 0.5rem 0 0;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
@@ -93,31 +95,31 @@
 }
 
 .category-slide__youtube-icon {
-  width: 24px;
-  height: 28px;
+  width: 48px;
+  height: 52px;
 }
 
 .category-slide__youtube-placeholder {
-  width: 24px;
-  height: 28px; /* Match youtube-icon size */
+  width: 48px;
+  height: 52px; /* Match youtube-icon size */
   display: inline-block; /* Reserve space when YouTube link is absent */
 }
 
 .category-slide__product-count {
-  color: #1e90ff;
-  font-size: 0.875rem;
+  color: $pureWhite;
+  font-size: 1.5rem;
   font-weight: 500;
   text-decoration: none;
 }
 
-@media (min-width: 1024px) {
+@mixin atLarge {
   .swiper-slide {
     min-width: 250px; /* Match larger card width */
   }
 
   .category-slide__card {
-    width: 250px; /* Fixed width for larger screens */
-    height: 180px; /* Fixed height for larger screens */
+    width: 700px; /* Fixed width for larger screens */
+    height: 700px; /* Fixed height for larger screens */
     padding: 16px;
   }
 

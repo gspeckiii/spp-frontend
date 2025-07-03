@@ -110,9 +110,9 @@ function CategorySlider() {
         navigation
         className="category-slider__swiper"
         breakpoints={{
-          640: { slidesPerView: 2, spaceBetween: 15 },
-          768: { slidesPerView: 3, spaceBetween: 20 },
-          1024: { slidesPerView: 4, spaceBetween: 25 }
+          530: { slidesPerView: 1, spaceBetween: 15 },
+          800: { slidesPerView: 2, spaceBetween: 20 },
+          1010: { slidesPerView: 3, spaceBetween: 25 }
         }}
       >
         {categoriesWithImages.map(category => (

@@ -1,7 +1,7 @@
 /* Mobile-first styles */
 .page-content {
   width: 100%;
-  height: 100vh;
+  height: 87vh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -13,13 +13,17 @@
   background-color: #333; /* Fallback color */
 
   &__content {
-    padding: 10px;
-    flex-grow: 1;
+    padding: 5px;
+    flex-grow: 0.92;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
+
+    &--header {
+      font-size: 2rem !important;
+    }
   }
 
   &__title {

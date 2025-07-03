@@ -142,8 +142,8 @@
 .mobile-menu {
   position: absolute;
   top: 100px;
-  width: 100%;
-  background-color: $pureBlack;
+  width: 100% !important;
+  background-color: $softBlack;
   z-index: 1;
   opacity: 0;
   transition: all 0.3s ease-out;
@@ -153,11 +153,10 @@
 
   &--is-visible {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
-    -webkit-transform: translateX(-50%) translateY(0);
-    -moz-transform: translateX(0) translateY(0);
   }
-
+  li {
+    padding: 0 0 !important; /* Adjust padding between li elements */
+  }
   @mixin atMedium {
     display: none;
   }
