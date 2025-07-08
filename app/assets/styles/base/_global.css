@@ -13,21 +13,16 @@ body {
   color: $softWhite !important;
   text-align: left;
 
-  /* === NEW BACKGROUND & LAYOUT STYLES === */
-  background-color: #333; /* Fallback color */
-
-  /* Use root-relative paths that work with your dev server and build */
+  background-color: #333;
   background-image: url("/assets/images/bark-background-mobile.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
-  /* Make body a full-height flex container */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 
-  /* Apply responsive backgrounds using your existing mixins */
   @mixin atSmall {
     background-image: url("/assets/images/bark-background-tablet-portrait.png");
   }
@@ -39,18 +34,44 @@ body {
   }
 }
 
-/* Make the React root element fill the body's flex container */
+body.overlay-is-open .mobile-overlay {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease;
+}
+
 #app {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
-/* Make the main content area expand to push the footer down */
 .main-content-area {
   flex-grow: 1;
-  display: flex; /* This ensures its children can also use flex properties */
+  display: flex;
   flex-direction: column;
+  padding-top: 100px;
+
+  /* === FIX #1: THE LAYERING FIX === */
+  /* This forces the main content to be the bottom layer (z-index: 0) */
+  /* The overlay (z-index: 1) and header (z-index: 2) will now always be on top. */
+  position: relative;
+  z-index: 0;
+}
+
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.container--narrow {
+  max-width: 900px;
 }
 
 img {

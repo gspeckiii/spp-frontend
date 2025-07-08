@@ -36,10 +36,12 @@
     font-size: 1rem;
     display: block;
     padding: 8px 20px;
-    transition: background-color 0.3s ease-out;
+    /* === FIX: Change transition to include color for a smooth hover === */
+    transition: color 0.3s ease-out;
 
     &:hover {
-      background-color: $pureBlack;
+      /* === FIX: Change font color on hover instead of background === */
+      color: $lightRed;
     }
 
     @mixin atMedium {

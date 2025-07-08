@@ -1,16 +1,20 @@
 /* Mobile-first styles */
 .page-content {
   width: 100%;
-  flex-grow: 1; /* Allow this container to grow within main-content-area */
-  display: flex;
-  flex-direction: column;
   box-sizing: border-box;
   color: #fff;
-  /* REMOVED: All height and background properties */
+
+  /* This will now correctly fill the space provided by the .container */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 0;
 
   &__content {
     padding: 5px;
-    flex-grow: 0.92; /* This pushes content to the center. Consider setting to 1 if not needed. */
+    /* This element takes up its natural height and does not grow */
+    flex-grow: 0;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -37,7 +41,7 @@
   }
 }
 
-/* Responsive adjustments still work fine */
+/* Responsive adjustments */
 @mixin atSmall {
   .page-content {
     &__content {
