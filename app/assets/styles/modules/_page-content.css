@@ -1,20 +1,16 @@
 /* Mobile-first styles */
 .page-content {
   width: 100%;
-  height: 87vh;
+  flex-grow: 1; /* Allow this container to grow within main-content-area */
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  background-image: url("/media/sherman/data/apps/spp/spp-frontend/app/assets/images/bark-background-mobile.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   color: #fff;
-  background-color: #333; /* Fallback color */
+  /* REMOVED: All height and background properties */
 
   &__content {
     padding: 5px;
-    flex-grow: 0.92;
+    flex-grow: 0.92; /* This pushes content to the center. Consider setting to 1 if not needed. */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -41,58 +37,52 @@
   }
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments still work fine */
 @mixin atSmall {
   .page-content {
-    background-image: url("/media/sherman/data/apps/spp/spp-frontend/app/assets/images/bark-background-tablet-portrait.png");
-  }
+    &__content {
+      padding: 15px;
+    }
 
-  &__content {
-    padding: 15px;
-  }
+    &__title {
+      font-size: 1.75rem;
+    }
 
-  &__title {
-    font-size: 1.75rem;
-  }
-
-  &__intro {
-    font-size: 1.125rem;
+    &__intro {
+      font-size: 1.125rem;
+    }
   }
 }
 @mixin atMedium {
   .page-content {
-    background-image: url("/media/sherman/data/apps/spp/spp-frontend/app/assets/images/bark-background-tablet-landscape.png");
-  }
+    &__content {
+      padding: 20px;
+    }
 
-  &__content {
-    padding: 20px;
-  }
+    &__title {
+      font-size: 2rem;
+    }
 
-  &__title {
-    font-size: 2rem;
-  }
-
-  &__intro {
-    font-size: 1.25rem;
+    &__intro {
+      font-size: 1.25rem;
+    }
   }
 }
 
 @mixin atLarge {
   .page-content {
-    background-image: url("/media/sherman/data/apps/spp/spp-frontend/app/assets/images/bark-background-laptop.png");
-  }
+    &__content {
+      padding: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-  &__content {
-    padding: 25px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+    &__title {
+      font-size: 2.25rem;
+    }
 
-  &__title {
-    font-size: 2.25rem;
-  }
-
-  &__intro {
-    font-size: 1.375rem;
+    &__intro {
+      font-size: 1.375rem;
+    }
   }
 }

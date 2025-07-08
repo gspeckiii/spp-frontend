@@ -4,16 +4,53 @@ html {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
   color: $softWhite !important;
   text-align: left;
 
-  background-color: $softBlack;
-  height: 100%;
-  margin: 0;
+  /* === NEW BACKGROUND & LAYOUT STYLES === */
+  background-color: #333; /* Fallback color */
+
+  /* Use root-relative paths that work with your dev server and build */
+  background-image: url("/assets/images/bark-background-mobile.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Make body a full-height flex container */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  /* Apply responsive backgrounds using your existing mixins */
+  @mixin atSmall {
+    background-image: url("/assets/images/bark-background-tablet-portrait.png");
+  }
+  @mixin atMedium {
+    background-image: url("/assets/images/bark-background-tablet-landscape.png");
+  }
+  @mixin atLarge {
+    background-image: url("/assets/images/bark-background-laptop.png");
+  }
+}
+
+/* Make the React root element fill the body's flex container */
+#app {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* Make the main content area expand to push the footer down */
+.main-content-area {
+  flex-grow: 1;
+  display: flex; /* This ensures its children can also use flex properties */
+  flex-direction: column;
 }
 
 img {
@@ -27,7 +64,4 @@ img {
 
 a {
   color: $pureWhite;
-}
-html,
-body {
 }
