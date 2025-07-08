@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect, useContext,useRef } from "react"
 import Axios from "axios"
 import { useParams, useNavigate, useLocation } from "react-router-dom"
 import StateContext from "../../StateContext"
@@ -16,6 +16,7 @@ function AdminProductImagePost() {
   const [loading, setLoading] = useState(true)
   const [product, setProduct] = useState(null)
   const [validationError, setValidationError] = useState(null)
+  const flashRef = useRef(null);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -49,10 +50,10 @@ function AdminProductImagePost() {
       setValidationError("Please select at least one image.")
     } else {
       const validTypes = ["image/jpeg", "image/png", "image/gif"]
-      const maxSize = 1 * 1024 * 1024 // 1MB
+      const maxSize = 5 * 1024 * 1024 // 1MB
       const invalidFiles = files.filter(file => !validTypes.includes(file.type) || file.size > maxSize)
       if (invalidFiles.length > 0) {
-        setValidationError("All images must be JPEG, PNG, or GIF and less than 1MB.")
+        setValidationError("All images must be JPEG, PNG, or GIF and less than 5MB.")
       } else {
         setValidationError(null)
       }
@@ -107,9 +108,11 @@ function AdminProductImagePost() {
               Product Images
             </label>
             <input type="file" name="images" onChange={handleFileChange} className="form__input" id="images" multiple />
-            <small style={{ color: "$softWhite", opacity: 0.7 }}>Select multiple images (JPEG, PNG, GIF, max 1MB each)</small>
-            <CSSTransition in={!!validationError} timeout={330} classNames="flash-messages" unmountOnExit>
-              <FlashMessages messages={[validationError]} />
+            <small style={{ color: "$softWhite", opacity: 0.7 }}>Select multiple images (JPEG, PNG, GIF, max 5MB each)</small>
+            <CSSTransition in={!!validationError} timeout={330} classNames="flash-messages" unmountOnExit nodeRef={flashRef}>
+              <div ref={flashRef}> {/* Attach the ref to a real DOM element */}
+                <FlashMessages messages={[validationError]} />
+              </div>
             </CSSTransition>
           </div>
           <div className="form__group">

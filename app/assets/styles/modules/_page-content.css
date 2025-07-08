@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  background-image: url("/home/sherman/Documents/spp-frontend/app/assets/images/bark-background-mobile.png");
+  background-image: url("/media/sherman/data/apps/spp/spp-frontend/app/assets/images/bark-background-mobile.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -44,7 +44,7 @@
 /* Responsive adjustments */
 @mixin atSmall {
   .page-content {
-    background-image: url("/home/sherman/Documents/spp-frontend/app/assets/images/bark-background-tablet-portrait.png");
+    background-image: url("/media/sherman/data/apps/spp/spp-frontend/app/assets/images/bark-background-tablet-portrait.png");
   }
 
   &__content {
@@ -61,7 +61,7 @@
 }
 @mixin atMedium {
   .page-content {
-    background-image: url("/home/sherman/Documents/spp-frontend/app/assets/images/bark-background-tablet-landscape.png");
+    background-image: url("/media/sherman/data/apps/spp/spp-frontend/app/assets/images/bark-background-tablet-landscape.png");
   }
 
   &__content {
@@ -79,7 +79,7 @@
 
 @mixin atLarge {
   .page-content {
-    background-image: url("/home/sherman/Documents/spp-frontend/app/assets/images/bark-background-laptop.png");
+    background-image: url("/media/sherman/data/apps/spp/spp-frontend/app/assets/images/bark-background-laptop.png");
   }
 
   &__content {
