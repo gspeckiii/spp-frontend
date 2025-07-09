@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import Page from "./Page";
@@ -179,16 +179,25 @@ function ProductSlider() {
                       {product.prod_desc}
                     </p>
                   )}
-                  {product.prod_cost && (
-                    <p className="swiper-slide__cost">
-                      ${parseFloat(product.prod_cost).toFixed(2)}
-                    </p>
-                  )}
                   {productImages[product.id]?.img_desc && (
                     <p className="swiper-slide__image-desc">
                       {productImages[product.id].img_desc}
                     </p>
                   )}
+                  <div className="product-slide__footer">
+                    <Link to={`/`} className="product-slide__back-arrow">
+                      <img
+                        src="/assets/images/icons/back-arrow.svg"
+                        alt="Back to Categories"
+                      />
+                    </Link>
+
+                    {product.prod_cost && (
+                      <Link to="/order" className="product-slide__cost-button">
+                        ${parseFloat(product.prod_cost).toFixed(2)}
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
             </SwiperSlide>
