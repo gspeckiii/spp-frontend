@@ -26,6 +26,5 @@
 @import "modules/_dashboard";
 @import "modules/_table-select";
 @import "modules/_form";
-@import "modules/_swiper-category";
-@import "modules/_swiper-product";
+@import "modules/_swiper";
 @import "modules/_page-content";

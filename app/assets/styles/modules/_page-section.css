@@ -32,11 +32,6 @@
 
   &--background {
     @mixin atLarge {
-      background: url("http://localhost:3000/assets/images/background-tree-bg.jpg") top center no-repeat;
-      background-size: cover;
-      height: 100%;
-      overflow: hidden;
-      padding-bottom: 2rem;
     }
   }
   &--pull-down {

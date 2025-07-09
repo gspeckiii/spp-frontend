@@ -1,10 +1,11 @@
+/* RESTORED: All original header styles are back */
 .site-header {
   padding: 10px 0;
   position: fixed;
   width: 100%;
   transition: background-color 0.3s ease-out;
 
-  /* Layer 2: The Header Controls are on top */
+  /* ESSENTIAL FIX: The header is on the top layer (z-index: 2) */
   z-index: 2;
 
   &--is-expanded {
@@ -22,7 +23,7 @@
     transition: transform 0.3s ease-out;
     transform: translateX(-50%) scale(0.8);
     transform-origin: 50% 0;
-    background-color: $softBlack;
+    background-color: $softBlack; /* RESTORED: The logo background */
     padding: 25px 36px;
     &--large {
       transform: translateX(-50%) scale(1.2);
@@ -86,7 +87,7 @@
   }
 }
 
-/* === THE SINGLE OVERLAY STYLING === */
+/* THE SINGLE OVERLAY STYLING */
 .mobile-overlay {
   position: fixed;
   top: 0;
@@ -95,15 +96,13 @@
   height: 100%;
   background-color: rgba(28, 37, 38, 0.95);
 
-  /* Layer 1: The Overlay is below the header */
+  /* ESSENTIAL FIX: The Overlay is below the header (z-index: 1) */
   z-index: 1;
 
-  /* Hide it by default */
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0s 0.3s linear;
 
-  /* Use flex to center its contents */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -123,7 +122,7 @@
   font-size: 1.5rem;
 }
 
-/* === FIX #2: Styles for the Logged-OUT form === */
+/* Styles for the Logged-OUT form */
 .mobile-overlay__modal-inner {
   width: 90%;
   max-width: 400px;
@@ -133,8 +132,6 @@
     color: $pureWhite;
     margin-bottom: 1.5rem;
   }
-
-  /* This is the new, highly specific rule that fixes the invisible inputs */
   .form-controls__group .form-controls__input {
     background-color: $softWhite !important;
     color: $softBlack !important;
@@ -144,16 +141,13 @@
     padding: 0.75rem;
     font-size: 1.1rem;
     border-radius: 4px;
-
     &::placeholder {
       color: #888;
     }
   }
-
   .form-controls__group {
     margin-bottom: 1rem;
   }
-
   .form-controls__button {
     background-color: $deepRed;
     color: $pureWhite;

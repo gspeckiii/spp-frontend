@@ -1,0 +1,239 @@
+.swiper-container-wrapper {
+  display: flex;
+  flex-grow: 1;
+  min-height: 0;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: $softBlack;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: auto;
+  border: 10px solid $softBlack;
+}
+
+.swiper-slide__image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 2px;
+}
+
+.swiper-slide__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem 0.5rem;
+  /* Ensure content area can grow if needed */
+  flex-grow: 1;
+}
+
+/* === FIX #1: Remove underline from category links === */
+.swiper-slide__link {
+  text-decoration: none;
+  color: inherit; /* Makes the text inside the link use the parent's color */
+}
+
+.swiper-slide__title {
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.swiper-slide__subtitle,
+.swiper-slide__description {
+  color: #ddd;
+  text-align: center;
+  font-weight: 400;
+  margin: 0.5rem 0 0;
+  font-size: 1rem;
+}
+
+.swiper-slide__cost {
+  color: $lightGreen;
+  text-align: center;
+  font-weight: bold;
+  margin: 1rem 0 0;
+  font-size: 1.1rem;
+}
+
+.swiper-slide__image-desc {
+  color: #aaa;
+  font-style: italic;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+}
+
+/* This is the main container for your footer */
+.swiper-slide__footer {
+  display: flex; /* Activates Flexbox */
+  justify-content: space-between; /* Pushes children to opposite ends */
+  align-items: center; /* Vertically aligns items in the middle */
+  width: 100%;
+  padding: 8px; /* Add some padding if needed */
+}
+
+/* Your icon styling */
+.swiper-slide__youtube-icon {
+  width: 32px;
+  height: auto;
+}
+
+/* This styles the circle for the product count */
+.swiper-slide__prod-count {
+  /* Sizing and Shape */
+  min-width: 28px; /* Use min-width to handle double-digit numbers */
+  height: 28px;
+  border-radius: 50%; /* This makes it a perfect circle */
+
+  /* Color and Font */
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  font-size: 14px;
+
+  /* Centering the number inside the circle */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Smooth transition for the hover effect */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* This handles the hover effect */
+.swiper-slide__prod-count:hover {
+  background-color: #ff6b6b; /* Replace with your $lightRed value */
+  color: white;
+  cursor: pointer; /* Optional: Makes it look clickable */
+}
+
+.number-in-circle {
+  /* Shape and Color */
+  display: inline-flex;
+  width: 32px; /* Set width and height to be equal */
+  height: 32px;
+  background-color: $lightRed;
+  border-radius: 50%; /* This makes the square a perfect circle */
+
+  /* Centering the number inside the circle */
+  justify-content: center;
+  align-items: center;
+
+  /* Text Styling */
+  color: black; /* Make the number's color visible on a white background */
+  font-weight: bold;
+  text-decoration: none; /* This removes the underline from the link */
+
+  /* Optional: Add a subtle hover effect */
+  transition: transform 0.2s ease;
+}
+
+.number-in-circle:hover {
+  transform: scale(1.1); /* Slightly enlarges the circle on hover */
+}
+
+/* Responsive Enhancements (Mobile-First) */
+
+@mixin atSmall {
+  .swiper-slide__title {
+    font-size: 1.5rem;
+  }
+  .swiper-slide__subtitle,
+  .swiper-slide__description {
+    font-size: 1.1rem;
+  }
+  .swiper-slide__cost {
+    font-size: 1.25rem;
+  }
+  .swiper-slide__image-desc {
+    font-size: 0.9rem;
+  }
+  .swiper-slide__product-count {
+    font-size: 1.1rem;
+  }
+}
+
+@mixin atMedium {
+  .swiper-slide__card {
+    border-width: 12px;
+  }
+  .swiper-slide__title {
+    font-size: 1.75rem;
+  }
+  .swiper-slide__subtitle,
+  .swiper-slide__description {
+    font-size: 1.25rem;
+  }
+  .swiper-slide__cost {
+    font-size: 1.5rem;
+  }
+  .swiper-slide__image-desc {
+    font-size: 1rem;
+  }
+  .swiper-slide__youtube-icon {
+    width: 40px;
+  }
+  .swiper-slide__youtube-placeholder {
+    width: 40px;
+    height: 28px;
+  }
+  .swiper-slide__product-count {
+    font-size: 1.25rem;
+    display: flex;
+    align-content: end;
+  }
+}
+
+@mixin atLarge {
+  .swiper-slide__card {
+    border-width: 15px;
+  }
+  .swiper-slide__title {
+    font-size: 2.25rem;
+  }
+  .swiper-slide__subtitle,
+  .swiper-slide__description {
+    font-size: 1.5rem;
+  }
+  .swiper-slide__cost {
+    font-size: 1.75rem;
+  }
+  .swiper-slide__image-desc {
+    font-size: 1.1rem;
+  }
+  .swiper-slide__youtube-icon {
+    width: 48px;
+  }
+  .swiper-slide__youtube-placeholder {
+    width: 48px;
+    height: 34px;
+  }
+  .swiper-slide__product-count {
+    font-size: 1.5rem;
+  }
+}
