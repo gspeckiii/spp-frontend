@@ -1,85 +1,62 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState, useEffect, useMemo, useContext } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import Page from "./Page";
+import StateContext from "../context/StateContext";
+import LoadingDotsIcon from "./LoadingDotsIcon";
 
 function ProductSlider() {
-  const { id } = useParams(); // Get cat_id from URL
+  const { id } = useParams();
+  const appState = useContext(StateContext);
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState([]);
   const [productImages, setProductImages] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Memoize products to prevent reference changes
   const memoizedProducts = useMemo(() => products, [products]);
 
-  // Fetch products for the category
+  // === Using YOUR working data fetching logic ===
   useEffect(() => {
-    console.log("ProductSlider mounted for category ID:", id);
     const fetchProducts = async () => {
       try {
-        console.log(`Fetching products for category ID: ${id}`);
         const response = await fetch(
           `http://localhost:8080/api/products/category/${id}`
         );
         if (response.ok) {
           const fetchedProducts = await response.json();
-          console.log(`Products for category ${id}:`, fetchedProducts);
           setProducts(Array.isArray(fetchedProducts) ? fetchedProducts : []);
           setError(null);
         } else {
-          console.error(
-            `Failed to fetch products for category ${id}:`,
-            response.status,
-            response.statusText
-          );
           setError(`Failed to load products: ${response.statusText}`);
           setProducts([]);
         }
       } catch (error) {
-        console.error(
-          `Error fetching products for category ${id}:`,
-          error.message
-        );
         setError("Failed to load products");
         setProducts([]);
       }
-      setIsLoading(false);
+      setIsLoading(false); // This was a key part of the original logic
     };
-
     fetchProducts();
-    return () => console.log("ProductSlider unmounted");
-  }, [id]); // Run when id changes
+  }, [id]);
 
-  // Fetch one image per product
   useEffect(() => {
     const fetchProductImages = async () => {
-      if (
-        !memoizedProducts ||
-        !Array.isArray(memoizedProducts) ||
-        memoizedProducts.length === 0
-      ) {
-        console.log("No products to fetch images for");
-        setIsLoading(false);
+      if (!memoizedProducts || memoizedProducts.length === 0) {
+        // No need to set loading false here, as the first effect handles it
         return;
       }
-
-      console.log("Fetching images for products:", memoizedProducts);
       const images = {};
       for (const product of memoizedProducts) {
         if (product.id) {
-          if (productImages[product.id]) {
-            images[product.id] = productImages[product.id];
-            continue;
-          }
           try {
             const response = await fetch(
               `http://localhost:8080/api/products/${product.id}/images`
             );
             if (response.ok) {
               const fetchedImages = await response.json();
-              console.log(`Images for product ${product.id}:`, fetchedImages);
               images[product.id] =
                 Array.isArray(fetchedImages) && fetchedImages.length > 0
                   ? {
@@ -88,64 +65,54 @@ function ProductSlider() {
                     }
                   : { img_path: null, img_desc: "" };
             } else {
-              console.error(
-                `Failed to fetch images for product ${product.id}:`,
-                response.status,
-                response.statusText
-              );
               images[product.id] = { img_path: null, img_desc: "" };
             }
           } catch (error) {
-            console.error(
-              `Error fetching images for product ${product.id}:`,
-              error.message
-            );
             images[product.id] = { img_path: null, img_desc: "" };
           }
         }
       }
-      setProductImages((prev) => ({ ...prev, ...images }));
-      console.log("Updated product images:", images);
-      setIsLoading(false);
+      setProductImages(images);
     };
-
     fetchProductImages();
   }, [memoizedProducts]);
+  // === End of your working data fetching logic ===
 
-  const handleImageError = (e, productId) => {
-    console.log(
-      `Image load failed for product ${productId}: http://localhost:8080/${productImages[productId]?.img_path}`
-    );
-    e.target.src = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
-    setProductImages((prev) => ({
-      ...prev,
-      [productId]: {
-        img_path: null,
-        img_desc: prev[productId]?.img_desc || "",
-      },
-    }));
+  const handleOrderClick = (e, product) => {
+    // This is the correct navigation logic
+    if (!appState.loggedIn) {
+      e.preventDefault();
+      navigate("/");
+    }
   };
 
+  // The loading/error states
   if (error) {
-    return <div className="swiper-container-wrapper">Error: {error}</div>;
-  }
-
-  if (isLoading) {
-    return <div className="swiper-container-wrapper">Loading products...</div>;
-  }
-
-  if (!products || products.length === 0) {
-    console.log(`No products available for category ${id}`);
     return (
-      <div className="swiper-container-wrapper">
-        No products available for this category
-      </div>
+      <Page title="Error">
+        <div className="swiper-container-wrapper">Error: {error}</div>
+      </Page>
+    );
+  }
+  if (isLoading) {
+    return (
+      <Page title="Loading...">
+        <LoadingDotsIcon />
+      </Page>
+    );
+  }
+  if (!products || products.length === 0) {
+    return (
+      <Page title="No Products">
+        <div className="swiper-container-wrapper">
+          No products available for this category
+        </div>
+      </Page>
     );
   }
 
   return (
     <Page title="Products">
-      {/* Replaced product-slider with swiper-container-wrapper */}
       <div className="swiper-container-wrapper">
         <Swiper
           modules={[Navigation]}
@@ -156,7 +123,6 @@ function ProductSlider() {
         >
           {products.map((product) => (
             <SwiperSlide key={product.id}>
-              {/* Using the new generic BEM class names */}
               <div className="swiper-slide__card">
                 <img
                   src={
@@ -168,22 +134,23 @@ function ProductSlider() {
                   }
                   alt={product.prod_name || "Product"}
                   className="swiper-slide__image"
-                  onError={(e) => handleImageError(e, product.id)}
                 />
                 <div className="swiper-slide__content">
-                  <h3 className="swiper-slide__title">
-                    {product.prod_name || "Unknown"}
-                  </h3>
-                  {product.prod_desc && (
-                    <p className="swiper-slide__description">
-                      {product.prod_desc}
-                    </p>
-                  )}
-                  {productImages[product.id]?.img_desc && (
-                    <p className="swiper-slide__image-desc">
-                      {productImages[product.id].img_desc}
-                    </p>
-                  )}
+                  <div>
+                    <h3 className="swiper-slide__title">
+                      {product.prod_name || "Unknown"}
+                    </h3>
+                    {product.prod_desc && (
+                      <p className="swiper-slide__description">
+                        {product.prod_desc}
+                      </p>
+                    )}
+                    {productImages[product.id]?.img_desc && (
+                      <p className="swiper-slide__image-desc">
+                        {productImages[product.id].img_desc}
+                      </p>
+                    )}
+                  </div>
                   <div className="product-slide__footer">
                     <Link to={`/`} className="product-slide__back-arrow">
                       <img
@@ -191,9 +158,13 @@ function ProductSlider() {
                         alt="Back to Categories"
                       />
                     </Link>
-
                     {product.prod_cost && (
-                      <Link to="/order" className="product-slide__cost-button">
+                      <Link
+                        to={`/order/${product.id}`}
+                        state={{ product: product }}
+                        onClick={(e) => handleOrderClick(e, product)}
+                        className="product-slide__cost-button"
+                      >
                         ${parseFloat(product.prod_cost).toFixed(2)}
                       </Link>
                     )}

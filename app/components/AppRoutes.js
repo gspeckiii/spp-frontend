@@ -25,6 +25,7 @@ import AdminProductImagePutSelect from "./admin/AdminProductImagePutSelect.js";
 import AdminCategoryImagePost from "./admin/AdminCategoryImagePost";
 import ProductSlider from "./ProductSlider";
 import OrderForm from "./OrderForm";
+import PaymentForm from "./PaymentForm.js";
 import Settings from "./Settings.js";
 import AdminOrder from "./admin/AdminOrder.js";
 
@@ -157,6 +158,14 @@ export default function AppRoutes() {
             <HomeGuest />
           )
         }
+      />
+      <Route
+        path="/order/:productId"
+        element={appState.loggedIn ? <OrderForm /> : <HomeGuest />}
+      />
+      <Route
+        path="/payment/:orderId"
+        element={appState.loggedIn ? <PaymentForm /> : <HomeGuest />}
       />
       <Route path="/about-us" element={<About />} />
       <Route path="/terms" element={<Terms />} />
