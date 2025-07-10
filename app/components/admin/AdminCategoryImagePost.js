@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import Axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import StateContext from "../../StateContext";
-import DispatchContext from "../../DispatchContext";
+import StateContext from "../../context/StateContext";
+import DispatchContext from "../../context/DispatchContext";
 import { CSSTransition } from "react-transition-group";
 import FlashMessages from "../FlashMessages";
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from "react";
 import Page from "./Page";
-import StateContext from "../StateContext.js";
+import StateContext from "../context/StateContext.js";
 import CategorySlider from "./CategorySlider";
 function Home(props) {
   const appState = useContext(StateContext);

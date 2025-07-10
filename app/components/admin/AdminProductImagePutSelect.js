@@ -1,85 +1,102 @@
-import React, { useState, useEffect, useContext } from "react"
-import Axios from "axios"
-import { useParams, useNavigate, useLocation, Link } from "react-router-dom"
-import StateContext from "../../StateContext"
-import DispatchContext from "../../DispatchContext"
+import React, { useState, useEffect, useContext } from "react";
+import Axios from "axios";
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
+import StateContext from "../../context/StateContext";
+import DispatchContext from "../../context/DispatchContext";
 
 function AdminProductImagePutSelect() {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const { user } = useContext(StateContext)
-  const appDispatch = useContext(DispatchContext)
-  const [images, setImages] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [product, setProduct] = useState(null)
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useContext(StateContext);
+  const appDispatch = useContext(DispatchContext);
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    console.log("Fetching images for product ID:", id)
+    console.log("Fetching images for product ID:", id);
     async function fetchImages() {
       try {
-        const token = localStorage.getItem("SPPtoken")
+        const token = localStorage.getItem("SPPtoken");
         if (!token) {
-          appDispatch({ type: "flashMessage", value: "Please log in as admin to manage images" })
-          setLoading(false)
-          return
+          appDispatch({
+            type: "flashMessage",
+            value: "Please log in as admin to manage images",
+          });
+          setLoading(false);
+          return;
         }
         if (!id || isNaN(id)) {
-          appDispatch({ type: "flashMessage", value: "Invalid product ID" })
-          setLoading(false)
-          return
+          appDispatch({ type: "flashMessage", value: "Invalid product ID" });
+          setLoading(false);
+          return;
         }
         const productResponse = await Axios.get(`/products/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        console.log("Product response:", productResponse.data)
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("Product response:", productResponse.data);
         setProduct({
           id: parseInt(id),
           prod_name: productResponse.data.prod_name || "Unknown Product",
-          cat_fk: productResponse.data.cat_fk
-        })
+          cat_fk: productResponse.data.cat_fk,
+        });
 
         const imagesResponse = await Axios.get(`/images/product/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        console.log("Images response:", imagesResponse.data)
-        setImages(imagesResponse.data)
-        setLoading(false)
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("Images response:", imagesResponse.data);
+        setImages(imagesResponse.data);
+        setLoading(false);
       } catch (e) {
-        appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error || "Image data not found" : "Error fetching images" })
-        console.error("Fetch error:", e)
-        setLoading(false)
+        appDispatch({
+          type: "flashMessage",
+          value: e.response
+            ? e.response.data.error || "Image data not found"
+            : "Error fetching images",
+        });
+        console.error("Fetch error:", e);
+        setLoading(false);
       }
     }
-    fetchImages()
-  }, [id, appDispatch])
+    fetchImages();
+  }, [id, appDispatch]);
 
-  const handleDelete = async imageId => {
+  const handleDelete = async (imageId) => {
     if (window.confirm("Are you sure you want to delete this image?")) {
       try {
-        const token = localStorage.getItem("SPPtoken")
+        const token = localStorage.getItem("SPPtoken");
         await Axios.delete(`/images/${imageId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        setImages(images.filter(img => img.id !== imageId))
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setImages(images.filter((img) => img.id !== imageId));
         appDispatch({
           type: "incrementImgCount",
-          data: { productId: parseInt(id), count: -1 }
-        })
-        appDispatch({ type: "flashMessage", value: "Image deleted successfully!" })
+          data: { productId: parseInt(id), count: -1 },
+        });
+        appDispatch({
+          type: "flashMessage",
+          value: "Image deleted successfully!",
+        });
       } catch (e) {
-        appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error deleting image" })
+        appDispatch({
+          type: "flashMessage",
+          value: e.response ? e.response.data.error : "Error deleting image",
+        });
       }
     }
-  }
+  };
 
-  const handleEdit = imageId => {
+  const handleEdit = (imageId) => {
     navigate(`/admin-product-image-put/${imageId}`, {
-      state: { categoryId: product?.cat_fk || location.state?.categoryId, productId: id }
-    })
-  }
+      state: {
+        categoryId: product?.cat_fk || location.state?.categoryId,
+        productId: id,
+      },
+    });
+  };
 
-  if (loading) return <p>Loading...</p>
+  if (loading) return <p>Loading...</p>;
   if (!product)
     return (
       <div className="wrapper">
@@ -89,7 +106,7 @@ function AdminProductImagePutSelect() {
           Back to Categories
         </Link>
       </div>
-    )
+    );
 
   return (
     <div className="table-select">
@@ -109,17 +126,21 @@ function AdminProductImagePutSelect() {
             </tr>
           </thead>
           <tbody>
-            {images.map(image => (
+            {images.map((image) => (
               <tr key={image.id}>
                 <td>
                   {image.img_path && (
                     <img
                       src={`http://localhost:8080/${image.img_path}`}
                       alt={image.img_name || "Thumbnail"}
-                      style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "contain" }}
-                      onError={e => {
-                        e.target.style.display = "none"
-                        console.log("Thumbnail load failed:", image.img_path)
+                      style={{
+                        maxWidth: "100px",
+                        maxHeight: "100px",
+                        objectFit: "contain",
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        console.log("Thumbnail load failed:", image.img_path);
                       }}
                     />
                   )}
@@ -129,10 +150,16 @@ function AdminProductImagePutSelect() {
                 <td>{image.img_order}</td>
                 <td>{image.img_media}</td>
                 <td>
-                  <button onClick={() => handleEdit(image.id)} className="table-select__button">
+                  <button
+                    onClick={() => handleEdit(image.id)}
+                    className="table-select__button"
+                  >
                     Edit
                   </button>
-                  <button onClick={() => handleDelete(image.id)} className="table-select__button">
+                  <button
+                    onClick={() => handleDelete(image.id)}
+                    className="table-select__button"
+                  >
                     Del
                   </button>
                 </td>
@@ -141,14 +168,23 @@ function AdminProductImagePutSelect() {
           </tbody>
         </table>
       )}
-      <Link to={`/admin-product-image-post/${id}`} state={{ categoryId: product?.cat_fk || location.state?.categoryId }} className="form__button">
+      <Link
+        to={`/admin-product-image-post/${id}`}
+        state={{ categoryId: product?.cat_fk || location.state?.categoryId }}
+        className="form__button"
+      >
         Add Images
       </Link>
-      <Link to={`/admin-product-put-select/${product?.cat_fk || location.state?.categoryId || id}`} className="form__button">
+      <Link
+        to={`/admin-product-put-select/${
+          product?.cat_fk || location.state?.categoryId || id
+        }`}
+        className="form__button"
+      >
         Back to Products
       </Link>
     </div>
-  )
+  );
 }
 
-export default AdminProductImagePutSelect
+export default AdminProductImagePutSelect;

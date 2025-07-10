@@ -1,9 +1,9 @@
-import React, { useContext } from "react"
-import { Link } from "react-router-dom" // Importing Link for navigation
-import StateContext from "../StateContext" // Import StateContext to access user state
+import React, { useContext } from "react";
+import { Link } from "react-router-dom"; // Importing Link for navigation
+import StateContext from "../context/StateContext"; // Import StateContext to access user state
 
 function Footer() {
-  const state = useContext(StateContext) // Access the global state
+  const state = useContext(StateContext); // Access the global state
 
   return (
     <footer className="site-footer">
@@ -31,7 +31,7 @@ function Footer() {
       </p>
       <p>All rights reserved. Copyright © {new Date().getFullYear()}</p>
     </footer>
-  )
+  );
 }
 
-export default Footer
+export default Footer;

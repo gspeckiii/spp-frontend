@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import StateContext from "../StateContext";
+import StateContext from "../context/StateContext";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 

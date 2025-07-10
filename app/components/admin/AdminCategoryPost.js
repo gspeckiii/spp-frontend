@@ -1,33 +1,36 @@
-import React, { useState, useContext } from "react"
-import Axios from "axios"
-import { useNavigate, Link } from "react-router-dom"
-import StateContext from "../../StateContext"
-import DispatchContext from "../../DispatchContext"
+import React, { useState, useContext } from "react";
+import Axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
+import StateContext from "../../context/StateContext";
+import DispatchContext from "../../context/DispatchContext";
 
 function AdminCategoryPost() {
-  const [catName, setCatName] = useState("")
-  const [catDesc, setCatDesc] = useState("")
-  const [catVid, setCatVid] = useState("")
-  const navigate = useNavigate()
-  const { user } = useContext(StateContext)
-  const appDispatch = useContext(DispatchContext)
+  const [catName, setCatName] = useState("");
+  const [catDesc, setCatDesc] = useState("");
+  const [catVid, setCatVid] = useState("");
+  const navigate = useNavigate();
+  const { user } = useContext(StateContext);
+  const appDispatch = useContext(DispatchContext);
 
   async function handleSubmit(e) {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const token = localStorage.getItem("SPPtoken")
+      const token = localStorage.getItem("SPPtoken");
       if (!token) {
-        appDispatch({ type: "flashMessage", value: "Please log in as admin to add categories" })
-        return
+        appDispatch({
+          type: "flashMessage",
+          value: "Please log in as admin to add categories",
+        });
+        return;
       }
       const response = await Axios.post(
         "/categories",
         { cat_name: catName, cat_desc: catDesc, cat_vid: catVid || null },
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         }
-      )
-      console.log("Create category response:", response.data)
+      );
+      console.log("Create category response:", response.data);
       appDispatch({
         type: "addCategory",
         data: {
@@ -36,22 +39,30 @@ function AdminCategoryPost() {
           cat_name: response.data.cat_name,
           cat_desc: response.data.cat_desc,
           cat_vid: response.data.cat_vid,
-          prod_count: response.data.prod_count || 0
-        }
-      })
-      appDispatch({ type: "flashMessage", value: "Category added successfully!" })
-      setCatName("")
-      setCatDesc("")
-      setCatVid("")
-      navigate("/admin-category-put-select")
+          prod_count: response.data.prod_count || 0,
+        },
+      });
+      appDispatch({
+        type: "flashMessage",
+        value: "Category added successfully!",
+      });
+      setCatName("");
+      setCatDesc("");
+      setCatVid("");
+      navigate("/admin-category-put-select");
     } catch (e) {
-      appDispatch({ type: "flashMessage", value: e.response ? e.response.data.error : "Error adding category" })
-      console.error("Error adding category:", e)
+      appDispatch({
+        type: "flashMessage",
+        value: e.response ? e.response.data.error : "Error adding category",
+      });
+      console.error("Error adding category:", e);
     }
   }
 
   if (!user.token) {
-    return <p className="text-danger">Please log in as admin to add categories</p>
+    return (
+      <p className="text-danger">Please log in as admin to add categories</p>
+    );
   }
 
   return (
@@ -63,19 +74,43 @@ function AdminCategoryPost() {
             <label htmlFor="cat-name" className="form__label">
               Category Name
             </label>
-            <input value={catName} onChange={e => setCatName(e.target.value)} id="cat-name" className="form__input" type="text" placeholder="Enter category name" required /> {/* BEM Element */}
+            <input
+              value={catName}
+              onChange={(e) => setCatName(e.target.value)}
+              id="cat-name"
+              className="form__input"
+              type="text"
+              placeholder="Enter category name"
+              required
+            />{" "}
+            {/* BEM Element */}
           </div>
           <div className="form__group">
             <label htmlFor="cat-desc" className="form__label">
               Description
             </label>
-            <input value={catDesc} onChange={e => setCatDesc(e.target.value)} id="cat-desc" className="form__input" type="text" placeholder="Enter description" required />
+            <input
+              value={catDesc}
+              onChange={(e) => setCatDesc(e.target.value)}
+              id="cat-desc"
+              className="form__input"
+              type="text"
+              placeholder="Enter description"
+              required
+            />
           </div>
           <div className="form__group">
             <label htmlFor="cat-vid" className="form__label">
               Video Link
             </label>
-            <input value={catVid} onChange={e => setCatVid(e.target.value)} id="cat-vid" className="form__input" type="url" placeholder="Enter video URL (optional)" />
+            <input
+              value={catVid}
+              onChange={(e) => setCatVid(e.target.value)}
+              id="cat-vid"
+              className="form__input"
+              type="url"
+              placeholder="Enter video URL (optional)"
+            />
           </div>
           <button type="submit" className="form__button">
             Add Category
@@ -86,7 +121,7 @@ function AdminCategoryPost() {
         </Link>
       </div>
     </div>
-  )
+  );
 }
 
-export default AdminCategoryPost
+export default AdminCategoryPost;

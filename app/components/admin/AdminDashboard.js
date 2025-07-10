@@ -1,5 +1,5 @@
-import React from "react"
-import { Link } from "react-router-dom"
+import React from "react";
+import { Link } from "react-router-dom";
 
 // Make sure you import your CSS file
 // import '../styles/_dashboard.scss'; // Or .css if compiled
@@ -17,110 +17,18 @@ function AdminDashboardContent() {
               </Link>
             </div>
             <div className="dashboard__col">
-              <Link to="/admin-category-put-select" className="dashboard__button">
+              <Link
+                to="/admin-category-put-select"
+                className="dashboard__button"
+              >
                 Lookup Categories to Edit
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
-              </Link>
-            </div>
-            <div className="dashboard__col">
-              <Link to="/admin/images/add" className="dashboard__button dashboard__button--disabled" disabled>
-                Add Image (Coming Soon)
               </Link>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default AdminDashboardContent
+export default AdminDashboardContent;

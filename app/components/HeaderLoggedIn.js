@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useContext } from "react"
-import { Link } from "react-router-dom"
-import DispatchContext from "../DispatchContext.js"
-import StateContext from "../StateContext.js"
+import React, { useEffect, useState, useContext } from "react";
+import { Link } from "react-router-dom";
+import DispatchContext from "../context/DispatchContext.js";
+import StateContext from "../context/StateContext.js";
 function HeaderLoggedIn(props) {
-  const appDispatch = useContext(DispatchContext)
-  const appState = useContext(StateContext)
+  const appDispatch = useContext(DispatchContext);
+  const appState = useContext(StateContext);
 
   function handleLogOut() {
-    appDispatch({ type: "logOut" })
+    appDispatch({ type: "logOut" });
 
-    window.location = "/"
+    window.location = "/";
   }
   return (
     <div>
@@ -19,10 +19,10 @@ function HeaderLoggedIn(props) {
         </button>
       </div>
     </div>
-  )
+  );
 }
 
-export default HeaderLoggedIn
+export default HeaderLoggedIn;
 
 /*
     <div className="form-controls">
