@@ -6,7 +6,7 @@ import Axios from "axios";
 import StateContext from "./StateContext.js";
 import DispatchContext from "./DispatchContext.js";
 
-const SERVER_URL = "http://localhost:8080";
+const SERVER_URL = "https://shermanpeckproductions.com";
 const API_URL = `${SERVER_URL}/api`;
 const IMAGE_URL = `${SERVER_URL}/`;
 
