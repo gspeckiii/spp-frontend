@@ -1,3 +1,5 @@
+/* _primary-nav.css (Corrected and Final) */
+
 .primary-nav {
   &--pull-right {
     @mixin atMedium {
@@ -7,7 +9,6 @@
 
   &--desktop {
     display: none;
-
     @mixin atMedium {
       display: block;
       float: right;
@@ -22,7 +23,6 @@
 
   li {
     padding: 10px 0;
-
     @mixin atMedium {
       display: inline-block;
       padding: 0 10px;
@@ -31,93 +31,64 @@
   }
 
   &__link {
-    color: #fff;
+    color: $softWhite;
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 1.5rem;
     display: block;
     padding: 8px 20px;
-    /* === FIX: Change transition to include color for a smooth hover === */
     transition: color 0.3s ease-out;
-
     &:hover {
-      /* === FIX: Change font color on hover instead of background === */
       color: $lightRed;
     }
-
     @mixin atMedium {
       display: inline-block;
       padding: 8px 15px;
     }
   }
-
-  &__link--button {
-    background-color: #fff;
-    color: #000;
-    border-radius: 5px;
-    padding: 10px 20px;
-    text-align: center;
+  &__btn {
+    background-color: $deepRed;
+    color: $pureWhite;
+    border: none;
     width: 100%;
-    max-width: 200px;
-    margin: 0 auto;
+    padding: 1rem;
+    font-size: 1.3rem;
 
+    border-radius: 4px;
+    cursor: pointer;
     &:hover {
-      background-color: #e0e0e0;
-    }
-
-    &[type="submit"] {
-      background-color: $deepRed;
-      color: #fff;
-
-      &:hover {
-        background-color: darken($deepRed, 10%);
-      }
-    }
-
-    @mixin atMedium {
-      width: auto;
-      max-width: none;
-      padding: 8px 15px;
+      background-color: $darkRed;
     }
   }
+}
 
-  &__form {
-    margin: 0;
-    padding: 0;
+/* 
+  DELETED: All of the broken .form-controls CSS is now gone.
+*/
 
-    @mixin atMedium {
-      display: inline-flex;
-      align-items: center;
-    }
-  }
+/*
+  === THE ONE, SIMPLE FIX ===
+  This rule targets the <form> tag itself ONLY when it's inside the desktop header.
+  It applies a simple flex layout to solve the alignment issue.
+*/
+.primary-nav--desktop form {
+  @mixin atMedium {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 
-  &__group {
-    margin-bottom: 15px;
-
-    @mixin atMedium {
+    .form__group {
       margin-bottom: 0;
-      margin-right: 10px;
     }
-
-    &--dark {
-      input,
-      button {
-        background-color: #000;
-        color: #fff;
-        border: 1px solid #fff;
-      }
-    }
-  }
-
-  &__input {
-    width: 100%;
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-
-    @mixin atMedium {
+    .form__input {
+      font-size: 1.1rem;
+      padding: 0.4rem 0.8rem;
       width: 120px;
-      padding: 8px;
-      font-size: 0.9rem;
+    }
+    .form__button {
+      font-size: 1.1rem;
+      padding: 0.4rem 1rem;
+      margin-top: 0;
+      width: auto;
     }
   }
 }

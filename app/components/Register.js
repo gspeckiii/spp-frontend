@@ -1,9 +1,15 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import Axios from "axios";
 import { useImmerReducer } from "use-immer";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { CSSTransition } from "react-transition-group";
 import DispatchContext from "../context/DispatchContext";
 import FlashMessages from "./FlashMessages";
+
+// Import the specific API functions from your service file
+import {
+  checkUsernameAvailability,
+  checkEmailAvailability,
+  createUser,
+} from "../services/api";
 
 function Register() {
   const usernameRef = useRef(null);
@@ -26,11 +32,7 @@ function Register() {
       isUnique: false,
       checkCount: 0,
     },
-    password: {
-      value: "",
-      hasErrors: false,
-      message: "",
-    },
+    password: { value: "", hasErrors: false, message: "" },
     submitCount: 0,
   };
 
@@ -68,8 +70,6 @@ function Register() {
           draft.username.message = "That username is already taken.";
         } else {
           draft.username.isUnique = true;
-          draft.username.hasErrors = false;
-          draft.username.message = "";
         }
         return;
       case "emailImmediately":
@@ -92,8 +92,6 @@ function Register() {
           draft.email.message = "That email is already being used.";
         } else {
           draft.email.isUnique = true;
-          draft.email.hasErrors = false;
-          draft.email.message = "";
         }
         return;
       case "passwordImmediately":
@@ -158,80 +156,80 @@ function Register() {
 
   useEffect(() => {
     if (state.username.checkCount) {
-      const ourRequest = Axios.CancelToken.source();
-      async function fetchResults() {
+      let didCancel = false;
+      const checkUsername = async () => {
         try {
-          const response = await Axios.post(
-            "/users/checkRegUsername",
-            { username: state.username.value },
-            { cancelToken: ourRequest.token }
+          const response = await checkUsernameAvailability(
+            state.username.value
           );
-          dispatch({ type: "usernameUniqueResults", value: response.data });
+          if (!didCancel) {
+            dispatch({ type: "usernameUniqueResults", value: response.data });
+          }
         } catch (e) {
-          appDispatch({
-            type: "flashMessage",
-            value: "Error checking username availability. Please try again.",
-          });
+          if (!didCancel)
+            console.log("There was a problem checking the username.");
         }
-      }
-      fetchResults();
-      return () => ourRequest.cancel();
+      };
+      checkUsername();
+      return () => (didCancel = true);
     }
-  }, [state.username.checkCount]);
+  }, [state.username.checkCount, state.username.value]);
 
   useEffect(() => {
     if (state.email.checkCount) {
-      const ourRequest = Axios.CancelToken.source();
-      async function fetchResults() {
+      let didCancel = false;
+      const checkEmail = async () => {
         try {
-          const response = await Axios.post(
-            "/users/checkRegEmail",
-            { email: state.email.value },
-            { cancelToken: ourRequest.token }
-          );
-          dispatch({ type: "emailUniqueResults", value: response.data });
+          const response = await checkEmailAvailability(state.email.value);
+          if (!didCancel) {
+            dispatch({ type: "emailUniqueResults", value: response.data });
+          }
         } catch (e) {
-          appDispatch({
-            type: "flashMessage",
-            value: "Error checking email availability. Please try again.",
-          });
+          if (!didCancel)
+            console.log("There was a problem checking the email.");
         }
-      }
-      fetchResults();
-      return () => ourRequest.cancel();
+      };
+      checkEmail();
+      return () => (didCancel = true);
     }
-  }, [state.email.checkCount]);
+  }, [state.email.checkCount, state.email.value]);
 
   useEffect(() => {
     if (state.submitCount) {
-      const ourRequest = Axios.CancelToken.source();
-      async function fetchResults() {
+      let didCancel = false;
+      const submitRegistration = async () => {
         try {
-          const response = await Axios.post(
-            "/users",
-            {
-              username: state.username.value,
-              email: state.email.value,
-              password: state.password.value,
-            },
-            { cancelToken: ourRequest.token }
-          );
-          appDispatch({ type: "login", data: response.data });
-          appDispatch({
-            type: "flashMessage",
-            value: "Congrats! Welcome to your new account.",
+          const response = await createUser({
+            username: state.username.value,
+            email: state.email.value,
+            password: state.password.value,
           });
+          if (!didCancel) {
+            appDispatch({ type: "logIn", data: response.data });
+            appDispatch({
+              type: "flashMessage",
+              value: "Congrats! Welcome to your new account.",
+            });
+          }
         } catch (e) {
-          appDispatch({
-            type: "flashMessage",
-            value: "Registration failed. Please try again.",
-          });
+          if (!didCancel) {
+            appDispatch({
+              type: "flashMessage",
+              value: "Registration failed. Please try again.",
+            });
+          }
         }
-      }
-      fetchResults();
-      return () => ourRequest.cancel();
+      };
+      submitRegistration();
+      return () => (didCancel = true);
     }
-  }, [state.submitCount]);
+  }, [
+    state.submitCount,
+    state.username.value,
+    state.email.value,
+    state.password.value,
+    appDispatch,
+  ]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -255,7 +253,7 @@ function Register() {
   return (
     <div className="wrapper wrapper--wide">
       <div className="form">
-        <form className="form" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <div className="form__group">
             <label htmlFor="username-register" className="form__label">
               <small>Username</small>
@@ -275,10 +273,12 @@ function Register() {
               nodeRef={usernameRef}
               in={state.username.hasErrors}
               timeout={330}
-              classNames="flash-messages"
+              classNames="liveValidateMessage"
               unmountOnExit
             >
-              <FlashMessages messages={[state.username.message]} />
+              <div ref={usernameRef} className="form__validation-message">
+                {state.username.message}
+              </div>
             </CSSTransition>
           </div>
           <div className="form__group">
@@ -300,10 +300,12 @@ function Register() {
               nodeRef={emailRef}
               in={state.email.hasErrors}
               timeout={330}
-              classNames="flash-messages"
+              classNames="liveValidateMessage"
               unmountOnExit
             >
-              <FlashMessages messages={[state.email.message]} />
+              <div ref={emailRef} className="form__validation-message">
+                {state.email.message}
+              </div>
             </CSSTransition>
           </div>
           <div className="form__group">
@@ -324,14 +326,16 @@ function Register() {
               nodeRef={passwordRef}
               in={state.password.hasErrors}
               timeout={330}
-              classNames="flash-messages"
+              classNames="liveValidateMessage"
               unmountOnExit
             >
-              <FlashMessages messages={[state.password.message]} />
+              <div ref={passwordRef} className="form__validation-message">
+                {state.password.message}
+              </div>
             </CSSTransition>
           </div>
           <button type="submit" className="form__button">
-            Sign up for ComplexApp
+            Sign up
           </button>
         </form>
       </div>

@@ -1,18 +1,20 @@
-import React, { useState, useContext } from "react";
-import Axios from "axios";
+// app/components/admin/AdminCategoryImagePost.js (Refactored)
+
+import React, { useState, useContext, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
 import { CSSTransition } from "react-transition-group";
 import FlashMessages from "../FlashMessages";
+// Import the new API function
+import { updateCategoryImage } from "../../services/api";
 
 function AdminCategoryImagePost() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useContext(StateContext);
   const appDispatch = useContext(DispatchContext);
   const [image, setImage] = useState(null);
   const [validationError, setValidationError] = useState(null);
+  const validationErrorRef = useRef(null); // Ref for CSSTransition
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -22,9 +24,10 @@ function AdminCategoryImagePost() {
       return;
     }
     const validTypes = ["image/jpeg", "image/png", "image/gif"];
-    const maxSize = 5 * 1024 * 1024; // 1MB
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
     if (!validTypes.includes(file.type)) {
-      setValidationError("Image must be JPEG, PNG, or GIF.");
+      setValidationError("Image must be a JPEG, PNG, or GIF.");
       setImage(null);
     } else if (file.size > maxSize) {
       setValidationError("Image must be less than 5MB.");
@@ -38,28 +41,20 @@ function AdminCategoryImagePost() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!image) {
-      setValidationError("Please select an image.");
+      setValidationError("Please select an image to upload.");
       return;
     }
     const formData = new FormData();
     formData.append("image", image);
+
     try {
-      const token = localStorage.getItem("SPPtoken");
-      if (!token) {
-        appDispatch({
-          type: "flashMessage",
-          value: "Please log in as admin to manage images",
-        });
-        return;
-      }
-      const response = await Axios.put(`/images/category/${id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      // Use the new, clean API function
+      const response = await updateCategoryImage(id, formData);
+
+      // Note: The reducer action here is hypothetical. Make sure you have
+      // an 'updateCategoryImage' case in your GlobalStateProvider reducer.
       appDispatch({
-        type: "updateCategoryImage",
+        type: "updateCategory", // Assuming this action updates the image path
         data: {
           cat_id: parseInt(id),
           cat_img_path: response.data.cat_img_path,
@@ -69,7 +64,7 @@ function AdminCategoryImagePost() {
         type: "flashMessage",
         value: "Category image updated successfully!",
       });
-      navigate("/admin-category-put-select");
+      navigate("/admin-dashboard"); // Navigate to a more appropriate place
     } catch (e) {
       console.error("Image upload error:", e.response?.data || e.message);
       appDispatch({
@@ -80,56 +75,58 @@ function AdminCategoryImagePost() {
   };
 
   const handleCancel = () => {
-    navigate("/admin-category-put-select");
+    navigate("/admin-dashboard");
   };
 
   return (
     <div className="wrapper">
-      <div className="form">
-        <h2>Update Category Image</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form__group">
-            <label htmlFor="image" className="form__label">
-              Category Image
-            </label>
-            <input
-              type="file"
-              name="image"
-              onChange={handleFileChange}
-              className="form__input"
-              id="image"
-              accept="image/jpeg,image/png,image/gif"
-            />
-            <small style={{ color: "$softWhite", opacity: 0.7 }}>
-              Select one image (JPEG, PNG, GIF, max 5MB)
-            </small>
-            <CSSTransition
-              in={!!validationError}
-              timeout={330}
-              classNames="flash-messages"
-              unmountOnExit
-            >
-              <FlashMessages messages={[validationError]} />
-            </CSSTransition>
-          </div>
-          <div className="form__group">
-            <button
-              type="submit"
-              className="form__button"
-              disabled={!!validationError || !image}
-            >
-              Update Image
-            </button>
-            <button
-              type="button"
-              className="form__button"
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
+      <form onSubmit={handleSubmit} className="form">
+        <h2 className="form__heading">Update Category Image</h2>
+        <div className="form__group">
+          <label htmlFor="image" className="form__label">
+            Category Image File
+          </label>
+          <input
+            type="file"
+            name="image"
+            onChange={handleFileChange}
+            className="form__input"
+            id="image"
+            accept="image/jpeg,image/png,image/gif"
+          />
+          <small className="form__helper-text">
+            Select one image (JPEG, PNG, GIF, max 5MB)
+          </small>
+          <CSSTransition
+            nodeRef={validationErrorRef}
+            in={!!validationError}
+            timeout={330}
+            classNames="liveValidateMessage"
+            unmountOnExit
+          >
+            <div ref={validationErrorRef} className="form__validation-message">
+              {validationError}
+            </div>
+          </CSSTransition>
+        </div>
+        <div className="form__group">
+          <button
+            type="submit"
+            className="form__button"
+            disabled={!!validationError || !image}
+          >
+            Update Image
+          </button>
+          <button
+            type="button"
+            className="form__button"
+            style={{ marginTop: "0.5rem", backgroundColor: "#6c757d" }}
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

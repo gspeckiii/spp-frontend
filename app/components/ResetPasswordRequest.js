@@ -1,46 +1,74 @@
-import React, { useState } from "react"
-import axios from "axios"
-import Page from "./Page"
-import { useNavigate } from "react-router-dom" // Import useNavigate for redirection
+// app/components/ResetPasswordRequest.js (Refactored)
+
+import React, { useState } from "react";
+import Page from "./Page.js";
+import { useNavigate } from "react-router-dom";
+// Import the new API function
+import { requestPasswordReset } from "../services/api";
 
 function ResetPasswordRequest() {
-  const [email, setEmail] = useState("")
-  const [message, setMessage] = useState("")
-  const navigate = useNavigate() // Hook for navigation
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   async function handleSubmit(e) {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const response = await axios.post("/api/request-password-reset", { email })
-      setMessage("Password reset token sent. Redirecting to reset page...")
-      console.log("Password reset token sent to email:", response.data)
-      // Redirect to /reset-password with the token (if returned in response)
-      // Note: The current API doesn't return the token in the response, so we'll rely on the console log for now
-      navigate("/reset-password")
+      // Use the new, clean API function
+      await requestPasswordReset(email);
+      setMessage(
+        "Password reset email has been sent. Please check your inbox."
+      );
+      // We don't automatically redirect here, as the user needs to go to their email client.
     } catch (e) {
-      setMessage("Error requesting reset: " + (e.response ? e.response.data.error : e.message))
-      console.error("Error in reset request:", e)
+      console.error("Error requesting password reset:", e);
+      setMessage(
+        e.response
+          ? e.response.data.error
+          : "Error making the request. Please try again."
+      );
     }
   }
 
   return (
-    <Page title="Get Token for Password Reset">
-      <div className="col-lg-5 pl-lg-5 pb-3 py-lg-5">
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email-reset" className="text-muted mb-1">
-              <small>Email</small>
-            </label>
-            <input value={email} onChange={e => setEmail(e.target.value)} id="email-reset" name="email" className="form-control" type="text" placeholder="you@example.com" autoComplete="off" />
-          </div>
-          <button type="submit" className="py-3 mt-4 btn btn-lg btn-primary btn-block">
-            Get Token
-          </button>
-          {message && <p className="mt-2">{message}</p>}
-        </form>
-      </div>
+    <Page title="Request Password Reset">
+      {/* Use the .form class for consistent styling */}
+      <form onSubmit={handleSubmit} className="form">
+        <h2 className="form__heading">Reset Your Password</h2>
+        <p
+          className="form__helper-text"
+          style={{ textAlign: "center", marginBottom: "1.5rem" }}
+        >
+          Enter your email address and we will send you a link to reset your
+          password.
+        </p>
+
+        <div className="form__group">
+          <label htmlFor="email-reset" className="form__label">
+            Email Address
+          </label>
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            id="email-reset"
+            name="email"
+            className="form__input"
+            type="email"
+            placeholder="you@example.com"
+            autoComplete="email"
+            required
+          />
+        </div>
+
+        <button type="submit" className="form__button">
+          Send Reset Link
+        </button>
+
+        {/* Use the new helper classes for messages */}
+        {message && <p className="form__success-message">{message}</p>}
+      </form>
     </Page>
-  )
+  );
 }
 
-export default ResetPasswordRequest
+export default ResetPasswordRequest;

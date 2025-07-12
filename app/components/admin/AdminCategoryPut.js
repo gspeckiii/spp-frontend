@@ -1,50 +1,38 @@
+// app/components/admin/AdminCategoryPut.js (Refactored)
+
 import React, { useState, useEffect, useContext } from "react";
-import Axios from "axios";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
+import Page from "../Page";
+import LoadingDotsIcon from "../LoadingDotsIcon";
+// Import the new API functions
+import { getCategoryById, updateCategory } from "../../services/api";
 
 function AdminCategoryPut() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { categories } = useContext(StateContext);
+  const appState = useContext(StateContext);
   const appDispatch = useContext(DispatchContext);
-  const [category, setCategory] = useState({
-    cat_name: "",
-    cat_desc: "",
-    cat_vid: "",
-  });
-  const [loading, setLoading] = useState(true);
+
+  const [category, setCategory] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!id || isNaN(parseInt(id))) {
-      setError("Invalid category ID");
-      setLoading(false);
-      return;
-    }
-
-    async function fetchCategory() {
+    // This effect now only fetches the initial data for the form.
+    const fetchCategory = async () => {
       try {
-        const token = localStorage.getItem("SPPtoken");
-        if (!token) {
-          setError("Please log in as admin to edit categories");
-          setLoading(false);
-          return;
-        }
-        const response = await Axios.get(`/categories/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await getCategoryById(id);
         console.log("Fetched category:", response.data);
         setCategory(response.data);
-        setLoading(false);
       } catch (e) {
-        setError(
-          e.response ? e.response.data.error : "Error fetching category"
-        );
-        setLoading(false);
+        console.error("Error fetching category details:", e);
+        setError("Could not load category information.");
       }
-    }
+      setIsLoading(false);
+    };
     fetchCategory();
   }, [id]);
 
@@ -55,101 +43,131 @@ function AdminCategoryPut() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
-      const token = localStorage.getItem("SPPtoken");
-      const response = await Axios.put(`/categories/${id}`, category, {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await updateCategory(id, {
+        cat_name: category.cat_name,
+        cat_desc: category.cat_desc,
+        cat_vid: category.cat_vid || null,
       });
+
       console.log("Update response:", response.data);
-      // Find existing category to preserve prod_count
-      const existingCategory = categories.list.find(
-        (cat) => cat.cat_id === parseInt(id)
-      );
-      const updatedCategory = {
-        cat_id: parseInt(id),
-        prod_count: existingCategory ? existingCategory.prod_count : 0,
-        ...response.data,
-      };
+
       appDispatch({
         type: "updateCategory",
-        data: updatedCategory,
+        data: response.data, // The API should return the complete, updated category object
       });
       appDispatch({
         type: "flashMessage",
         value: "Category updated successfully!",
       });
-      navigate("/admin-category-put-select");
+      navigate("/admin-dashboard");
     } catch (e) {
       appDispatch({
         type: "flashMessage",
-        value: e.response ? e.response.data.error : "Error updating category",
+        value: e.response?.data?.error || "Error updating category",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="text-danger">{error}</p>;
+  // Security check
+  if (!appState.user.admin) {
+    return (
+      <Page title="Unauthorized">
+        <p className="text-center text-danger">You do not have permission.</p>
+      </Page>
+    );
+  }
+  if (isLoading) {
+    return (
+      <Page title="Loading...">
+        <LoadingDotsIcon />
+      </Page>
+    );
+  }
+  if (error) {
+    return (
+      <Page title="Error">
+        <p className="text-center text-danger">{error}</p>
+      </Page>
+    );
+  }
 
   return (
-    <div className="wrapper">
-      <div className="form">
-        <div className="form__heading">
-          <h1>Manage Products</h1>
-          <Link to={`/admin-product-put-select/${id}`} className="btn">
-            View/Manage Products
+    <Page title={`Edit Category: ${category?.cat_name}`}>
+      <form onSubmit={handleSubmit} className="form">
+        <div
+          className="form__heading"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <h2>Edit Category</h2>
+          <Link
+            to={`/admin-product-put-select/${id}`}
+            className="form__button"
+            style={{ marginTop: 0, padding: "0.5rem 1rem" }}
+          >
+            Manage Products
           </Link>
         </div>
 
-        <h2>Edit Category</h2>
-        <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-          <div className="form-group">
-            <label htmlFor="cat_name" className="form__label">
-              Category Name
-            </label>
-            <input
-              type="text"
-              name="cat_name"
-              value={category.cat_name}
-              onChange={handleChange}
-              className="form__input"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="cat_desc" className="form__label">
-              Description
-            </label>
-            <input
-              type="text"
-              name="cat_desc"
-              value={category.cat_desc}
-              onChange={handleChange}
-              className="form__input"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="cat_vid" className="form__label">
-              Video Link
-            </label>
-            <input
-              type="url"
-              name="cat_vid"
-              value={category.cat_vid || ""}
-              onChange={handleChange}
-              className="form__input"
-            />
-          </div>
-          <button type="submit" className="form__button">
-            Update Category
-          </button>
-        </form>
+        <div className="form__group">
+          <label htmlFor="cat_name" className="form__label">
+            Category Name
+          </label>
+          <input
+            type="text"
+            name="cat_name"
+            value={category.cat_name}
+            onChange={handleChange}
+            className="form__input"
+            required
+          />
+        </div>
 
-        <Link to="/admin-category-put-select" className="form__button">
-          Back to Categories
+        <div className="form__group">
+          <label htmlFor="cat_desc" className="form__label">
+            Description
+          </label>
+          <input
+            type="text"
+            name="cat_desc"
+            value={category.cat_desc}
+            onChange={handleChange}
+            className="form__input"
+            required
+          />
+        </div>
+
+        <div className="form__group">
+          <label htmlFor="cat_vid" className="form__label">
+            Video Link
+          </label>
+          <input
+            type="url"
+            name="cat_vid"
+            value={category.cat_vid || ""}
+            onChange={handleChange}
+            className="form__input"
+          />
+        </div>
+
+        <button type="submit" className="form__button" disabled={isSubmitting}>
+          {isSubmitting ? "Saving..." : "Update Category"}
+        </button>
+        <Link
+          to="/admin-dashboard"
+          className="form__button form__button--secondary"
+        >
+          Back to Dashboard
         </Link>
-      </div>
-    </div>
+      </form>
+    </Page>
   );
 }
 

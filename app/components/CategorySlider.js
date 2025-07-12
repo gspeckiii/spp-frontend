@@ -3,124 +3,61 @@ import { Link } from "react-router-dom";
 import StateContext from "../context/StateContext";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
+import LoadingDotsIcon from "./LoadingDotsIcon";
 
 function CategorySlider() {
-  const { categories } = useContext(StateContext);
+  const appState = useContext(StateContext);
+  const { urls, categories } = appState;
   const [productCounts, setProductCounts] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [localCategories, setLocalCategories] = useState([]);
-
-  const memoizedCategories = useMemo(
-    () => categories?.list || [],
-    [categories]
+  const localCategories = useMemo(
+    () => categories.list || [],
+    [categories.list]
   );
 
   useEffect(() => {
-    console.log("CategorySlider mounted");
-    const fetchCategories = async () => {
-      if (
-        memoizedCategories &&
-        Array.isArray(memoizedCategories) &&
-        memoizedCategories.length > 0
-      ) {
-        console.log("Using StateContext categories:", memoizedCategories);
-        setLocalCategories(memoizedCategories);
-        setIsLoading(false);
-        return;
-      }
+    if (localCategories.length === 0) return;
 
-      console.log("No categories in StateContext, fetching categories...");
-      try {
-        const response = await fetch("http://localhost:8080/api/categories");
-        if (response.ok) {
-          const fetchedCategories = await response.json();
-          console.log("Fetched categories:", fetchedCategories);
-          setLocalCategories(
-            Array.isArray(fetchedCategories) ? fetchedCategories : []
-          );
-        } else {
-          console.error(
-            "Failed to fetch categories:",
-            response.status,
-            response.statusText
-          );
-          setLocalCategories([]);
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error.message);
-        setLocalCategories([]);
-      }
-      setIsLoading(false);
-    };
-
-    fetchCategories();
-    return () => console.log("CategorySlider unmounted");
-  }, [memoizedCategories]);
-
-  useEffect(() => {
     const fetchProductCounts = async () => {
-      if (
-        !localCategories ||
-        !Array.isArray(localCategories) ||
-        localCategories.length === 0
-      ) {
-        console.log("No categories to fetch product counts for");
-        return;
-      }
-
-      console.log("Fetching product counts for categories:", localCategories);
-      const counts = {};
-      for (const category of localCategories) {
-        if (category.cat_id) {
-          try {
-            const response = await fetch(
-              `http://localhost:8080/api/products/category/${category.cat_id}`
-            );
-            if (response.ok) {
-              const products = await response.json();
-              console.log(
-                `Products for category ${category.cat_id}:`,
-                products
-              );
-              counts[category.cat_id] = Array.isArray(products)
-                ? products.length
-                : 0;
-            } else {
-              console.error(
-                `Failed to fetch products for category ${category.cat_id}:`,
-                response.status,
-                response.statusText
-              );
-              counts[category.cat_id] = 0;
-            }
-          } catch (error) {
-            console.error(
-              `Error fetching products for category ${category.cat_id}:`,
-              error.message
-            );
-            counts[category.cat_id] = 0;
+      const promises = localCategories.map(async (category) => {
+        if (!category.cat_id) return [category.cat_id, 0];
+        try {
+          const response = await fetch(
+            `${urls.api}/products/category/${category.cat_id}`
+          );
+          if (response.ok) {
+            const products = await response.json();
+            return [
+              category.cat_id,
+              Array.isArray(products) ? products.length : 0,
+            ];
           }
+          return [category.cat_id, 0];
+        } catch (error) {
+          console.error(
+            `Error fetching products for category ${category.cat_id}:`,
+            error.message
+          );
+          return [category.cat_id, 0];
         }
-      }
+      });
+
+      const results = await Promise.all(promises);
+      const counts = Object.fromEntries(results);
       setProductCounts(counts);
-      console.log("Updated product counts:", counts);
     };
 
     fetchProductCounts();
-  }, [localCategories]);
+  }, [localCategories, urls.api]);
 
-  if (isLoading) {
+  if (categories.loading) {
     return (
-      <div className="swiper-container-wrapper">Loading categories...</div>
+      <div className="swiper-container-wrapper">
+        <LoadingDotsIcon />
+      </div>
     );
   }
 
-  if (
-    !localCategories ||
-    !Array.isArray(localCategories) ||
-    localCategories.length === 0
-  ) {
-    console.log("No categories available in localCategories");
+  if (localCategories.length === 0) {
     return (
       <div className="swiper-container-wrapper">No categories available</div>
     );
@@ -131,19 +68,12 @@ function CategorySlider() {
   );
 
   if (categoriesWithImages.length === 0) {
-    console.log("No categories with images in localCategories");
     return (
       <div className="swiper-container-wrapper">
         No category images available
       </div>
     );
   }
-
-  categoriesWithImages.forEach((cat) => {
-    console.log(
-      `Category ${cat.cat_id} image path: http://localhost:8080/${cat.cat_img_path}`
-    );
-  });
 
   return (
     <div className="swiper-container-wrapper">
@@ -154,7 +84,6 @@ function CategorySlider() {
         navigation
         className="swiper"
         breakpoints={{
-          // Adjusted breakpoints for better scaling
           640: { slidesPerView: 2, spaceBetween: 20 },
           1024: { slidesPerView: 3, spaceBetween: 30 },
         }}
@@ -165,17 +94,13 @@ function CategorySlider() {
               <img
                 src={
                   category.cat_img_path
-                    ? `http://localhost:8080/${category.cat_img_path}`
-                    : "http://localhost:8080/assets/images/default.jpg"
+                    ? `${urls.images}${category.cat_img_path}`
+                    : "/assets/images/default.jpg"
                 }
                 alt={category.cat_name || "Category"}
                 className="swiper-slide__image"
                 onError={(e) => {
-                  e.target.src =
-                    "http://localhost:8080/assets/images/default.jpg";
-                  console.log(
-                    `Image load failed for category ${category.cat_id}: http://localhost:8080/${category.cat_img_path}`
-                  );
+                  e.target.src = "/assets/images/default.jpg";
                 }}
               />
               <div className="swiper-slide__content">
@@ -204,12 +129,6 @@ function CategorySlider() {
                         src="/assets/images/icons/youtube.svg"
                         alt="Watch on YouTube"
                         className="swiper-slide__youtube-icon"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                          console.log(
-                            `YouTube icon load failed for category ${category.cat_id}`
-                          );
-                        }}
                       />
                     </a>
                   ) : (
@@ -217,11 +136,11 @@ function CategorySlider() {
                   )}
                   <Link
                     to={`/category/${category.cat_id}/products`}
-                    className="swiper-slide__product-count number-in-circle"
+                    className="swiper-slide__product-count-circle"
                   >
                     {productCounts[category.cat_id] !== undefined
-                      ? `${productCounts[category.cat_id]} `
-                      : "Loading..."}
+                      ? productCounts[category.cat_id]
+                      : "..."}
                   </Link>
                 </div>
               </div>

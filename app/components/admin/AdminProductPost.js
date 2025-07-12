@@ -1,14 +1,20 @@
+// app/components/admin/AdminProductPost.js (Refactored)
+
 import React, { useState, useEffect, useContext } from "react";
-import Axios from "axios";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
+import Page from "../Page";
+import LoadingDotsIcon from "../LoadingDotsIcon";
+// Import the new API functions
+import { getCategoryById, createProduct } from "../../services/api";
 
 function AdminProductPost() {
-  const { id } = useParams();
+  const { id } = useParams(); // This is the category ID
   const navigate = useNavigate();
   const { user } = useContext(StateContext);
   const appDispatch = useContext(DispatchContext);
+
   const [product, setProduct] = useState({
     prod_name: "",
     prod_desc: "",
@@ -16,30 +22,20 @@ function AdminProductPost() {
     cat_fk: id || "",
   });
   const [categoryName, setCategoryName] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchCategory() {
+    const fetchCategory = async () => {
       try {
-        const token = localStorage.getItem("SPPtoken");
-        if (!token) {
-          setError("Please log in as admin to add products");
-          setLoading(false);
-          return;
-        }
-        const response = await Axios.get(`/categories/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await getCategoryById(id);
         setCategoryName(response.data.cat_name || "Unknown Category");
-        setLoading(false);
       } catch (e) {
-        setError(
-          e.response ? e.response.data.error : "Error fetching category"
-        );
-        setLoading(false);
+        setError("Error fetching category details.");
       }
-    }
+      setIsLoading(false);
+    };
     fetchCategory();
   }, [id]);
 
@@ -50,31 +46,24 @@ function AdminProductPost() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
-      const token = localStorage.getItem("SPPtoken");
-      if (!token) {
-        appDispatch({
-          type: "flashMessage",
-          value: "Please log in as admin to add products",
-        });
-        return;
-      }
-      const response = await Axios.post("/products", product, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log("Create product response:", response.data);
+      await createProduct(product);
+
       appDispatch({ type: "incrementProdCount", data: parseInt(id) });
       appDispatch({
         type: "flashMessage",
         value: "Product added successfully!",
       });
-      setProduct({ prod_name: "", prod_desc: "", prod_cost: "", cat_fk: id });
+
       navigate(`/admin-product-put-select/${id}`);
     } catch (e) {
       appDispatch({
         type: "flashMessage",
-        value: e.response ? e.response.data.error : "Error adding product",
+        value: e.response?.data?.error || "Error adding product",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -82,90 +71,85 @@ function AdminProductPost() {
     navigate(`/admin-product-put-select/${id}`);
   };
 
-  if (loading)
+  if (!user.admin) {
     return (
-      <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}>
-        Loading...
-      </p>
+      <Page title="Unauthorized">
+        <p className="text-center text-danger">You do not have permission.</p>
+      </Page>
     );
-  if (error)
+  }
+  if (isLoading) {
     return (
-      <p
-        style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 400 }}
-        className="text-danger"
-      >
-        {error}
-      </p>
+      <Page title="Loading...">
+        <LoadingDotsIcon />
+      </Page>
     );
+  }
+  if (error) {
+    return (
+      <Page title="Error">
+        <p className="text-center text-danger">{error}</p>
+      </Page>
+    );
+  }
 
   return (
-    <div className="wrapper">
-      <div className="form">
-        <h2>Add Product to {categoryName}</h2>
-        <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-          <div className="form__group">
-            <label htmlFor="prod_name" className="form_label">
-              Product Name
-            </label>
-            <input
-              type="text"
-              name="prod_name"
-              value={product.prod_name}
-              onChange={handleChange}
-              className="form__input"
-              required
-            />
-            <div className="invalid-feedback">
-              Please provide a product name.
-            </div>
-          </div>
-          <div className="form__group">
-            <label htmlFor="prod_desc" className="form_label">
-              Description
-            </label>
-            <input
-              type="text"
-              name="prod_desc"
-              value={product.prod_desc}
-              onChange={handleChange}
-              className="form__input"
-              required
-            />
-            <div className="invalid-feedback">
-              Please provide a description.
-            </div>
-          </div>
-          <div className="form__group">
-            <label htmlFor="prod_cost" className="form_label">
-              Cost
-            </label>
-            <input
-              type="number"
-              name="prod_cost"
-              value={product.prod_cost}
-              onChange={handleChange}
-              className="form__input"
-              step="0.01"
-              required
-            />
-            <div className="invalid-feedback">Please provide a valid cost.</div>
-          </div>
+    <Page title={`Add Product to ${categoryName}`}>
+      <form onSubmit={handleSubmit} className="form">
+        <h2 className="form__heading">Add Product to {categoryName}</h2>
+        <div className="form__group">
+          <label htmlFor="prod_name" className="form__label">
+            Product Name
+          </label>
+          <input
+            type="text"
+            name="prod_name"
+            value={product.prod_name}
+            onChange={handleChange}
+            className="form__input"
+            required
+          />
+        </div>
+        <div className="form__group">
+          <label htmlFor="prod_desc" className="form__label">
+            Description
+          </label>
+          <input
+            type="text"
+            name="prod_desc"
+            value={product.prod_desc}
+            onChange={handleChange}
+            className="form__input"
+            required
+          />
+        </div>
+        <div className="form__group">
+          <label htmlFor="prod_cost" className="form__label">
+            Cost
+          </label>
+          <input
+            type="number"
+            name="prod_cost"
+            value={product.prod_cost}
+            onChange={handleChange}
+            className="form__input"
+            step="0.01"
+            required
+          />
+        </div>
 
-          <div className="d-flex justify-content-between mt-4">
-            <button type="submit" className="form__button">
-              Add Product
-            </button>
-            <button
-              type="button"
-              className="form__button"
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <button type="submit" className="form__button" disabled={isSubmitting}>
+          {isSubmitting ? "Adding..." : "Add Product"}
+        </button>
+        <button
+          type="button"
+          className="form__button form__button--secondary"
+          onClick={handleCancel}
+        >
+          Cancel
+        </button>
+      </form>
+    </Page>
   );
 }
 

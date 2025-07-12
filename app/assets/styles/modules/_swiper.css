@@ -1,3 +1,6 @@
+/* _swiper.css (Corrected and Cleaned) */
+
+/* --- SHARED SWIPER STYLES --- */
 .swiper-container-wrapper {
   display: flex;
   flex-grow: 1;
@@ -6,20 +9,17 @@
   position: relative;
   z-index: 1;
 }
-
 .swiper {
   width: 100%;
   height: 100%;
   padding: 10px;
   box-sizing: border-box;
 }
-
 .swiper-slide {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
 .swiper-slide__card {
   position: relative;
   display: flex;
@@ -32,29 +32,23 @@
   height: auto;
   border: 10px solid $softBlack;
 }
-
 .swiper-slide__image {
   width: 100%;
   height: auto;
   display: block;
   border-radius: 2px;
 }
-
 .swiper-slide__content {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 1rem 0.5rem;
-  /* Ensure content area can grow if needed */
   flex-grow: 1;
 }
-
-/* === FIX #1: Remove underline from category links === */
 .swiper-slide__link {
   text-decoration: none;
-  color: inherit; /* Makes the text inside the link use the parent's color */
+  color: inherit;
 }
-
 .swiper-slide__title {
   color: #fff;
   text-align: center;
@@ -62,7 +56,6 @@
   margin: 0;
   font-size: 1.25rem;
 }
-
 .swiper-slide__subtitle,
 .swiper-slide__description {
   color: #ddd;
@@ -71,15 +64,6 @@
   margin: 0.5rem 0 0;
   font-size: 1rem;
 }
-
-.swiper-slide__cost {
-  color: $lightGreen;
-  text-align: center;
-  font-weight: bold;
-  margin: 1rem 0 0;
-  font-size: 1.1rem;
-}
-
 .swiper-slide__image-desc {
   color: #aaa;
   font-style: italic;
@@ -87,97 +71,98 @@
   margin-top: 1rem;
   font-size: 0.8rem;
 }
-
-/* This is the main container for your footer */
 .swiper-slide__footer {
-  display: flex; /* Activates Flexbox */
-  justify-content: space-between; /* Pushes children to opposite ends */
-  align-items: center; /* Vertically aligns items in the middle */
-  width: 100%;
-  padding: 8px; /* Add some padding if needed */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
 }
 
-/* Your icon styling */
+/* --- CATEGORY SLIDER SPECIFIC STYLES --- */
 .swiper-slide__youtube-icon {
   width: 32px;
   height: auto;
 }
-
-/* This styles the circle for the product count */
-.swiper-slide__prod-count {
-  /* Sizing and Shape */
-  min-width: 28px; /* Use min-width to handle double-digit numbers */
-  height: 28px;
-  border-radius: 50%; /* This makes it a perfect circle */
-
-  /* Color and Font */
-  background-color: white;
-  color: black;
-  font-weight: bold;
-  font-size: 14px;
-
-  /* Centering the number inside the circle */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  /* Smooth transition for the hover effect */
-  transition: background-color 0.3s ease, color 0.3s ease;
+.swiper-slide__youtube-placeholder {
+  width: 32px;
+  height: 22px;
 }
 
-/* This handles the hover effect */
-.swiper-slide__prod-count:hover {
-  background-color: #ff6b6b; /* Replace with your $lightRed value */
-  color: white;
-  cursor: pointer; /* Optional: Makes it look clickable */
-}
-
-.number-in-circle {
-  /* Shape and Color */
+/* === THE FIX: CONSOLIDATED AND CORRECTED CIRCLE STYLE === */
+.swiper-slide__product-count-circle {
   display: inline-flex;
-  width: 32px; /* Set width and height to be equal */
-  height: 32px;
-  background-color: $lightRed;
-  border-radius: 50%; /* This makes the square a perfect circle */
-
-  /* Centering the number inside the circle */
   justify-content: center;
   align-items: center;
-
-  /* Text Styling */
-  color: black; /* Make the number's color visible on a white background */
+  min-width: 32px;
+  height: 32px;
+  padding: 0 5px;
+  background-color: $softWhite;
+  color: $softBlack;
+  border-radius: 50%;
   font-weight: bold;
-  text-decoration: none; /* This removes the underline from the link */
+  font-size: 1rem;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 
-  /* Optional: Add a subtle hover effect */
-  transition: transform 0.2s ease;
+  &:hover {
+    transform: scale(1.1);
+    background-color: $lightRed;
+    color: $softWhite;
+  }
 }
 
-.number-in-circle:hover {
-  transform: scale(1.1); /* Slightly enlarges the circle on hover */
+/* --- PRODUCT SLIDER SPECIFIC STYLES --- */
+.product-slide__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+.product-slide__back-arrow {
+  display: block;
+  width: 50px;
+  height: 50px;
+  transition: transform 0.2s ease-out;
+}
+.product-slide__back-arrow:hover {
+  transform: scale(1.1);
+}
+.product-slide__back-arrow img {
+  width: 100%;
+  height: 100%;
+}
+.product-slide__cost-button {
+  background-color: $deepRed;
+  color: $softWhite;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: background-color 0.2s ease-out;
+}
+.product-slide__cost-button:hover {
+  background-color: $darkRed;
 }
 
-/* Responsive Enhancements (Mobile-First) */
-
+/* --- RESPONSIVE ENHANCEMENTS for BOTH --- */
 @mixin atSmall {
   .swiper-slide__title {
     font-size: 1.5rem;
   }
-  .swiper-slide__subtitle,
   .swiper-slide__description {
     font-size: 1.1rem;
   }
-  .swiper-slide__cost {
-    font-size: 1.25rem;
+  .swiper-slide__cost-button {
+    font-size: 1.2rem;
   }
   .swiper-slide__image-desc {
     font-size: 0.9rem;
   }
-  .swiper-slide__product-count {
+  .swiper-slide__product-count-circle {
     font-size: 1.1rem;
   }
 }
-
 @mixin atMedium {
   .swiper-slide__card {
     border-width: 12px;
@@ -185,15 +170,19 @@
   .swiper-slide__title {
     font-size: 1.75rem;
   }
-  .swiper-slide__subtitle,
   .swiper-slide__description {
     font-size: 1.25rem;
   }
-  .swiper-slide__cost {
-    font-size: 1.5rem;
+  .swiper-slide__cost-button {
+    font-size: 1.4rem;
+    padding: 0.75rem 2rem;
   }
   .swiper-slide__image-desc {
     font-size: 1rem;
+  }
+  .swiper-slide__back-arrow {
+    width: 60px;
+    height: 60px;
   }
   .swiper-slide__youtube-icon {
     width: 40px;
@@ -202,13 +191,12 @@
     width: 40px;
     height: 28px;
   }
-  .swiper-slide__product-count {
-    font-size: 1.25rem;
-    display: flex;
-    align-content: end;
+  .swiper-slide__product-count-circle {
+    min-width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
   }
 }
-
 @mixin atLarge {
   .swiper-slide__card {
     border-width: 15px;
@@ -216,15 +204,19 @@
   .swiper-slide__title {
     font-size: 2.25rem;
   }
-  .swiper-slide__subtitle,
   .swiper-slide__description {
     font-size: 1.5rem;
   }
-  .swiper-slide__cost {
-    font-size: 1.75rem;
+  .swiper-slide__cost-button {
+    font-size: 1.6rem;
+    padding: 0.8rem 2.2rem;
   }
   .swiper-slide__image-desc {
     font-size: 1.1rem;
+  }
+  .swiper-slide__back-arrow {
+    width: 70px;
+    height: 70px;
   }
   .swiper-slide__youtube-icon {
     width: 48px;
@@ -233,80 +225,9 @@
     width: 48px;
     height: 34px;
   }
-  .swiper-slide__product-count {
-    font-size: 1.5rem;
-  }
-}
-/*
-  === ADD THESE NEW STYLES TO THE END OF _swiper.css ===
-*/
-
-/* --- PRODUCT SLIDER SPECIFIC STYLES --- */
-
-.product-slide__footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1.5rem; /* Space above the footer */
-}
-
-.product-slide__back-arrow {
-  display: block;
-  width: 50px;
-  height: 50px;
-  transition: transform 0.2s ease-out;
-}
-
-.product-slide__back-arrow:hover {
-  transform: scale(1.1);
-}
-
-.product-slide__back-arrow img {
-  width: 100%;
-  height: 100%;
-}
-
-.product-slide__cost-button {
-  background-color: $deepRed;
-  color: $softWhite;
-  padding: 0.5rem 1.5rem;
-  border-radius: 50px; /* Pill shape */
-  font-weight: bold;
-  text-decoration: none;
-  font-size: 1.1rem;
-  transition: background-color 0.2s ease-out;
-}
-
-.product-slide__cost-button:hover {
-  background-color: $darkRed;
-}
-
-/* --- Responsive Enhancements for Product Slider Elements --- */
-
-@mixin atSmall {
-  .product-slide__cost-button {
-    font-size: 1.2rem;
-  }
-}
-
-@mixin atMedium {
-  .product-slide__cost-button {
-    font-size: 1.4rem;
-    padding: 0.75rem 2rem;
-  }
-  .product-slide__back-arrow {
-    width: 60px;
-    height: 60px;
-  }
-}
-
-@mixin atLarge {
-  .product-slide__cost-button {
-    font-size: 1.6rem;
-    padding: 0.8rem 2.2rem;
-  }
-  .product-slide__back-arrow {
-    width: 70px;
-    height: 70px;
+  .swiper-slide__product-count-circle {
+    min-width: 44px;
+    height: 44px;
+    font-size: 1.3rem;
   }
 }

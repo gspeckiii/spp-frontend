@@ -86,7 +86,8 @@
     font-size: 0.875rem;
     line-height: 1.5;
     border-radius: 0.25rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+      border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     text-decoration: none;
     cursor: pointer;
     margin-right: 0.5rem;
@@ -160,5 +161,20 @@
 
   &__back-button-container {
     margin-bottom: 1rem;
+  }
+}
+/* Add this to a relevant CSS file */
+.table-select__thumbnail {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: contain;
+  vertical-align: middle; /* Helps with table cell alignment */
+}
+
+.table-select__button--danger {
+  background-color: $deepRed;
+  color: $softWhite;
+  &:hover {
+    background-color: $darkRed;
   }
 }

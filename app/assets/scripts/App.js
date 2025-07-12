@@ -3,7 +3,7 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import Axios from "axios";
+
 import "lazysizes";
 import "../styles/styles.css";
 
@@ -17,10 +17,6 @@ import StateContext from "../../context/StateContext.js"; // This is also needed
 import Header from "../../components/Header.js";
 import Footer from "../../components/Footer.js";
 import FlashMessages from "../../components/FlashMessages.js";
-
-// Global configuration can stay here
-Axios.defaults.baseURL = process.env.API_URL || "http://localhost:8080/api";
-console.log("Axios baseURL set to:", Axios.defaults.baseURL);
 
 class ErrorBoundary extends Component {
   state = { hasError: false };

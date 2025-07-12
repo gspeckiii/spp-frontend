@@ -5,7 +5,15 @@
   max-width: 1236px;
   margin-left: auto;
   margin-right: auto;
-
+  &--dark {
+    background-color: rgba(28, 37, 38, 0.67);
+  }
+  &--center {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+  }
   &--medium {
     max-width: 976px;
   }
@@ -32,11 +40,6 @@
       padding-left: 18px;
       padding-right: 18px;
     }
-  }
-
-  .wrapper {
-    padding-left: 0;
-    padding-right: 0;
   }
 
   &--b-margin {

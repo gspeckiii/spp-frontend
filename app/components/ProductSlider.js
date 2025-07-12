@@ -11,6 +11,9 @@ function ProductSlider() {
   const appState = useContext(StateContext);
   const navigate = useNavigate();
 
+  // Destructure the URLs from the global state for easy use
+  const { urls } = appState;
+
   const [products, setProducts] = useState([]);
   const [productImages, setProductImages] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -18,13 +21,15 @@ function ProductSlider() {
 
   const memoizedProducts = useMemo(() => products, [products]);
 
-  // === Using YOUR working data fetching logic ===
+  // Fetch products for the category
   useEffect(() => {
+    // Check if urls are available before fetching
+    if (!urls.api) return;
+
     const fetchProducts = async () => {
+      setIsLoading(true);
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/products/category/${id}`
-        );
+        const response = await fetch(`${urls.api}/products/category/${id}`);
         if (response.ok) {
           const fetchedProducts = await response.json();
           setProducts(Array.isArray(fetchedProducts) ? fetchedProducts : []);
@@ -37,23 +42,25 @@ function ProductSlider() {
         setError("Failed to load products");
         setProducts([]);
       }
-      setIsLoading(false); // This was a key part of the original logic
+      setIsLoading(false);
     };
     fetchProducts();
-  }, [id]);
+  }, [id, urls.api]); // Depend on urls.api
 
+  // Fetch one image per product
   useEffect(() => {
+    // Check if urls are available and there are products to fetch for
+    if (!urls.api || memoizedProducts.length === 0) {
+      return;
+    }
+
     const fetchProductImages = async () => {
-      if (!memoizedProducts || memoizedProducts.length === 0) {
-        // No need to set loading false here, as the first effect handles it
-        return;
-      }
       const images = {};
       for (const product of memoizedProducts) {
         if (product.id) {
           try {
             const response = await fetch(
-              `http://localhost:8080/api/products/${product.id}/images`
+              `${urls.api}/products/${product.id}/images`
             );
             if (response.ok) {
               const fetchedImages = await response.json();
@@ -75,18 +82,15 @@ function ProductSlider() {
       setProductImages(images);
     };
     fetchProductImages();
-  }, [memoizedProducts]);
-  // === End of your working data fetching logic ===
+  }, [memoizedProducts, urls.api]); // Depend on urls.api
 
   const handleOrderClick = (e, product) => {
-    // This is the correct navigation logic
     if (!appState.loggedIn) {
       e.preventDefault();
       navigate("/");
     }
   };
 
-  // The loading/error states
   if (error) {
     return (
       <Page title="Error">
@@ -120,6 +124,10 @@ function ProductSlider() {
           slidesPerView={1}
           navigation
           className="swiper"
+          breakpoints={{
+            640: { slidesPerView: 2, spaceBetween: 20 },
+            1024: { slidesPerView: 3, spaceBetween: 30 },
+          }}
         >
           {products.map((product) => (
             <SwiperSlide key={product.id}>
@@ -127,9 +135,8 @@ function ProductSlider() {
                 <img
                   src={
                     productImages[product.id]?.img_path
-                      ? `http://localhost:8080/${
-                          productImages[product.id].img_path
-                        }`
+                      ? // === THE FIX: Use the IMAGE_URL from context ===
+                        `${urls.images}${productImages[product.id].img_path}`
                       : "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
                   }
                   alt={product.prod_name || "Product"}

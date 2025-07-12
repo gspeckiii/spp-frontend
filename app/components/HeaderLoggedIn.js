@@ -14,7 +14,7 @@ function HeaderLoggedIn(props) {
   return (
     <div>
       <div className="site-header__btn-container">
-        <button onClick={handleLogOut} className="form-controls__button">
+        <button onClick={handleLogOut} className="primary-nav__btn">
           Sign Out
         </button>
       </div>
@@ -23,21 +23,3 @@ function HeaderLoggedIn(props) {
 }
 
 export default HeaderLoggedIn;
-
-/*
-    <div className="form-controls">
-      <Link to={`/profile/${appState.username}`}>
-        <img className="site-header__icon" src={appState.user.avatar} />
-      </Link>
-      <Link to="/orders">
-      Orders
-      </Link>
-     
-      <div className="form-controls__group form-controls__group--dark">
-        <button onClick={handleLogOut} className="form-controls__button form-controls--small">
-          Sign Out
-        </button>
-      </div>
-    </div>
-
-*/

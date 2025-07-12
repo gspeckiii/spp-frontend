@@ -1,69 +1,38 @@
+// app/components/admin/AdminProductImagePut.js (Refactored)
+
 import React, { useState, useEffect, useContext } from "react";
-import Axios from "axios";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
+import Page from "../Page";
+import LoadingDotsIcon from "../LoadingDotsIcon";
+// Import the new API functions
+import { getImageById, updateImage } from "../../services/api";
 
 function AdminProductImagePut() {
-  const { id } = useParams();
+  const { id } = useParams(); // This is the image ID
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useContext(StateContext);
+  const appState = useContext(StateContext);
   const appDispatch = useContext(DispatchContext);
-  const [image, setImage] = useState({
-    img_desc: "",
-    img_order: 0,
-    img_media: 0,
-    img_path: "",
-  });
-  const [loading, setLoading] = useState(true);
+
+  const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchImage() {
+    const fetchImage = async () => {
       try {
-        console.log("Fetching image with ID:", id);
-        const token = localStorage.getItem("SPPtoken");
-        if (!token) {
-          appDispatch({
-            type: "flashMessage",
-            value: "Please log in as admin to edit images",
-          });
-          setLoading(false);
-          return;
-        }
-        const response = await Axios.get(`/images/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("API Response:", response.data);
-        setImage({
-          img_desc: response.data.img_desc || "",
-          img_order: response.data.img_order || 0,
-          img_media: response.data.img_media || 0,
-          img_path: response.data.img_path || "",
-        });
-        setLoading(false);
+        const response = await getImageById(id);
+        setImage(response.data);
       } catch (e) {
-        appDispatch({
-          type: "flashMessage",
-          value: e.response
-            ? e.response.data.error || "Image not found"
-            : "Error fetching image",
-        });
-        console.error(
-          "Fetch error:",
-          e.response ? e.response.status : e.message
-        );
-        const productId = location.state?.productId;
-        navigate(
-          productId
-            ? `/admin-product-image-put-select/${productId}`
-            : "/admin-category-put-select"
-        );
-        setLoading(false);
+        setError("Could not load image details.");
       }
-    }
+      setIsLoading(false);
+    };
     fetchImage();
-  }, [id, appDispatch, navigate, location.state]);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -72,42 +41,34 @@ function AdminProductImagePut() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting image data:", image);
+    setIsSubmitting(true);
     const updatedData = {
       img_desc: image.img_desc,
       img_order: parseInt(image.img_order) || 0,
       img_media: parseInt(image.img_media) || 0,
     };
-    console.log("Parsed data:", updatedData);
-    if (isNaN(updatedData.img_order) || isNaN(updatedData.img_media)) {
-      appDispatch({
-        type: "flashMessage",
-        value: "Order and Media Type must be valid numbers",
-      });
-      return;
-    }
+
     try {
-      const token = localStorage.getItem("SPPtoken");
-      const response = await Axios.put(`/images/${id}`, updatedData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log("Update image response:", response.data);
+      await updateImage(id, updatedData);
+
       appDispatch({
         type: "flashMessage",
-        value: "Image updated successfully!",
+        value: "Image metadata updated successfully!",
       });
+
       const productId = location.state?.productId;
       navigate(
         productId
           ? `/admin-product-image-put-select/${productId}`
-          : "/admin-category-put-select"
+          : "/admin-dashboard"
       );
     } catch (e) {
       appDispatch({
         type: "flashMessage",
-        value: e.response ? e.response.data.error : "Error updating image",
+        value: e.response?.data?.error || "Error updating image",
       });
-      console.error("Update error:", e);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -116,84 +77,110 @@ function AdminProductImagePut() {
     navigate(
       productId
         ? `/admin-product-image-put-select/${productId}`
-        : "/admin-category-put-select"
+        : "/admin-dashboard"
     );
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (!appState.user.admin) {
+    return (
+      <Page title="Unauthorized">
+        <p className="text-center text-danger">You do not have permission.</p>
+      </Page>
+    );
+  }
+  if (isLoading) {
+    return (
+      <Page title="Loading...">
+        <LoadingDotsIcon />
+      </Page>
+    );
+  }
+  if (error || !image) {
+    return (
+      <Page title="Error">
+        <p className="text-center text-danger">{error || "Image not found."}</p>
+      </Page>
+    );
+  }
 
   return (
-    <div className="wrapper">
-      <div className="form">
-        <h2>Editing: {image.img_path}</h2>
+    <Page title="Edit Image Metadata">
+      <form onSubmit={handleSubmit} className="form">
+        <h2 className="form__heading">Editing Image</h2>
+
         {image.img_path && (
-          <div>
+          <div className="form__group text-center">
             <img
-              src={`http://localhost:8080/${image.img_path}`}
-              alt={image.img_desc || "Image"}
+              src={`${appState.urls.images}${image.img_path}`}
+              alt={image.img_desc || "Image preview"}
+              style={{
+                maxWidth: "300px",
+                maxHeight: "300px",
+                objectFit: "contain",
+                margin: "0 auto",
+                borderRadius: "4px",
+              }}
             />
+            <small className="form__helper-text">{image.img_path}</small>
           </div>
         )}
-        <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-          <div className="form__group">
-            <label className="form__label" htmlFor="img_desc">
-              Image Description
-            </label>
-            <input
-              type="text"
-              name="img_desc"
-              value={image.img_desc}
-              onChange={handleChange}
-              className="form__input"
-              required
-            />
-            <div className="invalid-feedback">
-              Please provide an image description.
-            </div>
-          </div>
-          <div className="form__group">
-            <label className="form__label" htmlFor="img_order">
-              Image Order
-            </label>
-            <input
-              type="number"
-              name="img_order"
-              value={image.img_order}
-              onChange={handleChange}
-              className="form__input"
-              min="0"
-              required
-            />
-          </div>
-          <div className="form__group">
-            <label className="form__label" htmlFor="img_media">
-              Media Type
-            </label>
-            <input
-              type="number"
-              name="img_media"
-              value={image.img_media}
-              onChange={handleChange}
-              className="form__input"
-              min="0"
-              required
-            />
-          </div>
-          <div className="d-flex justify-content-between mt-4">
-            <button type="submit" className="form__button">
-              Update Image
-            </button>
-            <button
-              type="button"
-              className="form__button"
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+
+        <div className="form__group">
+          <label className="form__label" htmlFor="img_desc">
+            Image Description
+          </label>
+          <input
+            type="text"
+            name="img_desc"
+            value={image.img_desc}
+            onChange={handleChange}
+            className="form__input"
+            required
+          />
+        </div>
+
+        <div className="form__group">
+          <label className="form__label" htmlFor="img_order">
+            Display Order
+          </label>
+          <input
+            type="number"
+            name="img_order"
+            value={image.img_order}
+            onChange={handleChange}
+            className="form__input"
+            min="0"
+            required
+          />
+        </div>
+
+        <div className="form__group">
+          <label className="form__label" htmlFor="img_media">
+            Media Type
+          </label>
+          <input
+            type="number"
+            name="img_media"
+            value={image.img_media}
+            onChange={handleChange}
+            className="form__input"
+            min="0"
+            required
+          />
+        </div>
+
+        <button type="submit" className="form__button" disabled={isSubmitting}>
+          {isSubmitting ? "Saving..." : "Update Metadata"}
+        </button>
+        <button
+          type="button"
+          className="form__button form__button--secondary"
+          onClick={handleCancel}
+        >
+          Cancel
+        </button>
+      </form>
+    </Page>
   );
 }
 

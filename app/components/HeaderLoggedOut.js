@@ -1,7 +1,9 @@
+// app/components/HeaderLoggedOut.js (Corrected and Final)
+
 import React, { useState, useContext } from "react";
-import Axios from "axios";
-import DispatchContext from "../context/DispatchContext";
 import { useNavigate } from "react-router-dom";
+import DispatchContext from "../context/DispatchContext";
+import { login } from "../services/api";
 
 function HeaderLoggedOut({ closeModal }) {
   const appDispatch = useContext(DispatchContext);
@@ -12,9 +14,7 @@ function HeaderLoggedOut({ closeModal }) {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      console.log("Attempting login with:", { username, password });
-      const response = await Axios.post("/users/login", { username, password });
-      console.log("Login response:", response.data);
+      const response = await login({ username, password });
       if (response.data.token) {
         appDispatch({ type: "logIn", data: response.data });
         appDispatch({
@@ -22,7 +22,7 @@ function HeaderLoggedOut({ closeModal }) {
           value: "You have successfully logged in!",
         });
         navigate("/");
-        closeModal(); // Close modal on successful login
+        if (closeModal) closeModal();
       } else {
         appDispatch({
           type: "flashMessage",
@@ -30,7 +30,6 @@ function HeaderLoggedOut({ closeModal }) {
         });
       }
     } catch (e) {
-      console.error("Login error:", e.response ? e.response.data : e.message);
       appDispatch({
         type: "flashMessage",
         value: e.response?.data?.error || "Login failed. Please try again.",
@@ -39,30 +38,30 @@ function HeaderLoggedOut({ closeModal }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="form-controls">
-      <div className="form-controls__group form-controls__group--dark">
+    // === THE FIX: Use the one, true .form__* styling system ===
+    <form onSubmit={handleSubmit}>
+      <div className="form__group">
         <input
           onChange={(e) => setUsername(e.target.value)}
           name="username"
-          className="form-controls__input"
+          className="form__input"
           type="text"
           placeholder="Username"
-          autoComplete="off"
-          value={username}
+          autoComplete="username"
         />
       </div>
-      <div className="form-controls__group form-controls__group--dark">
+      <div className="form__group">
         <input
           onChange={(e) => setPassword(e.target.value)}
           name="password"
-          className="form-controls__input"
+          className="form__input"
           type="password"
           placeholder="Password"
-          value={password}
+          autoComplete="current-password"
         />
       </div>
-      <div className="form-controls__group form-controls__group--dark">
-        <button type="submit" className="form-controls__button">
+      <div className="form__group">
+        <button type="submit" className="form__button">
           Sign In
         </button>
       </div>
