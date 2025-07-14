@@ -1,7 +1,5 @@
-// app/components/HeaderLoggedOut.js (Corrected and Final)
-
 import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import DispatchContext from "../context/DispatchContext";
 import { login } from "../services/api";
 
@@ -22,6 +20,7 @@ function HeaderLoggedOut({ closeModal }) {
           value: "You have successfully logged in!",
         });
         navigate("/");
+        // Close the modal only if the function is provided
         if (closeModal) closeModal();
       } else {
         appDispatch({
@@ -37,9 +36,26 @@ function HeaderLoggedOut({ closeModal }) {
     }
   }
 
+  // This function will be called when the "Sign up" link is clicked
+  const handleRegisterClick = () => {
+    // If we're in the mobile overlay, closeModal will be defined and will close it.
+    // If we're on the desktop, it will be an empty function, so nothing happens.
+    if (closeModal) {
+      closeModal();
+    }
+  };
+
   return (
-    // === THE FIX: Use the one, true .form__* styling system ===
     <form onSubmit={handleSubmit}>
+      <div className="form__group">
+        <Link
+          className="primary-nav__link"
+          to="/register"
+          onClick={handleRegisterClick}
+        >
+          Register
+        </Link>
+      </div>
       <div className="form__group">
         <input
           onChange={(e) => setUsername(e.target.value)}

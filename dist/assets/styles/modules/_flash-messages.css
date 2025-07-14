@@ -1,0 +1,101 @@
+/* flash-messages.css */
+
+/* Block: flash-messages */
+.flash-messages {
+  /* No specific styles for the container itself,
+     as it just holds the alerts. */
+}
+
+/* Element: flash-messages__alert */
+.flash-messages__alert {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  text-align: center; /* Based on your component's 'text-center' */
+  display: block !important;
+}
+
+/* Modifier: flash-messages__alert--success */
+.flash-messages__alert--success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+/* Modifier: flash-messages__alert--floating */
+.flash-messages__alert--floating {
+  display: none;
+  position: absolute;
+  z-index: 999;
+  top: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+  -moz-animation: flash-messages__alert--floating-animation ease-in 5s forwards;
+  -webkit-animation: flash-messages__alert--floating-animation ease-in 5s forwards;
+  -o-animation: flash-messages__alert--floating-animation ease-in 5s forwards;
+  animation: flash-messages__alert--floating-animation ease-in 5s forwards;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Replaced .shadow-sm */
+}
+
+/* This targets the last floating alert to display it,
+   assuming you'll have a container around them. */
+.flash-messages__alert-container .flash-messages__alert--floating:last-of-type {
+  display: block;
+}
+
+/* Animations for the floating alert */
+@keyframes flash-messages__alert--floating-animation {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) scale(1.2);
+  }
+
+  9% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+  }
+
+  91% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) scale(1.2);
+  }
+}
+
+@-webkit-keyframes flash-messages__alert--floating-animation {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) scale(1.2);
+  }
+
+  9% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+  }
+
+  91% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) scale(1.2);
+  }
+}

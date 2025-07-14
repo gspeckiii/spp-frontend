@@ -51,11 +51,10 @@
     "webpack-dev-server": "^5.2.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "webpack serve",
+    "build": "webpack --mode production",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "dev": "webpack serve"
+    "eject": "react-scripts eject"
   },
   "proxy": "http://localhost:8080",
   "eslintConfig": {

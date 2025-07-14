@@ -17,8 +17,12 @@
   display: block !important;
 }
 
-/* Modifier: flash-messages__alert--success */
-.flash-messages__alert--success {
+/* 
+  Modifier: Grouped selector for both success and danger states.
+  This ensures they look identical.
+*/
+.flash-messages__alert--success,
+.flash-messages__alert--danger {
   color: #155724;
   background-color: #d4edda;
   border-color: #c3e6cb;
@@ -33,7 +37,8 @@
   left: 50%;
   transform: translateX(-50%);
   -moz-animation: flash-messages__alert--floating-animation ease-in 5s forwards;
-  -webkit-animation: flash-messages__alert--floating-animation ease-in 5s forwards;
+  -webkit-animation: flash-messages__alert--floating-animation ease-in 5s
+    forwards;
   -o-animation: flash-messages__alert--floating-animation ease-in 5s forwards;
   animation: flash-messages__alert--floating-animation ease-in 5s forwards;
   -webkit-animation-fill-mode: forwards;

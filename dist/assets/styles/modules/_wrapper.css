@@ -1,0 +1,52 @@
+.wrapper {
+  overflow: hidden;
+  padding-left: 18px;
+  padding-right: 18px;
+  max-width: 1236px;
+  margin-left: auto;
+  margin-right: auto;
+  &--dark {
+    background-color: rgba(28, 37, 38, 0.67);
+  }
+  &--center {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+  }
+  &--medium {
+    max-width: 976px;
+  }
+
+  &--narrow {
+    max-width: 470px;
+  }
+
+  &--no-padding-until-medium {
+    padding-left: 0;
+    padding-right: 0;
+
+    @mixin atMedium {
+      padding-left: 18px;
+      padding-right: 18px;
+    }
+  }
+
+  &--no-padding-until-large {
+    padding-left: 0;
+    padding-right: 0;
+
+    @mixin atLarge {
+      padding-left: 18px;
+      padding-right: 18px;
+    }
+  }
+
+  &--b-margin {
+    margin-bottom: 1rem;
+
+    @mixin atSmall {
+      margin-bottom: 3.875rem;
+    }
+  }
+}

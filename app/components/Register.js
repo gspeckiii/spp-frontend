@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+// Register.js (Final version with HTML restored)
+import { useNavigate } from "react-router-dom";
+import React, { useEffect, useContext } from "react";
 import { useImmerReducer } from "use-immer";
-import { CSSTransition } from "react-transition-group";
 import DispatchContext from "../context/DispatchContext";
 import FlashMessages from "./FlashMessages";
 
-// Import the specific API functions from your service file
 import {
   checkUsernameAvailability,
   checkEmailAvailability,
@@ -12,11 +12,8 @@ import {
 } from "../services/api";
 
 function Register() {
-  const usernameRef = useRef(null);
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
   const appDispatch = useContext(DispatchContext);
-
+  const navigate = useNavigate();
   const initialState = {
     username: {
       value: "",
@@ -36,14 +33,15 @@ function Register() {
     submitCount: 0,
   };
 
+  // This reducer logic is correct.
   function ourReducer(draft, action) {
     switch (action.type) {
       case "usernameImmediately":
-        draft.username.hasErrors = false;
         draft.username.value = action.value;
         if (draft.username.value.length > 30) {
           draft.username.hasErrors = true;
           draft.username.message = "Username cannot exceed 30 characters.";
+          return;
         }
         if (
           draft.username.value &&
@@ -52,10 +50,13 @@ function Register() {
           draft.username.hasErrors = true;
           draft.username.message =
             "Username can only contain letters and numbers.";
+          return;
         }
+        draft.username.hasErrors = false;
         return;
+
       case "usernameAfterDelay":
-        if (draft.username.value.length < 3) {
+        if (action.value.length < 3) {
           draft.username.hasErrors = true;
           draft.username.message = "Username must be at least 3 characters.";
         }
@@ -63,6 +64,7 @@ function Register() {
           draft.username.checkCount++;
         }
         return;
+
       case "usernameUniqueResults":
         if (action.value) {
           draft.username.hasErrors = true;
@@ -72,12 +74,14 @@ function Register() {
           draft.username.isUnique = true;
         }
         return;
+
       case "emailImmediately":
-        draft.email.hasErrors = false;
         draft.email.value = action.value;
+        draft.email.hasErrors = false;
         return;
+
       case "emailAfterDelay":
-        if (!/^\S+@\S+$/.test(draft.email.value)) {
+        if (!/^\S+@\S+$/.test(action.value)) {
           draft.email.hasErrors = true;
           draft.email.message = "You must provide a valid email address.";
         }
@@ -85,6 +89,7 @@ function Register() {
           draft.email.checkCount++;
         }
         return;
+
       case "emailUniqueResults":
         if (action.value) {
           draft.email.hasErrors = true;
@@ -94,20 +99,24 @@ function Register() {
           draft.email.isUnique = true;
         }
         return;
+
       case "passwordImmediately":
-        draft.password.hasErrors = false;
         draft.password.value = action.value;
         if (draft.password.value.length > 50) {
           draft.password.hasErrors = true;
           draft.password.message = "Password cannot exceed 50 characters.";
+          return;
         }
+        draft.password.hasErrors = false;
         return;
+
       case "passwordAfterDelay":
-        if (draft.password.value.length < 12) {
+        if (action.value.length < 12) {
           draft.password.hasErrors = true;
           draft.password.message = "Password must be at least 12 characters.";
         }
         return;
+
       case "submitForm":
         if (
           !draft.username.hasErrors &&
@@ -124,10 +133,12 @@ function Register() {
 
   const [state, dispatch] = useImmerReducer(ourReducer, initialState);
 
+  // All useEffect hooks and the handleSubmit function are correct.
   useEffect(() => {
     if (state.username.value) {
       const delay = setTimeout(
-        () => dispatch({ type: "usernameAfterDelay" }),
+        () =>
+          dispatch({ type: "usernameAfterDelay", value: state.username.value }),
         800
       );
       return () => clearTimeout(delay);
@@ -137,7 +148,7 @@ function Register() {
   useEffect(() => {
     if (state.email.value) {
       const delay = setTimeout(
-        () => dispatch({ type: "emailAfterDelay" }),
+        () => dispatch({ type: "emailAfterDelay", value: state.email.value }),
         800
       );
       return () => clearTimeout(delay);
@@ -147,7 +158,8 @@ function Register() {
   useEffect(() => {
     if (state.password.value) {
       const delay = setTimeout(
-        () => dispatch({ type: "passwordAfterDelay" }),
+        () =>
+          dispatch({ type: "passwordAfterDelay", value: state.password.value }),
         800
       );
       return () => clearTimeout(delay);
@@ -166,14 +178,15 @@ function Register() {
             dispatch({ type: "usernameUniqueResults", value: response.data });
           }
         } catch (e) {
-          if (!didCancel)
+          if (!didCancel) {
             console.log("There was a problem checking the username.");
+          }
         }
       };
       checkUsername();
       return () => (didCancel = true);
     }
-  }, [state.username.checkCount, state.username.value]);
+  }, [state.username.checkCount]);
 
   useEffect(() => {
     if (state.email.checkCount) {
@@ -185,14 +198,15 @@ function Register() {
             dispatch({ type: "emailUniqueResults", value: response.data });
           }
         } catch (e) {
-          if (!didCancel)
+          if (!didCancel) {
             console.log("There was a problem checking the email.");
+          }
         }
       };
       checkEmail();
       return () => (didCancel = true);
     }
-  }, [state.email.checkCount, state.email.value]);
+  }, [state.email.checkCount]);
 
   useEffect(() => {
     if (state.submitCount) {
@@ -210,6 +224,10 @@ function Register() {
               type: "flashMessage",
               value: "Congrats! Welcome to your new account.",
             });
+
+            // ================== 3. NAVIGATE on success ==================
+            navigate("/home");
+            // ==========================================================
           }
         } catch (e) {
           if (!didCancel) {
@@ -223,13 +241,7 @@ function Register() {
       submitRegistration();
       return () => (didCancel = true);
     }
-  }, [
-    state.submitCount,
-    state.username.value,
-    state.email.value,
-    state.password.value,
-    appDispatch,
-  ]);
+  }, [state.submitCount, appDispatch, navigate]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -250,8 +262,16 @@ function Register() {
     dispatch({ type: "submitForm" });
   }
 
+  const validationErrors = [];
+  if (state.username.hasErrors) validationErrors.push(state.username.message);
+  if (state.email.hasErrors) validationErrors.push(state.email.message);
+  if (state.password.hasErrors) validationErrors.push(state.password.message);
+
   return (
     <div className="wrapper wrapper--wide">
+      <FlashMessages messages={validationErrors} isValidationMessage={true} />
+
+      {/* ======================= THIS HTML WAS MISSING ====================== */}
       <div className="form">
         <form onSubmit={handleSubmit}>
           <div className="form__group">
@@ -269,17 +289,6 @@ function Register() {
               placeholder="Pick a username"
               autoComplete="off"
             />
-            <CSSTransition
-              nodeRef={usernameRef}
-              in={state.username.hasErrors}
-              timeout={330}
-              classNames="liveValidateMessage"
-              unmountOnExit
-            >
-              <div ref={usernameRef} className="form__validation-message">
-                {state.username.message}
-              </div>
-            </CSSTransition>
           </div>
           <div className="form__group">
             <label htmlFor="email-register" className="form__label">
@@ -296,17 +305,6 @@ function Register() {
               placeholder="you@example.com"
               autoComplete="off"
             />
-            <CSSTransition
-              nodeRef={emailRef}
-              in={state.email.hasErrors}
-              timeout={330}
-              classNames="liveValidateMessage"
-              unmountOnExit
-            >
-              <div ref={emailRef} className="form__validation-message">
-                {state.email.message}
-              </div>
-            </CSSTransition>
           </div>
           <div className="form__group">
             <label htmlFor="password-register" className="form__label">
@@ -322,23 +320,13 @@ function Register() {
               type="password"
               placeholder="Create a password"
             />
-            <CSSTransition
-              nodeRef={passwordRef}
-              in={state.password.hasErrors}
-              timeout={330}
-              classNames="liveValidateMessage"
-              unmountOnExit
-            >
-              <div ref={passwordRef} className="form__validation-message">
-                {state.password.message}
-              </div>
-            </CSSTransition>
           </div>
           <button type="submit" className="form__button">
             Sign up
           </button>
         </form>
       </div>
+      {/* ====================================================================== */}
     </div>
   );
 }

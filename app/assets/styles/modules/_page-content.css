@@ -90,3 +90,33 @@
     }
   }
 }
+.main-content-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 100px;
+  @mixin atMedium {
+    padding-top: 175px;
+  }
+
+  /* === FIX #1: THE LAYERING FIX === */
+  /* This forces the main content to be the bottom layer (z-index: 0) */
+  /* The overlay (z-index: 1) and header (z-index: 2) will now always be on top. */
+  position: relative;
+  z-index: 0;
+}
+
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.container--narrow {
+  max-width: 900px;
+}

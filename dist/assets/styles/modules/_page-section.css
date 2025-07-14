@@ -1,0 +1,41 @@
+.page-section {
+  padding: 1.2rem;
+
+  @mixin atMedium {
+    padding: 4.5rem 0;
+  }
+
+  &--no-b-padding-until-medium {
+    padding-bottom: 0;
+
+    @mixin atMedium {
+      padding-bottom: 4.5rem;
+    }
+  }
+
+  &--no-b-padding-until-large {
+    padding-bottom: 0;
+
+    @mixin atLarge {
+      padding-bottom: 4.5rem;
+    }
+  }
+
+  &--green {
+    background-color: $medGreen;
+    color: #fff;
+  }
+  &--greenDark {
+    background-color: $darkGreen;
+    color: #fff;
+  }
+
+  &--background {
+    @mixin atLarge {
+    }
+  }
+  &--pull-down {
+    transform: translateY(100px);
+    overflow: hidden;
+  }
+}

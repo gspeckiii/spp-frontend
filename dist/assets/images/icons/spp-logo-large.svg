@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="142mm"
+   height="60mm"
+   viewBox="0 0 142 60"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   sodipodi:docname="spp-logo-large.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="191.44916"
+     inkscape:cy="309.35922"
+     inkscape:window-width="3840"
+     inkscape:window-height="2088"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <rect
+       x="39.271184"
+       y="36.187681"
+       width="458.10213"
+       height="148.90479"
+       id="rect55519" />
+    <rect
+       x="20.289734"
+       y="22.739517"
+       width="498.75897"
+       height="185.07237"
+       id="rect50039" />
+    <rect
+       x="21.311523"
+       y="23.409195"
+       width="493.14331"
+       height="178.95119"
+       id="rect44453" />
+    <rect
+       x="8.9040306"
+       y="9.8610549"
+       width="519.68403"
+       height="207.87401"
+       id="rect31041" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#b22222;fill-opacity:1;fill-rule:evenodd;stroke-width:0.263643"
+       id="rect51"
+       width="142"
+       height="60"
+       x="0.0020490363"
+       y="0.0009787" />
+    <rect
+       style="fill:#1c2526;fill-opacity:1;stroke-width:0.264583"
+       id="rect1189"
+       width="132.12587"
+       height="50.834976"
+       x="4.8522172"
+       y="4.4384933" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.5833px;line-height:1.25;font-family:'Public Sans';-inkscape-font-specification:'Public Sans, @wght=700';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;font-variation-settings:'wght' 700;fill:#f5f5f5;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="24.152914"
+       y="8.9057102"
+       id="text10689"><tspan
+         sodipodi:role="line"
+         id="tspan11727"
+         x="24.152914"
+         y="8.9057102" /></text>
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text31039"
+       style="line-height:1.25;font-family:'Public Sans';font-size:40px;-inkscape-font-specification:'Public Sans Bold';font-weight:bold;white-space:pre;shape-inside:url(#rect31041)" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.29167px;line-height:1.25;font-family:'Public Sans';-inkscape-font-specification:'Public Sans Bold';stroke-width:0.264583"
+       x="139.85559"
+       y="57.60907"
+       id="text38419"><tspan
+         sodipodi:role="line"
+         id="tspan38417"
+         style="stroke-width:0.264583" /></text>
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text50037"
+       style="line-height:1.25;font-family:'Public Sans';font-size:20px;-inkscape-font-specification:'Public Sans Bold';font-weight:bold;white-space:pre;shape-inside:url(#rect50039)" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-0.00465895,2.2092769)"
+       id="text55517"
+       style="font-weight:bold;font-size:56px;line-height:1.25;font-family:'Public Sans';-inkscape-font-specification:'Public Sans Bold';text-align:center;white-space:pre;shape-inside:url(#rect55519);fill:#f5f5f5;fill-opacity:0.917647"
+       x="227.1951"
+       y="0"><tspan
+         x="39.72718"
+         y="88.464096"
+         id="tspan871">SHERMAN PECK </tspan><tspan
+         x="61.054344"
+         y="158.4641"
+         id="tspan873">PRODUCTIONS</tspan></text>
+  </g>
+</svg>

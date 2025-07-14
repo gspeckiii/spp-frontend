@@ -1,0 +1,86 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, Arial;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: $softWhite !important;
+  text-align: left;
+
+  background-color: #333;
+  background-image: url("/assets/images/bark-background-mobile.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  @mixin atSmall {
+    background-image: url("/assets/images/bark-background-tablet-portrait.png");
+  }
+  @mixin atMedium {
+    background-image: url("/assets/images/bark-background-tablet-landscape.png");
+  }
+  @mixin atLarge {
+    background-image: url("/assets/images/bark-background-laptop.png");
+  }
+}
+
+body.overlay-is-open .mobile-overlay {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.main-content-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 100px;
+
+  /* === FIX #1: THE LAYERING FIX === */
+  /* This forces the main content to be the bottom layer (z-index: 0) */
+  /* The overlay (z-index: 1) and header (z-index: 2) will now always be on top. */
+  position: relative;
+  z-index: 0;
+}
+
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.container--narrow {
+  max-width: 900px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: $pureWhite;
+}

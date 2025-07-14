@@ -1,0 +1,92 @@
+/* Mobile-first styles */
+.page-content {
+  width: 100%;
+  box-sizing: border-box;
+  color: #fff;
+
+  /* This will now correctly fill the space provided by the .container */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 0;
+
+  &__content {
+    padding: 5px;
+    /* This element takes up its natural height and does not grow */
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    &--header {
+      font-size: 2rem !important;
+    }
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 10px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  &__intro {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0 0 15px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Responsive adjustments */
+@mixin atSmall {
+  .page-content {
+    &__content {
+      padding: 15px;
+    }
+
+    &__title {
+      font-size: 1.75rem;
+    }
+
+    &__intro {
+      font-size: 1.125rem;
+    }
+  }
+}
+@mixin atMedium {
+  .page-content {
+    &__content {
+      padding: 20px;
+    }
+
+    &__title {
+      font-size: 2rem;
+    }
+
+    &__intro {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+@mixin atLarge {
+  .page-content {
+    &__content {
+      padding: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    &__title {
+      font-size: 2.25rem;
+    }
+
+    &__intro {
+      font-size: 1.375rem;
+    }
+  }
+}

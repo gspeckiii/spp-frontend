@@ -4,7 +4,7 @@ function About() {
   return (
     <Page title="About Us">
       <div className="wrapper wrapper--dark wrapper--center">
-        <h1>About Us</h1>
+        <h1 classname="">About Us</h1>
         <p>Last updated: October 2023</p>
         <p>
           Welcome to Sherman Peck Productions. We are dedicated to creating

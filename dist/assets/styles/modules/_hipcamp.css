@@ -1,0 +1,9 @@
+.hipcamp{
+    transform:translateY(1rem);
+    background-color:black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px; 
+
+}

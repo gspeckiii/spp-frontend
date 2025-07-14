@@ -6,9 +6,7 @@ import Axios from "axios";
 import StateContext from "./StateContext.js";
 import DispatchContext from "./DispatchContext.js";
 
-const SERVER_URL = "https://shermanpeckproductions.com";
-const API_URL = `${SERVER_URL}/api`;
-const IMAGE_URL = `${SERVER_URL}/`;
+import { SERVER_URL, API_URL, IMAGE_URL } from "../config.js";
 
 Axios.defaults.baseURL = API_URL;
 console.log("Axios API baseURL configured to:", Axios.defaults.baseURL);
@@ -44,6 +42,9 @@ export default function GlobalStateProvider({ children }) {
   function ourReducer(draft, action) {
     // ... all your reducer logic is correct and does not need to be changed ...
     switch (action.type) {
+      case "flashMessage":
+        draft.flashMessages.push(action.value);
+        return;
       case "logIn":
         draft.loggedIn = true;
         draft.user = {

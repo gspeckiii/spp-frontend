@@ -1,0 +1,78 @@
+.dashboard {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 3rem;
+
+  @mixin atSmall {
+    max-width: 540px;
+  }
+  @mixin atMedium {
+    max-width: 720px;
+  }
+  @mixin atLarge {
+    max-width: 960px;
+  }
+
+  &__heading {
+    font-family: "Public Sans", sans-serif;
+    font-weight: 700;
+    margin-bottom: 0.5em;
+  }
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+  }
+
+  &__col {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-bottom: 1rem;
+
+    @mixin atMedium {
+      flex: 0 0 33.333333%;
+      max-width: 33.333333%;
+    }
+  }
+
+  &__button {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1.25rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    border-radius: 0.3rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+
+    color: $softWhite;
+    background-color: $deepRed;
+    border-color: $darkRed;
+
+    &:hover {
+      color: $softWhite;
+      background-color: $deepRed;
+      border-color: $darkRed;
+    }
+
+    &:focus {
+      outline: 0;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+    }
+
+    &--disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+}

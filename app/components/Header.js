@@ -9,12 +9,39 @@ function Header() {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [isLargeLogo, setIsLargeLogo] = useState(true);
 
+  // === CHANGED: Replaced the old useEffect with a new one that handles screen size ===
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLargeLogo(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    // Define the breakpoint. This should match the value used in your CSS for "@mixin atMedium".
+    // 800px is a common value, but adjust if yours is different.
+    const MEDIUM_BREAKPOINT = 800;
+
+    // This function sets the logo size based on the current window width.
+    const handleResize = () => {
+      setIsLargeLogo(window.innerWidth >= MEDIUM_BREAKPOINT);
+    };
+
+    // This timer handles the initial "shrink" animation ONLY on small screens.
+    let timer;
+    if (window.innerWidth < MEDIUM_BREAKPOINT) {
+      timer = setTimeout(() => {
+        setIsLargeLogo(false);
+      }, 1000);
+    } else {
+      // If we load on a large screen, make sure the logo is large immediately.
+      setIsLargeLogo(true);
+    }
+
+    // Add an event listener to check the size whenever the window is resized.
+    window.addEventListener("resize", handleResize);
+
+    // This is a cleanup function that React runs when the component is unmounted.
+    // It's important to prevent memory leaks.
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(timer);
+    };
+  }, []); // The empty dependency array [] means this effect runs only once when the component mounts.
+  // === END OF CHANGES ===
 
   useEffect(() => {
     if (isOverlayOpen) {
@@ -75,9 +102,6 @@ function Header() {
                 {appState.loggedIn ? (
                   <HeaderLoggedIn />
                 ) : (
-                  // === THE DEFINITIVE FIX: Restore the inline form for desktop view ===
-                  // The <HeaderLoggedOut> component is designed to be this form.
-                  // The closeModal prop is for the mobile overlay; for desktop, it does nothing.
                   <HeaderLoggedOut closeModal={() => {}} />
                 )}
               </li>

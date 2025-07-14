@@ -1,0 +1,82 @@
+/* _loading.css */
+
+/*
+  A simple, CSS-only loading dots animation.
+  Source: https://github.com/nzbin/three-dots
+*/
+.dots-loading {
+  position: relative;
+  left: -9999px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #fff;
+  box-shadow: 9999px 0 0 -5px;
+  animation: dot-loading 1.5s infinite linear;
+  animation-delay: 0.25s;
+
+  &::before,
+  &::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #fff;
+  }
+
+  &::before {
+    box-shadow: 9984px 0 0 -5px;
+    animation: dot-loading-before 1.5s infinite linear;
+    animation-delay: 0s;
+  }
+
+  &::after {
+    box-shadow: 10014px 0 0 -5px;
+    animation: dot-loading-after 1.5s infinite linear;
+    animation-delay: 0.5s;
+  }
+}
+
+@keyframes dot-loading-before {
+  0% {
+    box-shadow: 9984px 0 0 -5px;
+  }
+  30% {
+    box-shadow: 9984px 0 0 2px;
+  }
+  60%,
+  100% {
+    box-shadow: 9984px 0 0 -5px;
+  }
+}
+
+@keyframes dot-loading {
+  0% {
+    box-shadow: 9999px 0 0 -5px;
+  }
+  30% {
+    box-shadow: 9999px 0 0 2px;
+  }
+  60%,
+  100% {
+    box-shadow: 9999px 0 0 -5px;
+  }
+}
+
+@keyframes dot-loading-after {
+  0% {
+    box-shadow: 10014px 0 0 -5px;
+  }
+  30% {
+    box-shadow: 10014px 0 0 2px;
+  }
+  60%,
+  100% {
+    box-shadow: 10014px 0 0 -5px;
+  }
+}
