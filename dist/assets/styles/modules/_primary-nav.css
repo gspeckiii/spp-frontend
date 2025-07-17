@@ -35,14 +35,20 @@
     text-decoration: none;
     font-size: 1.5rem;
     display: block;
-    padding: 8px 20px;
+    padding: 1rem;
     transition: color 0.3s ease-out;
     &:hover {
-      color: $lightRed;
+      background-color: $deepRed;
+      border-radius: 4px;
     }
+
     @mixin atMedium {
       display: inline-block;
       padding: 8px 15px;
+      font-size: 1.1rem;
+    }
+    @mixin atLarge {
+      font-size: 1.5rem;
     }
   }
   &__btn {

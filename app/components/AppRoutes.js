@@ -7,7 +7,11 @@ import StateContext from "../context/StateContext.js";
 // === Import ALL components used in your routes ===
 import Home from "./Home.js";
 import HomeGuest from "./HomeGuest.js";
-import About from "./About.js";
+import AboutArtist from "./AboutArtist.js";
+import AboutEngineer from "./AboutEngineer.js";
+import AboutKcai from "./AboutKcai.js";
+import AboutFamily from "./AboutFamily.js";
+import AboutRaven from "./AboutRaven.js";
 import Terms from "./Terms.js";
 import RequestPasswordReset from "./ResetPasswordRequest";
 import ResetPassword from "./ResetPassword";
@@ -167,7 +171,11 @@ export default function AppRoutes() {
         path="/payment/:orderId"
         element={appState.loggedIn ? <PaymentForm /> : <HomeGuest />}
       />
-      <Route path="/about-us" element={<About />} />
+      <Route path="/about-artist" element={<AboutArtist />} />
+      <Route path="/about-engineer" element={<AboutEngineer />} />
+      <Route path="/about-kcai" element={<AboutKcai />} />
+      <Route path="/about-family" element={<AboutFamily />} />
+      <Route path="/about-raven" element={<AboutRaven />} />
       <Route path="/terms" element={<Terms />} />
       <Route
         path="/home"

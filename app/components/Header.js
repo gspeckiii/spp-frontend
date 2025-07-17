@@ -7,42 +7,44 @@ import StateContext from "../context/StateContext";
 function Header() {
   const appState = useContext(StateContext);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
-  const [isLargeLogo, setIsLargeLogo] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 800);
+  const [isInitialMobileLoad, setIsInitialMobileLoad] = useState(true);
 
-  // === CHANGED: Replaced the old useEffect with a new one that handles screen size ===
+  // Effect 1: Handles the initial 1-second animation ONCE on mobile.
   useEffect(() => {
-    // Define the breakpoint. This should match the value used in your CSS for "@mixin atMedium".
-    // 800px is a common value, but adjust if yours is different.
-    const MEDIUM_BREAKPOINT = 800;
-
-    // This function sets the logo size based on the current window width.
-    const handleResize = () => {
-      setIsLargeLogo(window.innerWidth >= MEDIUM_BREAKPOINT);
-    };
-
-    // This timer handles the initial "shrink" animation ONLY on small screens.
-    let timer;
-    if (window.innerWidth < MEDIUM_BREAKPOINT) {
-      timer = setTimeout(() => {
-        setIsLargeLogo(false);
+    // Only run this logic if we load on a mobile screen
+    if (!isDesktop) {
+      const timer = setTimeout(() => {
+        setIsInitialMobileLoad(false);
       }, 1000);
-    } else {
-      // If we load on a large screen, make sure the logo is large immediately.
-      setIsLargeLogo(true);
+
+      // Cleanup the timer if the component unmounts during that 1 second
+      return () => clearTimeout(timer);
     }
+    // If we load on desktop, make sure the initial state is false.
+    setIsInitialMobileLoad(false);
+  }, []); // Empty array ensures this runs ONLY ONCE on mount.
 
-    // Add an event listener to check the size whenever the window is resized.
-    window.addEventListener("resize", handleResize);
-
-    // This is a cleanup function that React runs when the component is unmounted.
-    // It's important to prevent memory leaks.
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      clearTimeout(timer);
+  // Effect 2: Tracks the scroll position. (This was already correct).
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
     };
-  }, []); // The empty dependency array [] means this effect runs only once when the component mounts.
-  // === END OF CHANGES ===
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
+  // Effect 3: Tracks if the screen is desktop-sized.
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 800);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Effect 4: Manages the body class for the overlay. (This was already correct).
   useEffect(() => {
     if (isOverlayOpen) {
       document.body.classList.add("overlay-is-open");
@@ -55,17 +57,25 @@ function Header() {
     setIsOverlayOpen((prev) => !prev);
   };
 
+  // === FINAL LOGIC ===
+  // The logo is large under two conditions:
+  // 1. We are on a desktop screen AND we are not scrolled.
+  // 2. We are on a mobile screen AND it's the initial 1-second load AND we are not scrolled.
+  const showLargeLogo =
+    (isDesktop && !isScrolled) ||
+    (!isDesktop && isInitialMobileLoad && !isScrolled);
+
   return (
     <>
       <header
         className={`site-header ${
           isOverlayOpen ? "site-header--is-expanded" : ""
-        }`}
+        } ${isScrolled ? "site-header--is-scrolled" : ""}`}
       >
         <div className="wrapper">
           <div
             className={`site-header__logo ${
-              isLargeLogo ? "site-header__logo--large" : ""
+              showLargeLogo ? "site-header__logo--large" : ""
             }`}
           >
             <Link to="/">
@@ -89,13 +99,18 @@ function Header() {
           <nav className="primary-nav primary-nav--desktop">
             <ul>
               <li>
-                <Link to="/home" className="primary-nav__link">
+                <Link to="/" className="primary-nav__link">
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/about-us" className="primary-nav__link">
-                  About
+                <Link to="/about-artist" className="primary-nav__link">
+                  Artist
+                </Link>
+              </li>
+              <li>
+                <Link to="/about-engineer" className="primary-nav__link">
+                  Engineer
                 </Link>
               </li>
               <li>
@@ -111,12 +126,13 @@ function Header() {
       </header>
 
       <div className="mobile-overlay">
+        {/* ... The rest of your JSX is correct and unchanged ... */}
         {appState.loggedIn ? (
           <nav className="mobile-overlay__nav">
             <ul>
               <li>
                 <Link
-                  to="/home"
+                  to="/"
                   className="primary-nav__link"
                   onClick={toggleOverlay}
                 >
@@ -125,11 +141,20 @@ function Header() {
               </li>
               <li>
                 <Link
-                  to="/about-us"
+                  to="/about-artist"
                   className="primary-nav__link"
                   onClick={toggleOverlay}
                 >
-                  About
+                  Artist
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/about-engineer"
+                  className="primary-nav__link"
+                  onClick={toggleOverlay}
+                >
+                  Engineer
                 </Link>
               </li>
               <li>
@@ -151,7 +176,7 @@ function Header() {
             <h2 className="section-title section-title--green section-title--less-margin">
               Sign In
             </h2>
-            <div className="wrapper wrapper--narrow">
+            <div>
               <HeaderLoggedOut closeModal={toggleOverlay} />
             </div>
           </div>

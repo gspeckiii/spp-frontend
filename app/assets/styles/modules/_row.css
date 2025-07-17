@@ -1,5 +1,4 @@
 .row {
-
   @mixin clearfix;
 
   &--t-padding {
@@ -35,7 +34,6 @@
   }
 
   @mixin atMedium {
-
     &__b-margin-until-medium {
       margin-bottom: 0;
     }
@@ -62,11 +60,9 @@
     &__medium-8--smaller {
       width: 63%;
     }
-
   }
 
   @mixin atLarge {
-
     &__b-margin-until-large {
       margin-bottom: 0;
     }
@@ -93,9 +89,8 @@
     &__large-8--smaller {
       width: 63%;
     }
-
   }
-  
+
   /* Begin Equal Height Rules */
   &--equal-height-at-medium {
     @mixin atMedium {
@@ -106,7 +101,6 @@
       float: none;
       display: flex;
     }
-
   }
 
   &--equal-height-at-large {
@@ -118,7 +112,5 @@
       float: none;
       display: flex;
     }
-
   }
-
 }

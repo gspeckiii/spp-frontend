@@ -41,7 +41,7 @@ function Main() {
         <BrowserRouter>
           <FlashMessagesWrapper />
           <Header />
-          <main className="main-content-area">
+          <main className="page-content">
             <AppRoutes />
           </main>
           <Footer />

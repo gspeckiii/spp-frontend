@@ -1,3 +1,48 @@
+/*
+  1. Use a more-intuitive box-sizing model.
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+/*
+  2. Remove default margin from the body.
+*/
+body {
+  margin: 0;
+}
+/*
+  3. Remove default margin from list, headings, etc.
+*/
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+/*
+  4. Make images easier to work with.
+*/
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+/*
+  5. Inherit fonts for inputs and buttons.
+*/
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
 html {
   scroll-behavior: smooth;
 }
@@ -8,10 +53,10 @@ body {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: $softWhite !important;
+  color: white;
+
   text-align: left;
 
-  background-color: #333;
   background-image: url("/assets/images/bark-background-mobile.png");
   background-size: cover;
   background-position: center;
@@ -30,6 +75,83 @@ body {
   @mixin atLarge {
     background-image: url("/assets/images/bark-background-laptop.png");
   }
+}
+
+h2,
+h3,
+p,
+ul {
+  line-height: 1.5;
+}
+
+h1 {
+  font-size: 1.33rem;
+  margin-bottom: 0.625rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.25rem;
+  font-weight: 300;
+}
+
+h3 {
+  font-size: 1.125rem;
+  margin-bottom: 0.3125rem;
+  font-weight: 600;
+}
+
+p,
+ul {
+  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  @mixin atSmall {
+    font-size: 1.33rem;
+  }
+  @mixin atMedium {
+    font-size: 1.67rem;
+  }
+
+  @mixin atLarge {
+    font-size: 2rem;
+  }
+}
+
+h2 {
+  @mixin atSmall {
+    font-size: 1rem;
+  }
+  @mixin atMedium {
+    font-size: 1.33rem;
+  }
+
+  @mixin atLarge {
+    font-size: 1.67rem;
+  }
+}
+
+h3 {
+  @mixin atMedium {
+    font-size: 1.5rem;
+  }
+
+  @mixin atLarge {
+  }
+}
+
+p,
+ul {
+  @mixin atMedium {
+    font-size: 1.125rem;
+    margin-bottom: 1.25rem;
+  }
+}
+.section {
+  margin-bottom: 20px;
 }
 
 body.overlay-is-open .mobile-overlay {

@@ -13,17 +13,21 @@ function Footer() {
           Home{" "}
         </Link>{" "}
         |{" "}
-        <Link to="/about-us" className="mx-1 white-font">
-          About Us
+        <Link to="/about-engineer" className="">
+          Engineer
         </Link>{" "}
         |{" "}
-        <Link to="/terms" className="mx-1 white-font">
+        <Link to="/about-artist" className="">
+          Artist
+        </Link>{" "}
+        |{" "}
+        <Link to="/terms" className="">
           Terms
         </Link>
-        {" | "}
         {state.loggedIn && state.user.admin && (
           <>
-            <Link to="/admin-dashboard" className="mx-1 white-font">
+            {" | "}
+            <Link to="/admin-dashboard" className="">
               Admin Dashboard
             </Link>
           </>

@@ -8,7 +8,7 @@ function Home(props) {
 
   return (
     <Page title="Home">
-      <div className="page-content">
+      <div>
         <CategorySlider />
       </div>
     </Page>
