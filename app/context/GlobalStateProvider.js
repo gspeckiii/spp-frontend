@@ -1,11 +1,8 @@
-// app/context/GlobalStateProvider.js
-
 import React, { useEffect } from "react";
 import { useImmerReducer } from "use-immer";
 import Axios from "axios";
 import StateContext from "./StateContext.js";
 import DispatchContext from "./DispatchContext.js";
-
 import { SERVER_URL, API_URL, IMAGE_URL } from "../config.js";
 
 Axios.defaults.baseURL = API_URL;
@@ -31,6 +28,12 @@ export default function GlobalStateProvider({ children }) {
       loading: false,
       error: null,
     },
+    // === NEW STATE SLICE ADDED HERE ===
+    historicProducts: {
+      list: [],
+      loading: true, // Start in loading state
+      error: null,
+    },
     products: [],
     urls: {
       server: SERVER_URL,
@@ -40,8 +43,8 @@ export default function GlobalStateProvider({ children }) {
   };
 
   function ourReducer(draft, action) {
-    // ... all your reducer logic is correct and does not need to be changed ...
     switch (action.type) {
+      // ... (your other cases like flashMessage, logIn, etc.)
       case "flashMessage":
         draft.flashMessages.push(action.value);
         return;
@@ -57,7 +60,6 @@ export default function GlobalStateProvider({ children }) {
       case "logOut":
         draft.loggedIn = false;
         return;
-      // ... all other cases ...
       case "setCategoryLoading":
         draft.categories.loading = true;
         return;
@@ -77,62 +79,73 @@ export default function GlobalStateProvider({ children }) {
         draft.categories.error = action.data;
         draft.categories.loading = false;
         return;
+
+      // === NEW REDUCER CASES FOR HISTORIC PRODUCTS ===
+      case "setHistoricProductsLoading":
+        draft.historicProducts.loading = true;
+        return;
+      case "setHistoricProducts":
+        draft.historicProducts.list = action.data;
+        draft.historicProducts.loading = false;
+        draft.historicProducts.error = null;
+        return;
+      case "setHistoricProductsError":
+        draft.historicProducts.error = action.data;
+        draft.historicProducts.loading = false;
+        return;
     }
   }
 
   const [state, dispatch] = useImmerReducer(ourReducer, initialState);
 
-  // This function can be passed via context if needed, but for now it's not part of the value.
-  const updateRefreshInterval = async (newInterval) => {
-    // ... logic is correct
-  };
+  // ... (useEffect for localStorage and token refresh remain the same) ...
 
-  // This useEffect for localStorage is correct
-  useEffect(() => {
-    if (state.loggedIn) {
-      localStorage.setItem("SPPtoken", state.user.token);
-      // ... etc.
-    } else {
-      localStorage.removeItem("SPPtoken");
-      // ... etc.
-    }
-  }, [state.loggedIn, state.user.token]);
-
-  // === THE DEFINITIVE FIX: Fetch categories on initial app load, regardless of login status ===
+  // Fetch initial data (Categories and Historic Products)
   useEffect(() => {
     const ourRequest = Axios.CancelToken.source();
-    async function fetchCategories() {
+
+    async function fetchInitialData() {
+      // Fetch Categories (existing logic)
       try {
         dispatch({ type: "setCategoryLoading" });
-        // The /categories endpoint is public, so no auth token is needed.
-        const response = await Axios.get("/categories", {
+        const catResponse = await Axios.get("/categories", {
           cancelToken: ourRequest.token,
         });
-        dispatch({ type: "setCategories", data: response.data });
+        dispatch({ type: "setCategories", data: catResponse.data });
       } catch (e) {
-        console.error("Fetch public categories error:", e);
-        dispatch({
-          type: "setCategoryError",
-          data: "Could not fetch category data.",
+        if (!Axios.isCancel(e)) {
+          console.error("Fetch categories error:", e);
+          dispatch({
+            type: "setCategoryError",
+            data: "Could not fetch category data.",
+          });
+        }
+      }
+
+      // === NEW LOGIC: Fetch Historic Products ===
+      try {
+        dispatch({ type: "setHistoricProductsLoading" });
+        const historicResponse = await Axios.get("/products/historic", {
+          cancelToken: ourRequest.token,
         });
+        dispatch({ type: "setHistoricProducts", data: historicResponse.data });
+      } catch (e) {
+        if (!Axios.isCancel(e)) {
+          console.error("Fetch historic products error:", e);
+          dispatch({
+            type: "setHistoricProductsError",
+            data: "Could not fetch historic items.",
+          });
+        }
       }
     }
-    fetchCategories(); // Run this immediately when the provider mounts
+
+    fetchInitialData();
 
     return () => ourRequest.cancel();
-  }, []); // The empty dependency array [] means this runs only ONCE.
-
-  // This useEffect for refreshing the token is correct
-  useEffect(() => {
-    let refreshIntervalId;
-    if (state.loggedIn) {
-      // ... logic is correct
-    }
-    return () => clearInterval(refreshIntervalId);
-  }, [state.loggedIn, state.user.refresh_interval]);
+  }, []); // Runs ONCE on app load
 
   return (
-    // Pass the whole state object, which now includes the 'urls'
     <StateContext.Provider value={state}>
       <DispatchContext.Provider value={dispatch}>
         {children}

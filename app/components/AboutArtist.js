@@ -22,12 +22,13 @@ function AboutArtist() {
 
         {/* --- COLUMN 2: PARAGRAPH + LINKS --- */}
         <div className="page-content--right-column">
+          <hr className="page-content--line-break" />
           <ul className="page-content--link-list">
             <li>
               <Link to="/about-family">Family</Link>
             </li>
             <li>
-              <Link to="/about-kcai">Kansas City Art Institute</Link>
+              <Link to="/about-history">Art History</Link>
             </li>
             <li>
               <Link to="/about-engineer">MSU Engineer</Link>

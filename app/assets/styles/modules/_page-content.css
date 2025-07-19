@@ -91,11 +91,13 @@
   &--h1 {
     margin-bottom: 0.25rem;
     margin-top: 0;
+    text-align: center;
   }
   &--h2 {
     margin-top: 0;
     color: #ccc;
     font-weight: 400;
+    text-align: center;
   }
 
   &--line-break {
@@ -121,13 +123,14 @@
     }
 
     a {
-      color: $deepRed;
+      color: $lightRed;
       text-decoration: none;
       font-weight: 500;
       transition: color 0.2s ease-out;
 
       &:hover {
-        color: $pureWhite;
+        color: $deepRed;
+        font-weight: bold;
       }
     }
   }

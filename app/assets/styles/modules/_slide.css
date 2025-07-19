@@ -1,0 +1,90 @@
+/*
+ * Isolated styles for the AboutHistory slider.
+ * Prefixes are 'slide-' to avoid conflicts with global 'swiper-' styles.
+*/
+
+.slide-card {
+  /* Base card styles copied from the original for visual consistency */
+  display: flex;
+  box-sizing: border-box;
+  background-color: $softBlack;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+
+  /* This allows the card to fill the height of the swiper-slide container, which stretches. */
+  height: 100%;
+
+  /* Default layout is landscape (text below) */
+  flex-direction: column;
+
+  /* --- Orientation-based Layouts --- */
+
+  /* Layout for Portrait Images (Text to the Side) */
+  &--portrait {
+    flex-direction: row;
+    align-items: stretch; /* Ensures image and content are the same height */
+
+    .slide-image {
+      flex: 0 0 45%;
+      object-fit: cover;
+    }
+
+    .slide-content {
+      flex: 1 1 55%;
+      padding: 1rem;
+      justify-content: center; /* Vertically center text block */
+    }
+
+    .slide-title,
+    .slide-description {
+      text-align: left;
+    }
+  }
+
+  /* Layout for Landscape Images (Text Below) */
+  &--landscape {
+    flex-direction: column;
+
+    .slide-image {
+      /* No special flex needed, it will sit on top */
+      object-fit: cover; /* Still useful to prevent distortion */
+    }
+
+    .slide-content {
+      padding: 1rem 0.5rem;
+    }
+
+    .slide-title,
+    .slide-description {
+      text-align: center;
+    }
+  }
+}
+
+.slide-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.slide-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.slide-title {
+  color: #fff;
+  font-weight: 700;
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.slide-description {
+  color: #ddd;
+  font-weight: 400;
+  margin: 0.5rem 0 0;
+  font-size: 1rem;
+}

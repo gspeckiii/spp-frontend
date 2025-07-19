@@ -84,7 +84,9 @@ function CategorySlider() {
         navigation
         className="swiper"
         breakpoints={{
-          640: { slidesPerView: 2, spaceBetween: 20 },
+          // Use 730px as the start of the 'atMedium' view
+          730: { slidesPerView: 2, spaceBetween: 20 },
+          // Use 1024px as the start of the 'atLarge' view
           1024: { slidesPerView: 3, spaceBetween: 30 },
         }}
       >
@@ -117,6 +119,9 @@ function CategorySlider() {
                     </p>
                   )}
                 </Link>
+
+                <hr className="swiper-slide__line-break" />
+
                 <div className="swiper-slide__footer">
                   {category.cat_vid ? (
                     <a

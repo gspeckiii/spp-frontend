@@ -9,7 +9,7 @@ import Home from "./Home.js";
 import HomeGuest from "./HomeGuest.js";
 import AboutArtist from "./AboutArtist.js";
 import AboutEngineer from "./AboutEngineer.js";
-import AboutKcai from "./AboutKcai.js";
+import AboutHistory from "./AboutHistory.js";
 import AboutFamily from "./AboutFamily.js";
 import AboutRaven from "./AboutRaven.js";
 import Terms from "./Terms.js";
@@ -173,7 +173,7 @@ export default function AppRoutes() {
       />
       <Route path="/about-artist" element={<AboutArtist />} />
       <Route path="/about-engineer" element={<AboutEngineer />} />
-      <Route path="/about-kcai" element={<AboutKcai />} />
+      <Route path="/about-history" element={<AboutHistory />} />
       <Route path="/about-family" element={<AboutFamily />} />
       <Route path="/about-raven" element={<AboutRaven />} />
       <Route path="/terms" element={<Terms />} />

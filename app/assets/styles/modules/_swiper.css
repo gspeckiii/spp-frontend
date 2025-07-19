@@ -231,3 +231,76 @@
     font-size: 1.3rem;
   }
 }
+
+/*
+*
+* === ABOUT HISTORY SLIDER - SPECIFIC OVERRIDES ===
+*
+*/
+.about-history-slider-wrapper {
+  /* --- MOBILE FIXES --- */
+  .swiper-slide__card {
+    height: auto;
+  }
+  .swiper-slide__image {
+    /* Let the image have its natural height on mobile */
+    aspect-ratio: unset;
+  }
+  .swiper-slide__content {
+    /* === THE FIX: Stop content from growing, which caused the vibration === */
+    flex-grow: 0;
+  }
+
+  /* --- LARGE SCREEN ENHANCEMENTS --- */
+  @include atLarge {
+    .swiper-container-wrapper {
+      align-items: center;
+      max-width: 1020px;
+      max-height: 85vh;
+      margin: 0 auto;
+    }
+
+    .swiper-slide {
+      align-self: stretch;
+    }
+
+    .swiper-slide__card {
+      height: 100%;
+    }
+
+    .swiper-slide__image {
+      /* === THE FIX: Show the entire image without cropping === */
+      object-fit: contain;
+    }
+
+    .swiper-slide__card--portrait {
+      flex-direction: row;
+
+      .swiper-slide__image {
+        flex: 0 0 40%;
+        height: 100%;
+      }
+      .swiper-slide__content {
+        flex: 1 1 60%;
+        padding: 2rem;
+        justify-content: center;
+        flex-grow: 1; /* Restore flex-grow for desktop layout */
+      }
+    }
+
+    .swiper-slide__card--landscape {
+      flex-direction: column;
+
+      .swiper-slide__image {
+        flex: 1 1 65%;
+        min-height: 0;
+      }
+      .swiper-slide__content {
+        flex-shrink: 0;
+        padding: 1.5rem;
+        justify-content: center;
+        flex-grow: 0; /* Content should not grow here */
+      }
+    }
+  }
+}
