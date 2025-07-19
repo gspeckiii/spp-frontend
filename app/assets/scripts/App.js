@@ -1,23 +1,23 @@
-// app/assets/scripts/App.js (Refactored)
+// app/assets/scripts/App.js (Corrected and Final)
 
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
 import "lazysizes";
 import "../styles/styles.css";
 
-// === THE DEFINITIVE FIX: Corrected import paths ===
-// The path from /assets/scripts/ needs to go up two levels to the /app/ directory
+// Corrected import paths
 import GlobalStateProvider from "../../context/GlobalStateProvider.js";
 import AppRoutes from "../../components/AppRoutes.js";
-import StateContext from "../../context/StateContext.js"; // This is also needed for the wrapper
+import StateContext from "../../context/StateContext.js";
 
 // Import the shell components
 import Header from "../../components/Header.js";
 import Footer from "../../components/Footer.js";
 import FlashMessages from "../../components/FlashMessages.js";
 
+// Your ErrorBoundary can remain unchanged
 class ErrorBoundary extends Component {
   state = { hasError: false };
   static getDerivedStateFromError(error) {
@@ -34,6 +34,13 @@ class ErrorBoundary extends Component {
   }
 }
 
+// A small wrapper component to get flash messages from context,
+// as it needs to be a child of the provider.
+function FlashMessagesWrapper() {
+  const { flashMessages } = useContext(StateContext);
+  return <FlashMessages messages={flashMessages} />;
+}
+
 function Main() {
   return (
     <ErrorBoundary>
@@ -41,20 +48,17 @@ function Main() {
         <BrowserRouter>
           <FlashMessagesWrapper />
           <Header />
-          <main className="page-content">
-            <AppRoutes />
-          </main>
+          {/* 
+            The AppRoutes component will now handle the main content area,
+            including its own loading state. The Header and Footer are
+            now stable and will not be unmounted.
+          */}
+          <AppRoutes />
           <Footer />
         </BrowserRouter>
       </GlobalStateProvider>
     </ErrorBoundary>
   );
-}
-
-// A small wrapper component to get flash messages from context
-function FlashMessagesWrapper() {
-  const { flashMessages } = React.useContext(StateContext);
-  return <FlashMessages messages={flashMessages} />;
 }
 
 const root = ReactDOM.createRoot(document.querySelector("#app"));

@@ -10,6 +10,8 @@ console.log("Axios API baseURL configured to:", Axios.defaults.baseURL);
 
 export default function GlobalStateProvider({ children }) {
   const initialState = {
+    // This state now acts as a signal for other components
+    appIsReady: false,
     loggedIn: Boolean(localStorage.getItem("SPPtoken")),
     flashMessages: [],
     user: {
@@ -28,10 +30,9 @@ export default function GlobalStateProvider({ children }) {
       loading: false,
       error: null,
     },
-    // === NEW STATE SLICE ADDED HERE ===
     historicProducts: {
       list: [],
-      loading: true, // Start in loading state
+      loading: true,
       error: null,
     },
     products: [],
@@ -44,7 +45,10 @@ export default function GlobalStateProvider({ children }) {
 
   function ourReducer(draft, action) {
     switch (action.type) {
-      // ... (your other cases like flashMessage, logIn, etc.)
+      case "setAppIsReady":
+        draft.appIsReady = true;
+        return;
+
       case "flashMessage":
         draft.flashMessages.push(action.value);
         return;
@@ -59,6 +63,12 @@ export default function GlobalStateProvider({ children }) {
         return;
       case "logOut":
         draft.loggedIn = false;
+        localStorage.removeItem("SPPtoken");
+        localStorage.removeItem("SPPusername");
+        localStorage.removeItem("SPPavatar");
+        localStorage.removeItem("SPPbio");
+        localStorage.removeItem("SPPadmin");
+        localStorage.removeItem("SPPuser_id");
         return;
       case "setCategoryLoading":
         draft.categories.loading = true;
@@ -80,7 +90,6 @@ export default function GlobalStateProvider({ children }) {
         draft.categories.loading = false;
         return;
 
-      // === NEW REDUCER CASES FOR HISTORIC PRODUCTS ===
       case "setHistoricProductsLoading":
         draft.historicProducts.loading = true;
         return;
@@ -98,46 +107,36 @@ export default function GlobalStateProvider({ children }) {
 
   const [state, dispatch] = useImmerReducer(ourReducer, initialState);
 
-  // ... (useEffect for localStorage and token refresh remain the same) ...
+  useEffect(() => {
+    if (state.loggedIn) {
+      localStorage.setItem("SPPtoken", state.user.token);
+      localStorage.setItem("SPPusername", state.user.username);
+      localStorage.setItem("SPPavatar", state.user.avatar);
+      localStorage.setItem("SPPbio", state.user.bio);
+      localStorage.setItem("SPPadmin", state.user.admin);
+      localStorage.setItem("SPPuser_id", state.user.user_id);
+    }
+  }, [state.loggedIn]);
 
-  // Fetch initial data (Categories and Historic Products)
   useEffect(() => {
     const ourRequest = Axios.CancelToken.source();
 
     async function fetchInitialData() {
-      // Fetch Categories (existing logic)
       try {
-        dispatch({ type: "setCategoryLoading" });
-        const catResponse = await Axios.get("/categories", {
-          cancelToken: ourRequest.token,
-        });
-        dispatch({ type: "setCategories", data: catResponse.data });
-      } catch (e) {
-        if (!Axios.isCancel(e)) {
-          console.error("Fetch categories error:", e);
-          dispatch({
-            type: "setCategoryError",
-            data: "Could not fetch category data.",
-          });
-        }
-      }
+        const [catResponse, historicResponse] = await Promise.all([
+          Axios.get("/categories", { cancelToken: ourRequest.token }),
+          Axios.get("/products/historic", { cancelToken: ourRequest.token }),
+        ]);
 
-      // === NEW LOGIC: Fetch Historic Products ===
-      try {
-        dispatch({ type: "setHistoricProductsLoading" });
-        const historicResponse = await Axios.get("/products/historic", {
-          cancelToken: ourRequest.token,
-        });
+        dispatch({ type: "setCategories", data: catResponse.data });
         dispatch({ type: "setHistoricProducts", data: historicResponse.data });
       } catch (e) {
         if (!Axios.isCancel(e)) {
-          console.error("Fetch historic products error:", e);
-          dispatch({
-            type: "setHistoricProductsError",
-            data: "Could not fetch historic items.",
-          });
+          console.error("Error fetching initial app data:", e);
         }
       }
+      // After all data fetching is attempted, mark the app as ready to render
+      dispatch({ type: "setAppIsReady" });
     }
 
     fetchInitialData();
@@ -145,6 +144,7 @@ export default function GlobalStateProvider({ children }) {
     return () => ourRequest.cancel();
   }, []); // Runs ONCE on app load
 
+  // The provider now ALWAYS renders its children, preventing the DOM error.
   return (
     <StateContext.Provider value={state}>
       <DispatchContext.Provider value={dispatch}>
