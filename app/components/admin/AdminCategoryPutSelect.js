@@ -5,8 +5,7 @@ import { Link } from "react-router-dom";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
 import Page from "../Page"; // Assuming you want a consistent page layout
-import LoadingDotsIcon from "../LoadingDotsIcon";
-// Import the new API function
+
 import { deleteCategory } from "../../services/api";
 
 function AdminCategoryPutSelect() {

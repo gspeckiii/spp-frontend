@@ -1,21 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
-import Axios from "axios";
 import StateContext from "../context/StateContext";
 import LoadingDotsIcon from "./LoadingDotsIcon";
-
-/* No longer need to import an isolated stylesheet */
-
-const detectImageOrientation = (url) => {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () =>
-      resolve(img.naturalWidth > img.naturalHeight ? "landscape" : "portrait");
-    img.onerror = () => resolve("landscape");
-    img.src = url;
-  });
-};
 
 function AboutHistory() {
   const appState = useContext(StateContext);
@@ -24,71 +11,84 @@ function AboutHistory() {
 
   const [productImages, setProductImages] = useState({});
 
+  // Simplified image fetching, consistent with ProductSlider
   useEffect(() => {
     if (!historicProducts || historicProducts.length === 0 || !urls.api) return;
 
-    const fetchProductImagesAndOrientation = async () => {
+    const fetchProductImages = async () => {
       const images = {};
-      const requests = historicProducts.map(async (product) => {
+      const imagePromises = historicProducts.map(async (product) => {
         if (!product.id) return;
         try {
-          const response = await Axios.get(`/products/${product.id}/images`);
-          if (response.data?.[0]?.img_path) {
-            const firstImage = response.data[0];
-            const fullUrl = `${urls.images}${firstImage.img_path}`;
-            const orientation = await detectImageOrientation(fullUrl);
-            images[product.id] = { img_path: firstImage.img_path, orientation };
+          const response = await fetch(
+            `${urls.api}/products/${product.id}/images`
+          );
+          if (response.ok) {
+            const fetchedImages = await response.json();
+            images[product.id] =
+              Array.isArray(fetchedImages) && fetchedImages.length > 0
+                ? { img_path: fetchedImages[0].img_path }
+                : { img_path: null };
           } else {
-            images[product.id] = { img_path: null, orientation: "landscape" };
+            images[product.id] = { img_path: null };
           }
         } catch (error) {
-          images[product.id] = { img_path: null, orientation: "landscape" };
+          console.error(
+            `Failed to fetch image for historic product ${product.id}`,
+            error
+          );
+          images[product.id] = { img_path: null };
         }
       });
-      await Promise.all(requests);
+      await Promise.all(imagePromises);
       setProductImages(images);
     };
 
-    fetchProductImagesAndOrientation();
-  }, [historicProducts, urls.api, urls.images]);
+    fetchProductImages();
+  }, [historicProducts, urls.api]);
 
   /* --- Rendering Logic --- */
-  if (loading)
+  if (loading) {
     return (
       <div className="swiper-container-wrapper">
         <LoadingDotsIcon />
       </div>
     );
-  if (error) return <div className="swiper-container-wrapper">{error}</div>;
-  if (!historicProducts || historicProducts.length === 0)
+  }
+  if (error) {
+    return <div className="swiper-container-wrapper">{error}</div>;
+  }
+  if (!historicProducts || historicProducts.length === 0) {
     return (
       <div className="swiper-container-wrapper">No historic items found.</div>
     );
+  }
 
   return (
-    /* === THE FIX: Add a unique wrapper class to scope our new styles === */
-    <div className="about-history-slider-wrapper">
+    // Use the common wrapper class for consistent styling
+    <div className="swiper-container-wrapper">
       <Swiper
         modules={[Navigation]}
-        spaceBetween={30} /* A generous space for a single slide view */
-        slidesPerView={1} /* ALWAYS one slide */
+        spaceBetween={10}
+        slidesPerView={1}
         navigation
         className="swiper"
-        /* NO breakpoints needed */
+        breakpoints={{
+          // Use 730px as the start of the 'atMedium' view
+          800: { slidesPerView: 2, spaceBetween: 20 },
+          // Use 1024px as the start of the 'atLarge' view
+          1020: { slidesPerView: 3, spaceBetween: 30 },
+        }}
       >
         {historicProducts.map((product) => (
           <SwiperSlide key={product.id}>
-            {/* Reverting to your global, trusted class names */}
-            <div
-              className={`swiper-slide__card swiper-slide__card--${
-                productImages[product.id]?.orientation || "landscape"
-              }`}
-            >
+            {/* Use the common, trusted class name for the card */}
+            <div className="swiper-slide__card">
               <img
                 src={
                   productImages[product.id]?.img_path
                     ? `${urls.images}${productImages[product.id].img_path}`
-                    : "/assets/images/default.jpg"
+                    : "/assets/images/default.jpg" // Fallback image
                 }
                 alt={product.prod_name || "Historic Product"}
                 className="swiper-slide__image"

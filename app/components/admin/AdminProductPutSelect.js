@@ -1,4 +1,4 @@
-// app/components/admin/AdminProductPutSelect.js (Refactored)
+// app/components/admin/AdminProductPutSelect.js
 
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -6,7 +6,6 @@ import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
 import Page from "../Page";
 import LoadingDotsIcon from "../LoadingDotsIcon";
-// Import the new API functions
 import {
   getCategoryById,
   getProductsByCategory,
@@ -23,18 +22,25 @@ function AdminProductPutSelect() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  // --- NEW: State for the product filter ---
+  const [filter, setFilter] = useState("current"); // 'current', 'historic', 'all'
 
   useEffect(() => {
+    // Set loading to true each time the filter or ID changes to give user feedback
+    setIsLoading(true);
+
     const fetchData = async () => {
       try {
+        // --- MODIFIED: Pass the current filter state to the API call ---
         const [categoryResponse, productsResponse] = await Promise.all([
           getCategoryById(id),
-          getProductsByCategory(id),
+          getProductsByCategory(id, filter), // Pass the filter here
         ]);
 
         setCategory(categoryResponse.data);
         setProducts(productsResponse.data);
 
+        // Update global state
         appDispatch({ type: "selectCategory", data: categoryResponse.data });
         appDispatch({ type: "setProducts", data: productsResponse.data });
       } catch (e) {
@@ -43,8 +49,15 @@ function AdminProductPutSelect() {
       }
       setIsLoading(false);
     };
+
     fetchData();
-  }, [id, appDispatch]);
+    // --- MODIFIED: Added 'filter' to dependency array to re-run on change ---
+  }, [id, appDispatch, filter]);
+
+  // --- NEW: Handler for the filter dropdown ---
+  const handleFilterChange = (e) => {
+    setFilter(e.target.value);
+  };
 
   const handleDelete = async (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
@@ -78,6 +91,7 @@ function AdminProductPutSelect() {
       </Page>
     );
   }
+  // Show loading indicator when fetching initially or when filter changes
   if (isLoading) {
     return (
       <Page title="Loading...">
@@ -98,17 +112,32 @@ function AdminProductPutSelect() {
       <div className="table-select">
         <div className="table-select__section-heading">
           <h1>Products in: {category ? category.cat_name : "..."}</h1>
-          <Link
-            to={`/admin-product-post/${id}`}
-            className="table-select__button table-select__button--success"
-          >
-            Add Product
-          </Link>
+          <div className="table-select__actions">
+            {/* --- NEW: Filter dropdown menu --- */}
+            <div className="form__group">
+              <select
+                value={filter}
+                onChange={handleFilterChange}
+                className="form__input form__input--select"
+                aria-label="Filter products"
+              >
+                <option value="current">Show Current</option>
+                <option value="historic">Show Historic</option>
+                <option value="all">Show All</option>
+              </select>
+            </div>
+            <Link
+              to={`/admin-product-post/${id}`}
+              className="table-select__button table-select__button--success"
+            >
+              Add Product
+            </Link>
+          </div>
         </div>
 
         {products.length === 0 ? (
           <p className="text-center">
-            No products have been added to this category yet.
+            No products match the current filter in this category.
           </p>
         ) : (
           <table className="table-select__table">

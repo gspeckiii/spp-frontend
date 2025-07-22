@@ -46,8 +46,8 @@ export const deleteCategory = (categoryId) =>
   api.delete(`/categories/${categoryId}`);
 
 // --- Products ---
-export const getProductsByCategory = (categoryId) =>
-  api.get(`/products/category/${categoryId}`);
+export const getProductsByCategory = (categoryId, filter = "current") =>
+  api.get(`/products/category/${categoryId}?filter=${filter}`);
 export const getProductById = (productId) => api.get(`/products/${productId}`);
 export const createProduct = (productData) =>
   api.post("/products", productData);

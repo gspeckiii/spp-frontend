@@ -1,12 +1,11 @@
-// app/components/admin/AdminProductPut.js (Refactored)
+// app/components/admin/AdminProductPut.js
 
 import React, { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
 import Page from "../Page";
 import LoadingDotsIcon from "../LoadingDotsIcon";
-// Import the new API functions
 import {
   getProductById,
   updateProduct,
@@ -45,11 +44,15 @@ function AdminProductPut() {
     fetchData();
   }, [id]);
 
+  // --- MODIFIED: This handler now correctly processes checkbox changes ---
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProduct((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    // Use 'checked' for checkbox input type, otherwise use 'value'
+    const newValue = type === "checkbox" ? checked : value;
+    setProduct((prev) => ({ ...prev, [name]: newValue }));
   };
 
+  // --- MODIFIED: This now sends the 'historic' field in the update payload ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -59,6 +62,7 @@ function AdminProductPut() {
         prod_desc: product.prod_desc,
         prod_cost: product.prod_cost,
         cat_fk: product.cat_fk,
+        historic: product.historic, // Send the historic status
       });
 
       appDispatch({
@@ -115,6 +119,7 @@ function AdminProductPut() {
           </label>
           <input
             type="text"
+            id="prod_name"
             name="prod_name"
             value={product.prod_name}
             onChange={handleChange}
@@ -129,6 +134,7 @@ function AdminProductPut() {
           </label>
           <input
             type="text"
+            id="prod_desc"
             name="prod_desc"
             value={product.prod_desc || ""}
             onChange={handleChange}
@@ -143,6 +149,7 @@ function AdminProductPut() {
           </label>
           <input
             type="number"
+            id="prod_cost"
             name="prod_cost"
             value={product.prod_cost}
             onChange={handleChange}
@@ -150,6 +157,22 @@ function AdminProductPut() {
             step="0.01"
             required
           />
+        </div>
+
+        {/* --- NEW: Checkbox for marking product as historic --- */}
+        <div className="form__group form__group--checkbox">
+          <input
+            type="checkbox"
+            name="historic"
+            id="historic"
+            // Use '!!' to ensure the value is always a boolean for the 'checked' prop
+            checked={!!product.historic}
+            onChange={handleChange}
+            className="form__input--checkbox"
+          />
+          <label className="form__label--checkbox" htmlFor="historic">
+            Mark as Historic (will be hidden from public category view)
+          </label>
         </div>
 
         <button type="submit" className="form__button" disabled={isSubmitting}>

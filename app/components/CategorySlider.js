@@ -15,7 +15,7 @@ function CategorySlider() {
   );
 
   useEffect(() => {
-    if (localCategories.length === 0) return;
+    if (localCategories.length === 0 || !urls.api) return;
 
     const fetchProductCounts = async () => {
       const promises = localCategories.map(async (category) => {
@@ -84,9 +84,7 @@ function CategorySlider() {
         navigation
         className="swiper"
         breakpoints={{
-          // Use 730px as the start of the 'atMedium' view
           730: { slidesPerView: 2, spaceBetween: 20 },
-          // Use 1024px as the start of the 'atLarge' view
           1024: { slidesPerView: 3, spaceBetween: 30 },
         }}
       >
@@ -106,21 +104,21 @@ function CategorySlider() {
                 }}
               />
               <div className="swiper-slide__content">
-                <Link
-                  to={`/category/${category.cat_id}/products`}
-                  className="swiper-slide__link"
-                >
-                  <h3 className="swiper-slide__title">
-                    {category.cat_name || "Unknown"}
-                  </h3>
-                  {category.cat_desc && (
-                    <p className="swiper-slide__subtitle">
-                      {category.cat_desc}
-                    </p>
-                  )}
-                </Link>
-
-                <hr className="swiper-slide__line-break" />
+                <div className="swiper-slide__main-content">
+                  <Link
+                    to={`/category/${category.cat_id}/products`}
+                    className="swiper-slide__link"
+                  >
+                    <h3 className="swiper-slide__title">
+                      {category.cat_name || "Unknown"}
+                    </h3>
+                    {category.cat_desc && (
+                      <p className="swiper-slide__subtitle">
+                        {category.cat_desc}
+                      </p>
+                    )}
+                  </Link>
+                </div>
 
                 <div className="swiper-slide__footer">
                   {category.cat_vid ? (

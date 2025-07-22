@@ -11,7 +11,6 @@ function ProductSlider() {
   const appState = useContext(StateContext);
   const navigate = useNavigate();
 
-  // Destructure the URLs from the global state for easy use
   const { urls } = appState;
 
   const [products, setProducts] = useState([]);
@@ -21,9 +20,7 @@ function ProductSlider() {
 
   const memoizedProducts = useMemo(() => products, [products]);
 
-  // Fetch products for the category
   useEffect(() => {
-    // Check if urls are available before fetching
     if (!urls.api) return;
 
     const fetchProducts = async () => {
@@ -45,11 +42,9 @@ function ProductSlider() {
       setIsLoading(false);
     };
     fetchProducts();
-  }, [id, urls.api]); // Depend on urls.api
+  }, [id, urls.api]);
 
-  // Fetch one image per product
   useEffect(() => {
-    // Check if urls are available and there are products to fetch for
     if (!urls.api || memoizedProducts.length === 0) {
       return;
     }
@@ -82,7 +77,7 @@ function ProductSlider() {
       setProductImages(images);
     };
     fetchProductImages();
-  }, [memoizedProducts, urls.api]); // Depend on urls.api
+  }, [memoizedProducts, urls.api]);
 
   const handleOrderClick = (e, product) => {
     if (!appState.loggedIn) {
@@ -135,15 +130,14 @@ function ProductSlider() {
                 <img
                   src={
                     productImages[product.id]?.img_path
-                      ? // === THE FIX: Use the IMAGE_URL from context ===
-                        `${urls.images}${productImages[product.id].img_path}`
+                      ? `${urls.images}${productImages[product.id].img_path}`
                       : "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
                   }
                   alt={product.prod_name || "Product"}
                   className="swiper-slide__image"
                 />
                 <div className="swiper-slide__content">
-                  <div>
+                  <div className="swiper-slide__main-content">
                     <h3 className="swiper-slide__title">
                       {product.prod_name || "Unknown"}
                     </h3>

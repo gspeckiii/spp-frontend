@@ -1,6 +1,6 @@
-/* _swiper.css (Corrected and Cleaned) */
+/* _swiper.css (Cleaned and Refactored) */
 
-/* --- SHARED SWIPER STYLES --- */
+/* --- CORE STRUCTURAL STYLES --- */
 .swiper-container-wrapper {
   display: flex;
   flex-grow: 1;
@@ -8,6 +8,7 @@
   width: 100%;
   position: relative;
   z-index: 1;
+  box-sizing: border-box;
 }
 .swiper {
   width: 100%;
@@ -16,9 +17,9 @@
   box-sizing: border-box;
 }
 .swiper-slide {
-  display: flex;
+  display: flex; /* This is crucial for the card to be able to stretch */
   justify-content: center;
-  align-items: center;
+  height: auto; /* Let Swiper determine the row height */
 }
 .swiper-slide__card {
   position: relative;
@@ -32,53 +33,39 @@
   height: auto;
   border: 10px solid $softBlack;
 }
+
+/* === IMAGE BEHAVIOR === */
 .swiper-slide__image {
   width: 100%;
   height: auto;
   display: block;
   border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0; /* Prevents image from being squished */
 }
+
+/* === CONTENT & FOOTER STRUCTURE === */
 .swiper-slide__content {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  flex-grow: 1; /* This makes the content area fill the card's vertical space */
   padding: 1rem 0.5rem;
-  flex-grow: 1;
+}
+.swiper-slide__main-content {
+  /* This block holds the main text content */
 }
 .swiper-slide__link {
   text-decoration: none;
-  color: inherit;
 }
-.swiper-slide__title {
-  color: #fff;
-  text-align: center;
-  font-weight: 700;
-  margin: 0;
-  font-size: 1.25rem;
-}
-.swiper-slide__subtitle,
-.swiper-slide__description {
-  color: #ddd;
-  text-align: center;
-  font-weight: 400;
-  margin: 0.5rem 0 0;
-  font-size: 1rem;
-}
-.swiper-slide__image-desc {
-  color: #aaa;
-  font-style: italic;
-  text-align: center;
-  margin-top: 1rem;
-  font-size: 0.8rem;
-}
-.swiper-slide__footer {
+.swiper-slide__footer,
+.product-slide__footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1rem;
+  margin-top: 1rem; /* This provides a minimum gap for shorter cards on mobile */
 }
 
-/* --- CATEGORY SLIDER SPECIFIC STYLES --- */
+/* --- COMPONENT-SPECIFIC STRUCTURAL STYLES --- */
 .swiper-slide__youtube-icon {
   width: 32px;
   height: auto;
@@ -87,8 +74,6 @@
   width: 32px;
   height: 22px;
 }
-
-/* === THE FIX: CONSOLIDATED AND CORRECTED CIRCLE STYLE === */
 .swiper-slide__product-count-circle {
   display: inline-flex;
   justify-content: center;
@@ -98,91 +83,45 @@
   padding: 0 5px;
   background-color: $softWhite;
   color: $softBlack;
-  border-radius: 50%;
   font-weight: bold;
-  font-size: 1rem;
+  border-radius: 50%;
   text-decoration: none;
   transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
-
   &:hover {
     transform: scale(1.1);
     background-color: $lightRed;
     color: $softWhite;
   }
 }
-
-/* --- PRODUCT SLIDER SPECIFIC STYLES --- */
-.product-slide__footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1.5rem;
-}
 .product-slide__back-arrow {
   display: block;
   width: 50px;
   height: 50px;
   transition: transform 0.2s ease-out;
-}
-.product-slide__back-arrow:hover {
-  transform: scale(1.1);
-}
-.product-slide__back-arrow img {
-  width: 100%;
-  height: 100%;
+  &:hover {
+    transform: scale(1.1);
+  }
+  img {
+    width: 100%;
+    height: 100%;
+  }
 }
 .product-slide__cost-button {
   background-color: $deepRed;
-  color: $softWhite;
   padding: 0.5rem 1.5rem;
   border-radius: 50px;
-  font-weight: bold;
   text-decoration: none;
-  font-size: 1.1rem;
   transition: background-color 0.2s ease-out;
-}
-.product-slide__cost-button:hover {
-  background-color: $darkRed;
+  &:hover {
+    background-color: $darkRed;
+  }
 }
 
-/* --- RESPONSIVE ENHANCEMENTS for BOTH --- */
+/* --- RESPONSIVE LAYOUT & SPACING --- */
 @mixin atSmall {
-  .swiper-slide__title {
-    font-size: 1.5rem;
-  }
-  .swiper-slide__description {
-    font-size: 1.1rem;
-  }
-  .swiper-slide__cost-button {
-    font-size: 1.2rem;
-  }
-  .swiper-slide__image-desc {
-    font-size: 0.9rem;
-  }
-  .swiper-slide__product-count-circle {
-    font-size: 1.1rem;
-  }
-}
-@mixin atMedium {
-  .swiper-slide__card {
-    border-width: 12px;
-  }
-  .swiper-slide__title {
-    font-size: 1.75rem;
-  }
-  .swiper-slide__description {
-    font-size: 1.25rem;
-  }
-  .swiper-slide__cost-button {
-    font-size: 1.4rem;
-    padding: 0.75rem 2rem;
-  }
-  .swiper-slide__image-desc {
-    font-size: 1rem;
-  }
-  .swiper-slide__back-arrow {
-    width: 60px;
-    height: 60px;
+  .swiper-container-wrapper {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
   .swiper-slide__youtube-icon {
     width: 40px;
@@ -191,32 +130,64 @@
     width: 40px;
     height: 28px;
   }
+  .product-slide__back-arrow {
+    width: 60px;
+    height: 60px;
+  }
   .swiper-slide__product-count-circle {
     min-width: 40px;
     height: 40px;
-    font-size: 1.2rem;
   }
 }
+
+@mixin atMedium {
+  /*
+  *
+  * === THE DEFINITIVE ALIGNMENT SOLUTION ===
+  *
+  */
+
+  /* 1. Tell each individual slide to stretch itself to the height of the row.
+        This is more direct and robust than styling the parent. */
+  .swiper-slide {
+    align-self: stretch;
+  }
+
+  /* 2. Tell the card to fill the newly stretched slide container. */
+  .swiper-slide__card {
+    height: 100%;
+  }
+
+  /* 3. Force the footer to the bottom of the card. */
+  .swiper-slide__footer,
+  .product-slide__footer {
+    /* This overrides the mobile margin and consumes all available space above it,
+       pushing the footer to the very bottom of the .swiper-slide__content block. */
+    margin-top: auto;
+  }
+
+  /* Other sizing adjustments */
+  .swiper-slide__card {
+    border-width: 12px;
+  }
+  .product-slide__cost-button {
+    padding: 0.75rem 2rem;
+  }
+}
+
 @mixin atLarge {
+  .swiper-container-wrapper {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
   .swiper-slide__card {
     border-width: 15px;
   }
-  .swiper-slide__title {
-    font-size: 2.25rem;
-  }
-  .swiper-slide__description {
-    font-size: 1.5rem;
-  }
-  .swiper-slide__cost-button {
-    font-size: 1.6rem;
+  .product-slide__cost-button {
     padding: 0.8rem 2.2rem;
-  }
-  .swiper-slide__image-desc {
-    font-size: 1.1rem;
-  }
-  .swiper-slide__back-arrow {
-    width: 70px;
-    height: 70px;
   }
   .swiper-slide__youtube-icon {
     width: 48px;
@@ -225,82 +196,12 @@
     width: 48px;
     height: 34px;
   }
+  .product-slide__back-arrow {
+    width: 70px;
+    height: 70px;
+  }
   .swiper-slide__product-count-circle {
     min-width: 44px;
     height: 44px;
-    font-size: 1.3rem;
-  }
-}
-
-/*
-*
-* === ABOUT HISTORY SLIDER - SPECIFIC OVERRIDES ===
-*
-*/
-.about-history-slider-wrapper {
-  /* --- MOBILE FIXES --- */
-  .swiper-slide__card {
-    height: auto;
-  }
-  .swiper-slide__image {
-    /* Let the image have its natural height on mobile */
-    aspect-ratio: unset;
-  }
-  .swiper-slide__content {
-    /* === THE FIX: Stop content from growing, which caused the vibration === */
-    flex-grow: 0;
-  }
-
-  /* --- LARGE SCREEN ENHANCEMENTS --- */
-  @include atLarge {
-    .swiper-container-wrapper {
-      align-items: center;
-      max-width: 1020px;
-      max-height: 85vh;
-      margin: 0 auto;
-    }
-
-    .swiper-slide {
-      align-self: stretch;
-    }
-
-    .swiper-slide__card {
-      height: 100%;
-    }
-
-    .swiper-slide__image {
-      /* === THE FIX: Show the entire image without cropping === */
-      object-fit: contain;
-    }
-
-    .swiper-slide__card--portrait {
-      flex-direction: row;
-
-      .swiper-slide__image {
-        flex: 0 0 40%;
-        height: 100%;
-      }
-      .swiper-slide__content {
-        flex: 1 1 60%;
-        padding: 2rem;
-        justify-content: center;
-        flex-grow: 1; /* Restore flex-grow for desktop layout */
-      }
-    }
-
-    .swiper-slide__card--landscape {
-      flex-direction: column;
-
-      .swiper-slide__image {
-        flex: 1 1 65%;
-        min-height: 0;
-      }
-      .swiper-slide__content {
-        flex-shrink: 0;
-        padding: 1.5rem;
-        justify-content: center;
-        flex-grow: 0; /* Content should not grow here */
-      }
-    }
   }
 }

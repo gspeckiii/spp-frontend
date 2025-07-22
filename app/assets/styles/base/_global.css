@@ -110,36 +110,40 @@ ul {
 
 h1 {
   @mixin atSmall {
-    font-size: 1.33rem;
+    font-size: 1.1rem;
   }
   @mixin atMedium {
-    font-size: 1.67rem;
+    font-size: 1.2rem;
   }
 
   @mixin atLarge {
-    font-size: 2rem;
+    font-size: 1.3rem;
   }
 }
 
 h2 {
   @mixin atSmall {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
   @mixin atMedium {
-    font-size: 1.33rem;
+    font-size: 1rem;
   }
 
   @mixin atLarge {
-    font-size: 1.67rem;
+    font-size: 1.1rem;
   }
 }
 
 h3 {
+  @mixin atSmall {
+    font-size: 0.8rem;
+  }
   @mixin atMedium {
-    font-size: 1.5rem;
+    font-size: 0.9rem;
   }
 
   @mixin atLarge {
+    font-size: 1rem;
   }
 }
 
