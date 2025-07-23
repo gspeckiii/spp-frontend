@@ -28,5 +28,6 @@
 @import "modules/_swiper";
 @import "modules/_page-content";
 @import "modules/_loading";
-
+@import "modules/_image-grid";
 @import "modules/_slide";
+@import "modules/_resume";

@@ -39,15 +39,17 @@ function AboutArtist() {
           </ul>
           <hr className="page-content--line-break" />
           <p className="page-content--p">
-            Art is an expression of our experiences. From the day we are born
-            our souls search from a way to honor those who came before us and
-            leave a legacy they would be proud of. Art can transend good and
-            evil. The only tool we can use to free ourselves from ourselves.
-            Stand toe to toe with a mirror pointed blankly at our soul. A risk
-            that no matter the outcome will result in an experience we can learn
-            from. To grow in skill is real fulfillment. To quench curiousity is
-            the pleasure of lifetime. To live in hope and pass into the spirit
-            world with a smile. A true keeper of the flame.
+            Art is the essential language of experience. I see it as a bridge
+            connecting our present lives to the past, providing a way to honor
+            those who came before us while leaving behind a meaningful legacy.
+            My work explores truths that exist beyond the simple frameworks of
+            good and evil, using the creative act as a tool for radical
+            self-confrontation. The driving forces behind my practice are a
+            relentless curiosity and a dedication to honing my craft. I find
+            profound fulfillment in technical development and the pleasure of
+            exploration. Ultimately, my aspiration is to tend to this creative
+            spirit with hope and sincerity, contributing something of lasting
+            value as a keeper of the flame.
           </p>
         </div>
       </div>
