@@ -5,6 +5,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
 import "lazysizes";
+
 import "../styles/styles.css";
 
 // Corrected import paths

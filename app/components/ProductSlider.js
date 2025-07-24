@@ -112,69 +112,71 @@ function ProductSlider() {
 
   return (
     <Page title="Products">
-      <div className="swiper-container-wrapper">
-        <Swiper
-          modules={[Navigation]}
-          spaceBetween={10}
-          slidesPerView={1}
-          navigation
-          className="swiper"
-          breakpoints={{
-            640: { slidesPerView: 2, spaceBetween: 20 },
-            1024: { slidesPerView: 3, spaceBetween: 30 },
-          }}
-        >
-          {products.map((product) => (
-            <SwiperSlide key={product.id}>
-              <div className="swiper-slide__card">
-                <img
-                  src={
-                    productImages[product.id]?.img_path
-                      ? `${urls.images}${productImages[product.id].img_path}`
-                      : "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
-                  }
-                  alt={product.prod_name || "Product"}
-                  className="swiper-slide__image"
-                />
-                <div className="swiper-slide__content">
-                  <div className="swiper-slide__main-content">
-                    <h3 className="swiper-slide__title">
-                      {product.prod_name || "Unknown"}
-                    </h3>
-                    {product.prod_desc && (
-                      <p className="swiper-slide__description">
-                        {product.prod_desc}
-                      </p>
-                    )}
-                    {productImages[product.id]?.img_desc && (
-                      <p className="swiper-slide__image-desc">
-                        {productImages[product.id].img_desc}
-                      </p>
-                    )}
-                  </div>
-                  <div className="product-slide__footer">
-                    <Link to={`/`} className="product-slide__back-arrow">
-                      <img
-                        src="/assets/images/icons/back-arrow.svg"
-                        alt="Back to Categories"
-                      />
-                    </Link>
-                    {product.prod_cost && (
-                      <Link
-                        to={`/order/${product.id}`}
-                        state={{ product: product }}
-                        onClick={(e) => handleOrderClick(e, product)}
-                        className="product-slide__cost-button"
-                      >
-                        ${parseFloat(product.prod_cost).toFixed(2)}
+      <div className="full-width-section">
+        <div className="swiper-container-wrapper">
+          <Swiper
+            modules={[Navigation]}
+            spaceBetween={10}
+            slidesPerView={1}
+            navigation
+            className="swiper"
+            breakpoints={{
+              730: { slidesPerView: 2, spaceBetween: 20 },
+              1024: { slidesPerView: 3, spaceBetween: 30 },
+            }}
+          >
+            {products.map((product) => (
+              <SwiperSlide key={product.id}>
+                <div className="swiper-slide__card">
+                  <img
+                    src={
+                      productImages[product.id]?.img_path
+                        ? `${urls.images}${productImages[product.id].img_path}`
+                        : "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                    }
+                    alt={product.prod_name || "Product"}
+                    className="swiper-slide__image"
+                  />
+                  <div className="swiper-slide__content">
+                    <div className="swiper-slide__main-content">
+                      <h3 className="swiper-slide__title">
+                        {product.prod_name || "Unknown"}
+                      </h3>
+                      {product.prod_desc && (
+                        <p className="swiper-slide__description">
+                          {product.prod_desc}
+                        </p>
+                      )}
+                      {productImages[product.id]?.img_desc && (
+                        <p className="swiper-slide__image-desc">
+                          {productImages[product.id].img_desc}
+                        </p>
+                      )}
+                    </div>
+                    <div className="product-slide__footer">
+                      <Link to={`/`} className="product-slide__back-arrow">
+                        <img
+                          src="/assets/images/icons/back-arrow.svg"
+                          alt="Back to Categories"
+                        />
                       </Link>
-                    )}
+                      {product.prod_cost && (
+                        <Link
+                          to={`/order/${product.id}`}
+                          state={{ product: product }}
+                          onClick={(e) => handleOrderClick(e, product)}
+                          className="product-slide__cost-button"
+                        >
+                          ${parseFloat(product.prod_cost).toFixed(2)}
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
       </div>
     </Page>
   );

@@ -1,3 +1,48 @@
+/*
+  1. Use a more-intuitive box-sizing model.
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+/*
+  2. Remove default margin from the body.
+*/
+body {
+  margin: 0;
+}
+/*
+  3. Remove default margin from list, headings, etc.
+*/
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+/*
+  4. Make images easier to work with.
+*/
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+/*
+  5. Inherit fonts for inputs and buttons.
+*/
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
 html {
   scroll-behavior: smooth;
 }
@@ -8,10 +53,10 @@ body {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: $softWhite !important;
+  color: white;
+
   text-align: left;
 
-  background-color: #333;
   background-image: url("/assets/images/bark-background-mobile.png");
   background-size: cover;
   background-position: center;
@@ -30,6 +75,90 @@ body {
   @mixin atLarge {
     background-image: url("/assets/images/bark-background-laptop.png");
   }
+}
+
+h2,
+h3,
+p,
+ul {
+  line-height: 1.5;
+}
+
+h1 {
+  font-size: 1.2rem;
+  margin-bottom: 0.625rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.1rem;
+  font-weight: 300;
+  text-align: center;
+}
+
+h3 {
+  font-size: 1rem;
+  margin-bottom: 0.3125rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+p,
+ul {
+  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  @mixin atSmall {
+    font-size: 1.1rem;
+  }
+  @mixin atMedium {
+    font-size: 1.2rem;
+  }
+
+  @mixin atLarge {
+    font-size: 1.3rem;
+  }
+}
+
+h2 {
+  @mixin atSmall {
+    font-size: 0.9rem;
+  }
+  @mixin atMedium {
+    font-size: 1rem;
+  }
+
+  @mixin atLarge {
+    font-size: 1.1rem;
+  }
+}
+
+h3 {
+  @mixin atSmall {
+    font-size: 0.8rem;
+  }
+  @mixin atMedium {
+    font-size: 0.9rem;
+  }
+
+  @mixin atLarge {
+    font-size: 1rem;
+  }
+}
+
+p,
+ul {
+  @mixin atMedium {
+    font-size: 1.125rem;
+    margin-bottom: 1.25rem;
+  }
+}
+.section {
+  margin-bottom: 20px;
 }
 
 body.overlay-is-open .mobile-overlay {

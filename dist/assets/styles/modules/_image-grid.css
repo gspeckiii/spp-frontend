@@ -1,0 +1,93 @@
+/* _imagegrid.css */
+
+/*
+  This is the PARENT of the image grid. We are forcing it to
+  become a centering grid. This assumes it's wrapping your component.
+  If the direct parent is `.container`, this will work.
+  We need to find the right parent selector. Let's start with this.
+*/
+.container {
+  /* Use Grid for robust centering */
+  display: grid;
+  place-items: center; /* This centers horizontally and vertically */
+  padding-right: 0.5rem; /* Add padding to the outside */
+  padding-left: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+/* Your image grid container now just defines its background and max-width */
+.image-grid-container {
+  max-width: 1500px;
+  width: 100%; /* Ensure it takes up available space up to its max-width */
+  background-color: $softBlack;
+  padding: 1rem; /* Padding for inside the container */
+}
+
+/* 
+  The rest of your styles for .image-grid, .image-grid__item, etc.,
+  are correct and do not need to be changed.
+*/
+/* ... */
+/*
+  The rest of the styles are correct and do not need to change.
+  They control the grid layout INSIDE the now-centered container.
+*/
+.image-grid {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 10px;
+  grid-template-columns: 1fr;
+}
+
+.image-grid__item {
+  box-sizing: border-box;
+  border: 7px solid $pureBlack;
+  overflow: hidden;
+}
+
+.image-grid__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* === PORTRAIT Images Grid Layout === */
+@mixin atMedium {
+  .image-grid--portrait {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .container {
+    padding-right: 1rem; /* Add padding to the outside */
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+@mixin atLarge {
+  .image-grid--portrait {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@mixin atXlarge {
+  .image-grid--portrait {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.image-grid--portrait .image-grid__item {
+  aspect-ratio: 3 / 4;
+}
+
+/* === LANDSCAPE Images Grid Layout === */
+@mixin atMedium {
+  .image-grid--landscape {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@mixin atXlarge {
+  .image-grid--landscape {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.image-grid--landscape .image-grid__item {
+  aspect-ratio: 16 / 9;
+}

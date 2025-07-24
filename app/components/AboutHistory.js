@@ -66,50 +66,51 @@ function AboutHistory() {
 
   return (
     // Use the common wrapper class for consistent styling
-    <div className="swiper-container-wrapper">
-      <Swiper
-        modules={[Navigation]}
-        spaceBetween={10}
-        slidesPerView={1}
-        navigation
-        className="swiper"
-        breakpoints={{
-          // Use 730px as the start of the 'atMedium' view
-          800: { slidesPerView: 2, spaceBetween: 20 },
-          // Use 1024px as the start of the 'atLarge' view
-          1020: { slidesPerView: 3, spaceBetween: 30 },
-        }}
-      >
-        {historicProducts.map((product) => (
-          <SwiperSlide key={product.id}>
-            {/* Use the common, trusted class name for the card */}
-            <div className="swiper-slide__card">
-              <img
-                src={
-                  productImages[product.id]?.img_path
-                    ? `${urls.images}${productImages[product.id].img_path}`
-                    : "/assets/images/default.jpg" // Fallback image
-                }
-                alt={product.prod_name || "Historic Product"}
-                className="swiper-slide__image"
-                onError={(e) => {
-                  e.target.src = "/assets/images/default.jpg";
-                }}
-              />
-              <div className="swiper-slide__content">
-                <h3 className="swiper-slide__title">
-                  {product.prod_name || "Untitled"}
-                </h3>
-                {product.prod_desc && (
-                  <p className="swiper-slide__description">
-                    {product.prod_desc}
-                  </p>
-                )}
+    <div className="full-width-section">
+      <div className="swiper-container-wrapper">
+        <Swiper
+          modules={[Navigation]}
+          spaceBetween={10}
+          slidesPerView={1}
+          navigation
+          className="swiper"
+          breakpoints={{
+            730: { slidesPerView: 2, spaceBetween: 20 },
+            1020: { slidesPerView: 3, spaceBetween: 30 },
+            /*1020: { slidesPerView: 3, spaceBetween: 30 },*/
+          }}
+        >
+          {historicProducts.map((product) => (
+            <SwiperSlide key={product.id}>
+              {/* Use the common, trusted class name for the card */}
+              <div className="swiper-slide__card">
+                <img
+                  src={
+                    productImages[product.id]?.img_path
+                      ? `${urls.images}${productImages[product.id].img_path}`
+                      : "/assets/images/default.jpg" // Fallback image
+                  }
+                  alt={product.prod_name || "Historic Product"}
+                  className="swiper-slide__image"
+                  onError={(e) => {
+                    e.target.src = "/assets/images/default.jpg";
+                  }}
+                />
+                <div className="swiper-slide__content">
+                  <h3 className="swiper-slide__title">
+                    {product.prod_name || "Untitled"}
+                  </h3>
+                  {product.prod_desc && (
+                    <p className="swiper-slide__description">
+                      {product.prod_desc}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
     </div>
   );
 }
