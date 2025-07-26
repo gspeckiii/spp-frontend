@@ -6,6 +6,8 @@ import { BrowserRouter } from "react-router-dom";
 
 import "lazysizes";
 
+import "swiper/css";
+import "swiper/css/navigation";
 import "../styles/styles.css";
 
 // Corrected import paths

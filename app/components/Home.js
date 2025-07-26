@@ -1,18 +1,26 @@
-// /app/components/Home.js (THE FINAL, WORKING VERSION)
+// Home.js (THE FINAL, CORRECTED VERSION)
 
 import React from "react";
-import Page from "./Page"; // We use Page for the overall structure and title
+import Page from "./Page";
 import CategorySlider from "./CategorySlider";
 
-function Home(props) {
+function Home() {
   return (
-    // Use the Page component WITHOUT the 'wide' prop.
-    // This provides the narrow container for your text content.
-    <Page title="Home">
-      <div className="full-width-section">
-        <CategorySlider />
-      </div>
-    </Page>
+    <>
+      {/* 
+        SECTION 1: The Animated Heading
+        Just like in HomeGuest, this is now separate and has no background.
+      */}
+      <h1 className="container__heading--animated">Where Truth Takes Form</h1>
+
+      {/* 
+        SECTION 2: The Full-Width Slider
+        This remains a direct child for full-width layout.
+      */}
+      <CategorySlider />
+
+      {/* No other content is needed for the logged-in user's home page */}
+    </>
   );
 }
 

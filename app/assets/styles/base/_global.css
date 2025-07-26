@@ -57,7 +57,7 @@ body {
 
   text-align: left;
 
-  background-image: url("assets/images/bark-background-mobile.png");
+  background-image: url("~images/bark-background-mobile.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -67,13 +67,13 @@ body {
   flex-direction: column;
 
   @mixin atSmall {
-    background-image: url("assets/images/bark-background-tablet-portrait.png");
+    background-image: url("~images/bark-background-tablet-portrait.png");
   }
   @mixin atMedium {
-    background-image: url("assets/images/bark-background-tablet-landscape.png");
+    background-image: url("~images/bark-background-tablet-landscape.png");
   }
   @mixin atLarge {
-    background-image: url("assets/images/bark-background-laptop.png");
+    background-image: url("~images/bark-background-laptop.png");
   }
 }
 
@@ -186,19 +186,9 @@ a {
   color: $pureWhite;
 }
 
-/* Add this back to your CSS */
-.container {
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
+/* Used in base container component*/
 
-.Container--narrow {
-  max-width: 840px; /* Or whatever your desired narrow width is */
-}
-
-/* Add this to a global CSS file that's always loaded */
+/* AUsed in ProductSlider and AboutHistory Components */
 .full-width-section {
   width: 100vw; /* 100% of the viewport width */
   position: relative;

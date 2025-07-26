@@ -1,12 +1,16 @@
-// app/components/AboutRaven.js
+// app/components/AboutRaven.js (THE FINAL, CORRECTED VERSION)
 
-import React from "react";
-import Page from "./Page";
+import React, { useEffect } from "react";
+// We no longer need the Page component for this layout.
 
 function AboutRaven() {
-  // The complete list of your image filenames
+  useEffect(() => {
+    document.title = "About Raven | SPP";
+    window.scrollTo(0, 0);
+  }, []);
+
   const ravenImageFiles = [
-    "IMG_2302.JPEG",
+    /* ... your long list of images is unchanged ... */ "IMG_2302.JPEG",
     "IMG_3094.JPEG",
     "IMG_4053.JPEG",
     "IMG_5210.JPEG",
@@ -58,23 +62,24 @@ function AboutRaven() {
   ];
 
   return (
-    <Page title="About Raven">
-      <div className="image-grid-container">
-        {/* We use the --portrait modifier class to trigger the correct column layout */}
-        <div className="image-grid image-grid--portrait">
-          {ravenImageFiles.map((filename, index) => (
-            <div key={index} className="image-grid__item">
-              <img
-                // The path points to the new /raven/ subdirectory
-                src={`../assets/images/raven/${filename}`}
-                alt={`Raven photo ${index + 1}`}
-                className="image-grid__img"
-              />
-            </div>
-          ))}
-        </div>
+    /* 
+      THE FIX: We have removed the <Page> wrapper. 
+      This component's root is now the .image-grid-container itself,
+      preventing the "double container" layout bug.
+    */
+    <div className="image-grid-container">
+      <div className="image-grid image-grid--portrait">
+        {ravenImageFiles.map((filename, index) => (
+          <div key={index} className="image-grid__item">
+            <img
+              src={`../assets/images/raven/${filename}`}
+              alt={`Raven photo ${index + 1}`}
+              className="image-grid__img"
+            />
+          </div>
+        ))}
       </div>
-    </Page>
+    </div>
   );
 }
 

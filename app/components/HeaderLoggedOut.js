@@ -36,26 +36,8 @@ function HeaderLoggedOut({ closeModal }) {
     }
   }
 
-  // This function will be called when the "Sign up" link is clicked
-  const handleRegisterClick = () => {
-    // If we're in the mobile overlay, closeModal will be defined and will close it.
-    // If we're on the desktop, it will be an empty function, so nothing happens.
-    if (closeModal) {
-      closeModal();
-    }
-  };
-
   return (
     <form onSubmit={handleSubmit}>
-      <div className="form__group">
-        <Link
-          className="primary-nav__link"
-          to="/register"
-          onClick={handleRegisterClick}
-        >
-          Register
-        </Link>
-      </div>
       <div className="form__group">
         <input
           onChange={(e) => setUsername(e.target.value)}
@@ -76,11 +58,10 @@ function HeaderLoggedOut({ closeModal }) {
           autoComplete="current-password"
         />
       </div>
-      <div className="form__group">
-        <button type="submit" className="form__button">
-          Sign In
-        </button>
-      </div>
+
+      <button type="submit" className="form__button">
+        Sign In
+      </button>
     </form>
   );
 }

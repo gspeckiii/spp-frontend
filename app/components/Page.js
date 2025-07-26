@@ -1,13 +1,29 @@
-import React, { useEffect } from "react"
-import Container from "./Container"
+// Page.js (THE FINAL, CORRECTED ARCHITECTURE)
+
+import React, { useEffect } from "react";
+import Container from "./Container";
 
 function Page(props) {
   useEffect(() => {
-    document.title = `${props.title} | SPP`
-    window.scrollTo(0, 0)
-  }, [])
+    document.title = `${props.title} | SPP`;
+    window.scrollTo(0, 0);
+  }, [props.title]);
 
-  return <Container wide={props.wide}>{props.children}</Container>
+  // Determine the correct container class based on the layout prop.
+  let containerClass = "container--narrow"; // The default
+  if (props.layout === "wide") {
+    containerClass = "container--wide";
+  } else if (props.layout === "two-column") {
+    containerClass = "container--two-column";
+  }
+
+  // The Container component is now simpler. It just receives the final class.
+  // We also pass the transparent prop if it exists.
+  return (
+    <Container className={containerClass} transparent={props.transparent}>
+      {props.children}
+    </Container>
+  );
 }
 
-export default Page
+export default Page;

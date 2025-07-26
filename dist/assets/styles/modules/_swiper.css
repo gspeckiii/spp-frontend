@@ -1,4 +1,13 @@
-/* _swiper.css (Cleaned and Refactored) */
+/*
+ * ====================================================================
+ * Swiper Custom Styles (Corrected Version)
+ *
+ * NOTE: All dangerous overrides for the core `.swiper` and 
+ * `.swiper-slide` classes have been removed. This file now only 
+ * styles the custom components *inside* the slides, which is the 
+ * safe and correct approach.
+ * ====================================================================
+ */
 
 /* --- CORE STRUCTURAL STYLES --- */
 .swiper-container-wrapper {
@@ -10,17 +19,7 @@
   z-index: 1;
   box-sizing: border-box;
 }
-.swiper {
-  width: 100%;
-  height: 100%;
-  padding: 10px;
-  box-sizing: border-box;
-}
-.swiper-slide {
-  display: flex; /* This is crucial for the card to be able to stretch */
-  justify-content: center;
-  height: auto; /* Let Swiper determine the row height */
-}
+
 .swiper-slide__card {
   position: relative;
   display: flex;
@@ -30,7 +29,8 @@
   border-radius: 6px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 100%;
-  height: auto;
+  /* Use 100% height to fill the slide, especially at larger breakpoints */
+  height: 100%;
   border: 10px solid $softBlack;
 }
 
@@ -51,12 +51,15 @@
   flex-grow: 1; /* This makes the content area fill the card's vertical space */
   padding: 1rem 0.5rem;
 }
+
 .swiper-slide__main-content {
   /* This block holds the main text content */
 }
+
 .swiper-slide__link {
   text-decoration: none;
 }
+
 .swiper-slide__footer,
 .product-slide__footer {
   display: flex;
@@ -70,10 +73,12 @@
   width: 32px;
   height: auto;
 }
+
 .swiper-slide__youtube-placeholder {
   width: 32px;
   height: 22px;
 }
+
 .swiper-slide__product-count-circle {
   display: inline-flex;
   justify-content: center;
@@ -93,6 +98,7 @@
     color: $softWhite;
   }
 }
+
 .product-slide__back-arrow {
   display: block;
   width: 50px;
@@ -106,6 +112,7 @@
     height: 100%;
   }
 }
+
 .product-slide__cost-button {
   background-color: $deepRed;
   padding: 0.5rem 1.5rem;
@@ -144,21 +151,17 @@
   /*
   *
   * === THE DEFINITIVE ALIGNMENT SOLUTION ===
+  * This is the correct way to achieve equal-height slides
+  * and bottom-aligned footers.
   *
   */
 
-  /* 1. Tell each individual slide to stretch itself to the height of the row.
-        This is more direct and robust than styling the parent. */
-  .swiper-slide {
-    align-self: stretch;
-  }
-
-  /* 2. Tell the card to fill the newly stretched slide container. */
+  /* 1. Tell the card to fill the slide container (already set in base style). */
   .swiper-slide__card {
     height: 100%;
   }
 
-  /* 3. Force the footer to the bottom of the card. */
+  /* 2. Force the footer to the bottom of the card's content area. */
   .swiper-slide__footer,
   .product-slide__footer {
     /* This overrides the mobile margin and consumes all available space above it,

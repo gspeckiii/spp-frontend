@@ -1,42 +1,36 @@
-/* _imagegrid.css */
+/* _image-grid.css (FINAL, WITH CORRECT CALC() GUTTERS) */
 
-/*
-  This is the PARENT of the image grid. We are forcing it to
-  become a centering grid. This assumes it's wrapping your component.
-  If the direct parent is `.container`, this will work.
-  We need to find the right parent selector. Let's start with this.
-*/
-.container {
-  /* Use Grid for robust centering */
-  display: grid;
-  place-items: center; /* This centers horizontally and vertically */
-  padding-right: 0.5rem; /* Add padding to the outside */
-  padding-left: 0.5rem;
-  padding-top: 0.5rem;
-}
-
-/* Your image grid container now just defines its background and max-width */
 .image-grid-container {
-  max-width: 1500px;
-  width: 100%; /* Ensure it takes up available space up to its max-width */
+  max-width: 2020px;
   background-color: $softBlack;
-  padding: 1rem; /* Padding for inside the container */
+  padding: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+
+  /* 
+    !!! THE DEFINITIVE FIX FOR "STILL TOUCHING" !!!
+    1. We explicitly calculate the width to be "100% of the viewport
+       MINUS the space for our gutters (1rem on each side)".
+    2. We then use `margin: auto` to perfectly center this new,
+       slightly-narrower box. This is a modern, unbreakable pattern.
+  */
+  width: calc(100% - 2rem);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* 
-  The rest of your styles for .image-grid, .image-grid__item, etc.,
-  are correct and do not need to be changed.
-*/
-/* ... */
-/*
-  The rest of the styles are correct and do not need to change.
-  They control the grid layout INSIDE the now-centered container.
+  The rest of your styles are correct and do not need to be changed.
 */
 .image-grid {
   display: grid;
   gap: 10px;
-  margin-bottom: 10px;
   grid-template-columns: 1fr;
+  width: 100%;
+
+  &:not(:last-child) {
+    margin-bottom: 2rem;
+  }
 }
 
 .image-grid__item {
@@ -56,11 +50,6 @@
 @mixin atMedium {
   .image-grid--portrait {
     grid-template-columns: repeat(2, 1fr);
-  }
-  .container {
-    padding-right: 1rem; /* Add padding to the outside */
-    padding-left: 1rem;
-    padding-bottom: 1rem;
   }
 }
 @mixin atLarge {

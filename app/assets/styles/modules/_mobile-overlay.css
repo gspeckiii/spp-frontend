@@ -1,0 +1,64 @@
+/* _mobile-overlay.css (FINAL, CONSOLIDATED) */
+
+.mobile-overlay {
+  position: fixed; /* Stays fixed to the viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(28, 37, 38, 0.95);
+
+  /* It sits *within* the header's z-index, but we can manage it here */
+  z-index: 5; /* Ensure it's above the logo */
+
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-out, visibility 0s 0.3s linear;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* When the overlay should be visible */
+  &--is-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease-out;
+  }
+}
+
+/* --- Mobile Navigation Menu Styles (MOVED FROM _primary-nav.css) --- */
+.mobile-overlay__nav {
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+  }
+  li {
+    padding: 1rem 0;
+  }
+  a {
+    color: $softWhite;
+    text-decoration: none;
+    font-size: 1.5rem;
+    display: block;
+    padding: 1rem;
+    transition: color 0.3s ease-out;
+    &:hover {
+      color: $deepRed;
+    }
+  }
+}
+
+/* --- Mobile Login Form Styles --- */
+.mobile-overlay__modal-inner {
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+
+  .section-title {
+    color: $pureWhite;
+    margin-bottom: 1.5rem;
+  }
+}

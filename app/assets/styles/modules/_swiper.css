@@ -10,6 +10,8 @@
  */
 
 /* --- CORE STRUCTURAL STYLES --- */
+/* In your Swiper CSS file */
+
 .swiper-container-wrapper {
   display: flex;
   flex-grow: 1;
@@ -18,8 +20,17 @@
   position: relative;
   z-index: 1;
   box-sizing: border-box;
-}
 
+  /* This padding creates the space for the navigation arrows */
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  /* 
+    !!! THE FIX FOR "JACKED UP SWIPERS" !!!
+    The '100vw', 'margin-left', and 'transform' rules have all been DELETED.
+    The swiper now behaves as a normal block-level element.
+  */
+}
 .swiper-slide__card {
   position: relative;
   display: flex;
@@ -60,14 +71,18 @@
   text-decoration: none;
 }
 
-.swiper-slide__footer,
-.product-slide__footer {
+.swiper-slide__footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 1rem; /* This provides a minimum gap for shorter cards on mobile */
 }
-
+.product-slide__footer {
+  display: flex;
+  justify-content: center; /* NEW */
+  align-items: center;
+  margin-top: 1rem;
+}
 /* --- COMPONENT-SPECIFIC STRUCTURAL STYLES --- */
 .swiper-slide__youtube-icon {
   width: 32px;
@@ -96,20 +111,6 @@
     transform: scale(1.1);
     background-color: $lightRed;
     color: $softWhite;
-  }
-}
-
-.product-slide__back-arrow {
-  display: block;
-  width: 50px;
-  height: 50px;
-  transition: transform 0.2s ease-out;
-  &:hover {
-    transform: scale(1.1);
-  }
-  img {
-    width: 100%;
-    height: 100%;
   }
 }
 

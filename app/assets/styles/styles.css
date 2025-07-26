@@ -1,12 +1,17 @@
-/* Change these lines: */
+/* Change these lines: 
 @import "swiper.css";
 @import "navigation.css";
-
-/* To these lines: */
+*/
 
 @import "base/_variables";
 @import "base/_mixins";
 @import "base/_global";
+@import "modules/_container";
+@import "modules/_site-footer";
+@import "modules/_site-header";
+@import "modules/_mobile-overlay";
+@import "modules/_swiper";
+
 @import "modules/_large-hero";
 @import "modules/_btn";
 @import "modules/_wrapper";
@@ -17,9 +22,7 @@
 @import "modules/_section-title";
 @import "modules/_feature-item";
 @import "modules/_testimonial";
-@import "modules/_site-footer";
-@import "modules/_site-header";
-@import "modules/_primary-nav";
+
 @import "modules/_reveal-item";
 
 @import "modules/_social-icons";
@@ -33,4 +36,3 @@
 @import "modules/_loading";
 @import "modules/_image-grid";
 @import "modules/_resume";
-@import "modules/_swiper";

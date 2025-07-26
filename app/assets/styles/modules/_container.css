@@ -1,0 +1,182 @@
+/* _container.css (THE FINAL, COMPLETE, AND MERGED VERSION) */
+
+/* ==========================================================================
+   CORE CONTAINER & LAYOUT STYLES (for AboutArtist, etc.)
+   ========================================================================== */
+
+.container {
+  margin-left: 0.67rem;
+  margin-right: 0.67rem;
+  background-color: $softBlack;
+  padding: 1rem;
+  z-index: 1;
+
+  @mixin atSmall {
+    padding: 2rem;
+    margin-left: 2.5rem;
+    margin-right: 2.5rem;
+  }
+
+  @mixin atLarge {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.container.container--narrow {
+  @mixin atLarge {
+    max-width: 840px;
+  }
+}
+
+.container.container--wide {
+  max-width: none;
+}
+
+.container.container--two-column {
+  @mixin atSmall {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2.5rem;
+  }
+  @mixin atLarge {
+    max-width: 1010px;
+  }
+}
+
+.container.container--two-column .container__column-left,
+.container.container--two-column .container__column-right {
+  @mixin atSmall {
+    flex: 1;
+    min-width: 0;
+    align-self: flex-start;
+  }
+}
+
+.container.container--two-column
+  .container__column-right.container__column-right--v-center {
+  @mixin atSmall {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+.container__image {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.container__heading-main {
+  margin-bottom: 0.25rem;
+  margin-top: 0;
+  text-align: center;
+}
+.container__heading-sub {
+  margin-top: 0;
+  color: #ccc;
+  font-weight: 400;
+  text-align: center;
+}
+.container__line-break {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  margin: 1.5rem 0;
+}
+.container__text-block {
+  margin: 0;
+  line-height: 1.8;
+  letter-spacing: 0.5px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+.container__link-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  li {
+    margin-bottom: 0.75rem;
+  }
+  a {
+    color: $lightRed;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease-out;
+    &:hover {
+      color: $deepRed;
+      font-weight: bold;
+    }
+  }
+}
+
+/* ==========================================================================
+   HOMEPAGE-SPECIFIC STYLES (RESTORED)
+   These rules are for the animated heading and the large Register button.
+   ========================================================================== */
+
+.container__heading--animated {
+  text-align: center;
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+  animation-delay: 1s;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  font-size: 2rem;
+  color: $softWhite;
+
+  @mixin atMedium {
+    font-size: 3rem;
+    letter-spacing: 2px;
+  }
+
+  @mixin atLarge {
+    font-size: 4rem;
+    letter-spacing: 2.5px;
+  }
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Wrapper for the Register button */
+.container__wrapper--narrow {
+  max-width: 840px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+/* Styles for the large Register button */
+.container__wrapper--narrow .form__button {
+  display: inline-block;
+  width: auto;
+  margin: 2rem 0;
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  @mixin atMedium {
+    padding: 1.25rem 3rem;
+    font-size: 1.4rem;
+  }
+
+  @mixin atLarge {
+    padding: 1.5rem 3.5rem;
+    font-size: 1.5rem;
+  }
+}

@@ -4,7 +4,7 @@ import React, { useEffect, useContext } from "react";
 import { useImmerReducer } from "use-immer";
 import DispatchContext from "../context/DispatchContext";
 import FlashMessages from "./FlashMessages";
-
+import Page from "./Page";
 import {
   checkUsernameAvailability,
   checkEmailAvailability,
@@ -268,11 +268,10 @@ function Register() {
   if (state.password.hasErrors) validationErrors.push(state.password.message);
 
   return (
-    <div className="wrapper wrapper--wide">
-      <FlashMessages messages={validationErrors} isValidationMessage={true} />
-
-      {/* ======================= THIS HTML WAS MISSING ====================== */}
+    <Page title="resgister">
       <div className="form">
+        <FlashMessages messages={validationErrors} isValidationMessage={true} />
+
         <form onSubmit={handleSubmit}>
           <div className="form__group">
             <label htmlFor="username-register" className="form__label">
@@ -326,8 +325,7 @@ function Register() {
           </button>
         </form>
       </div>
-      {/* ====================================================================== */}
-    </div>
+    </Page>
   );
 }
 

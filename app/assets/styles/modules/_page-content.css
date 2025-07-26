@@ -1,131 +1,22 @@
-/* ==========================================================================
-   Page Content Styles
-   - Mobile-first, single-column layout
-   - Responsive two-column grid at the `atSmall` breakpoint
-   - Gutters on tablet view to reveal the background
-   - Max-width container for large desktop screens
-   ========================================================================== */
+/* page-content.css (THE CORRECT, SIMPLE VERSION) */
 
 .page-content {
-  width: 100%;
+  /* This tells the content area to expand and take up all available
+     vertical space, which makes your footer stick to the bottom. */
   flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+
+  /* This pushes the content down so it doesn't hide behind your header. */
   padding-top: 90px;
-  position: relative;
-  z-index: 0;
-  justify-content: center;
 
   @mixin atSmall {
-    padding-top: 125px;
+    padding-top: 100px;
   }
   @mixin atMedium {
     padding-top: 175px;
   }
-  @mixin atLarge {
-  }
 
-  &--section {
-    z-index: 1;
-    /* Base styles for mobile */
-    background-color: $softBlack;
-    padding: 1rem;
-
-    /* These rules constrain the block on LARGE screens */
-    max-width: 1010px;
-
-    /* === THE FIX: Explicitly set a margin for mobile view === */
-    /* This overrides the 'auto' margins below for small screens only */
-    margin-left: 0.67rem;
-    margin-right: 0.67rem;
-
-    @mixin atSmall {
-      /* This correctly overrides the 1rem margin for tablet view */
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 2.5rem;
-      width: auto;
-      margin-left: 2.5rem;
-      margin-right: 2.5rem;
-      padding: 2rem;
-    }
-
-    @mixin atLarge {
-      /* This overrides the 2.5rem margin to re-center the block */
-      margin-left: auto;
-      margin-right: auto;
-    }
-  }
-
-  /* --- Column & Content Styles --- */
-
-  &--left-column {
-    @mixin atSmall {
-      flex: 1;
-      text-align: center;
-    }
-  }
-
-  &--right-column {
-    @mixin atSmall {
-      flex: 1;
-      text-align: left;
-    }
-  }
-
-  /* ... The rest of your styles are unchanged ... */
-
-  &--image {
-    width: 100%;
-    margin-bottom: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  &--h1 {
-    margin-bottom: 0.25rem;
-    margin-top: 0;
-    text-align: center;
-  }
-  &--h2 {
-    margin-top: 0;
-    color: #ccc;
-    font-weight: 400;
-    text-align: center;
-  }
-
-  &--line-break {
-    border: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    width: 100%;
-    margin: 1.5rem 0;
-  }
-
-  &--p {
-    margin: 0;
-    line-height: 1.8;
-    letter-spacing: 0.5px;
-  }
-
-  &--link-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-
-    li {
-      margin-bottom: 0.75rem;
-    }
-
-    a {
-      color: $lightRed;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s ease-out;
-
-      &:hover {
-        color: $deepRed;
-        font-weight: bold;
-      }
-    }
-  }
+  /* 
+    IMPORTANT: There is NO `display: flex` and NO `justify-content` here.
+    Their absence is what prevents your content from being cut off.
+  */
 }

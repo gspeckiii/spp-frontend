@@ -15,6 +15,7 @@ function CategorySlider() {
   );
 
   useEffect(() => {
+    // This useEffect remains the same. It correctly fetches the counts for all categories.
     if (localCategories.length === 0 || !urls.api) return;
 
     const fetchProductCounts = async () => {
@@ -57,20 +58,41 @@ function CategorySlider() {
     );
   }
 
+  // This check is fine. If there are no categories from the API, show this.
   if (localCategories.length === 0) {
     return (
       <div className="swiper-container-wrapper">No categories available</div>
     );
   }
 
-  const categoriesWithImages = localCategories.filter(
-    (cat) => cat.cat_img_path
-  );
+  // ====================================================================
+  // === CHANGE IS HERE: Create the final list of categories to display ===
+  // ====================================================================
+  const displayCategories = localCategories.filter((category) => {
+    // We will check three conditions to see if a category should be displayed.
 
-  if (categoriesWithImages.length === 0) {
+    // Condition 1: The category must have an image path.
+    const hasImage = category.cat_img_path;
+
+    // Condition 2: The category must NOT be historic.
+    // (Assuming the property from your database is called 'historic' and is a boolean)
+    const isNotHistoric = !category.historic;
+
+    // Condition 3: The category must have more than 0 products.
+    // We check the productCounts state we fetched earlier.
+    const hasProducts = productCounts[category.cat_id] > 0;
+
+    // Only if all three conditions are true, we include it in our final list.
+    return hasImage && isNotHistoric && hasProducts;
+  });
+
+  // Now, we check if our FINAL list is empty. This could be because all categories
+  // had no products, or no images, etc.
+  if (displayCategories.length === 0) {
     return (
       <div className="swiper-container-wrapper">
-        No category images available
+        {/* We can show a more specific message if we want */}
+        No active categories to display at this time.
       </div>
     );
   }
@@ -88,7 +110,8 @@ function CategorySlider() {
           1024: { slidesPerView: 3, spaceBetween: 30 },
         }}
       >
-        {categoriesWithImages.map((category) => (
+        {/* We now map over our new, filtered `displayCategories` list */}
+        {displayCategories.map((category) => (
           <SwiperSlide key={category.cat_id}>
             <div className="swiper-slide__card">
               <img
@@ -141,9 +164,8 @@ function CategorySlider() {
                     to={`/category/${category.cat_id}/products`}
                     className="swiper-slide__product-count-circle"
                   >
-                    {productCounts[category.cat_id] !== undefined
-                      ? productCounts[category.cat_id]
-                      : "..."}
+                    {/* The count will always be greater than 0 here */}
+                    {productCounts[category.cat_id]}
                   </Link>
                 </div>
               </div>

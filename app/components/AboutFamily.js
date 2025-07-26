@@ -1,14 +1,16 @@
-// app/components/AboutFamily.js
+// app/components/AboutFamily.js (THE FINAL, CORRECTED VERSION)
 
-import React, { useContext } from "react";
-import Page from "./Page";
-import StateContext from "../context/StateContext";
+import React, { useEffect } from "react";
+// We no longer need the Page component for this layout.
 
 function AboutFamily() {
-  const appState = useContext(StateContext);
+  useEffect(() => {
+    document.title = "Family Photos | SPP";
+    window.scrollTo(0, 0);
+  }, []);
 
   const imageFiles = [
-    "anne-me-78.png",
+    /* ... your long list of images is unchanged ... */ "anne-me-78.png",
     "beer-me-78.png",
     "cousins-landscape.png",
     "darcie-grandpa-landscape.png",
@@ -24,8 +26,6 @@ function AboutFamily() {
     "sister-brother-landscape.png",
     "virgina-me-landscape.png",
   ];
-
-  // === THE FIX: Separate images into two distinct groups ===
   const portraitImages = imageFiles.filter(
     (filename) => !filename.includes("-landscape")
   );
@@ -34,37 +34,34 @@ function AboutFamily() {
   );
 
   return (
-    <Page title="Family Photos">
-      <div className="container">
-        <div className="image-grid-container">
-          {/* --- Portrait Images Section --- */}
-          <div className="image-grid image-grid--portrait">
-            {portraitImages.map((filename, index) => (
-              <div key={index} className="image-grid__item">
-                <img
-                  src={`../assets/images/family/${filename}`}
-                  alt={`Family portrait ${index + 1}`}
-                  className="image-grid__img"
-                />
-              </div>
-            ))}
+    /* 
+      THE FIX: The <Page> wrapper is removed. The .image-grid-container
+      is now the top-level element, fixing the layout bug.
+    */
+    <div className="image-grid-container">
+      <div className="image-grid image-grid--portrait">
+        {portraitImages.map((filename, index) => (
+          <div key={index} className="image-grid__item">
+            <img
+              src={`../assets/images/family/${filename}`}
+              alt={`Family portrait ${index + 1}`}
+              className="image-grid__img"
+            />
           </div>
-
-          {/* --- Landscape Images Section --- */}
-          <div className="image-grid image-grid--landscape">
-            {landscapeImages.map((filename, index) => (
-              <div key={index} className="image-grid__item">
-                <img
-                  src={`../assets/images/family/${filename}`}
-                  alt={`Family landscape ${index + 1}`}
-                  className="image-grid__img"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
-    </Page>
+      <div className="image-grid image-grid--landscape">
+        {landscapeImages.map((filename, index) => (
+          <div key={index} className="image-grid__item">
+            <img
+              src={`../assets/images/family/${filename}`}
+              alt={`Family landscape ${index + 1}`}
+              className="image-grid__img"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 

@@ -1,3 +1,8 @@
+// =============================================================
+// FINAL, CORRECTED webpack.config.js
+// You can replace your entire file with this.
+// =============================================================
+
 const currentTask = process.env.npm_lifecycle_event;
 const path = require("path");
 const Dotenv = require("dotenv-webpack");
@@ -16,27 +21,16 @@ const postCSSPlugins = [
   require("autoprefixer"),
 ];
 
+// REMOVED: The RunAfterCompile class is no longer needed.
+// Webpack will now handle all assets automatically.
+/*
 class RunAfterCompile {
   apply(compiler) {
-    compiler.hooks.done.tap("Copy files", () => {
-      // Only copy to dist/ in build mode
-      if (currentTask === "build" || currentTask === "webpackBuild") {
-        fse.copySync(
-          "./app/assets/styles/styles.css",
-          "./dist/assets/styles/styles.css"
-        );
-        fse.copySync(
-          "./app/assets/styles/modules",
-          "./dist/assets/styles/modules"
-        );
-        fse.copySync("./app/assets/styles/base", "./dist/assets/styles/base");
-        fse.copySync("./app/assets/images", "./dist/assets/images");
-      }
-    });
+    // ...
   }
 }
+*/
 
-// vvvvvv  THE CHANGE IS IN HERE vvvvvv
 let cssConfig = {
   test: /\.css$/i,
   use: [
@@ -48,7 +42,7 @@ let cssConfig = {
       options: {
         sourceMap: true,
         importLoaders: 1,
-        url: false, // <-- ADD THIS LINE
+        // CORRECT: The "url: false" line is GONE.
       },
     },
     {
@@ -62,7 +56,6 @@ let cssConfig = {
     },
   ],
 };
-// ^^^^^^ THE CHANGE IS IN HERE ^^^^^^
 
 const htmlPlugin = new HtmlWebpackPlugin({
   filename: "index.html",
@@ -79,7 +72,7 @@ const config = {
     }),
     htmlPlugin,
     new HtmlWebpackHarddiskPlugin(),
-    new RunAfterCompile(),
+    // REMOVED: new RunAfterCompile() is no longer in the plugins array.
   ],
   module: {
     rules: [
@@ -113,14 +106,15 @@ const config = {
     clean: true,
   },
   mode: "development",
+  // CHANGED: This is the main fix for your path issues.
   resolve: {
-    modules: [
-      "node_modules",
-      "app/assets/styles",
-      "app/assets/styles/base",
-      "app/assets/styles/modules",
-    ],
+    // We only need node_modules here for Webpack's primary resolution.
+    modules: ["node_modules"],
     extensions: [".js", ".jsx", ".css"],
+    // This ALIAS is the key. It creates a shortcut for your image paths.
+    alias: {
+      images: path.resolve(__dirname, "app/assets/images"),
+    },
   },
 };
 
@@ -133,6 +127,7 @@ if (currentTask === "dev" || currentTask === "webpackDev") {
         directory: path.join(__dirname, "app"),
         publicPath: "/",
       },
+      // This is still fine to keep for dev server.
       {
         directory: path.join(__dirname, "app/assets"),
         publicPath: "/assets",

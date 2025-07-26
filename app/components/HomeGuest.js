@@ -1,18 +1,23 @@
-// /app/components/Home.js (THE FINAL, WORKING VERSION)
+// HomeGuest.js (Final, Cleaned-Up Version)
 
 import React from "react";
-import Page from "./Page"; // We use Page for the overall structure and title
+import { Link } from "react-router-dom";
 import CategorySlider from "./CategorySlider";
 
-function HomeGuest(props) {
+function HomeGuest() {
   return (
-    // Use the Page component WITHOUT the 'wide' prop.
-    // This provides the narrow container for your text content.
-    <Page title="Home">
-      <div className="full-width-section">
-        <CategorySlider />
+    <>
+      <h1 className="container__heading--animated">Where Truth Takes Form</h1>
+
+      <CategorySlider />
+
+      <div className="container__wrapper--narrow">
+        {/* The inline style has been removed. All styling is now in the CSS. */}
+        <Link className="form__button" to="/register">
+          Register
+        </Link>
       </div>
-    </Page>
+    </>
   );
 }
 

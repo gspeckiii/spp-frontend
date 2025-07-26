@@ -12,12 +12,10 @@ function HeaderLoggedIn(props) {
     window.location = "/";
   }
   return (
-    <div>
-      <div className="site-header__btn-container">
-        <button onClick={handleLogOut} className="primary-nav__btn">
-          Sign Out
-        </button>
-      </div>
+    <div className="form__group">
+      <button onClick={handleLogOut} className="form__button">
+        Sign Out
+      </button>
     </div>
   );
 }

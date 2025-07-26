@@ -1,184 +1,199 @@
+/* _site-header.css (FINAL, WITH INCREASED HEADER HEIGHT) */
+
 .site-header {
-  padding: 10px 0;
   position: fixed;
   width: 100%;
-  transition: background-color 0.3s ease-out, padding 0.3s ease-out,
-    box-shadow 0.3s ease-out;
   z-index: 2;
+  transition: background-color 0.3s ease-out, box-shadow 0.3s ease-out;
 
-  &--is-expanded {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+
+  @mixin atMedium {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    /* 
+      !!! THIS IS THE CHANGE FOR A THICKER HEADER !!!
+      Changed padding from '5px 2rem' to '10px 2rem'.
+      This adds 5px of space to the top and bottom of the header bar.
+    */
+    padding: 10px 2rem;
+
     background-color: rgba(28, 37, 38, 0.67);
   }
 
+  &--is-expanded {
+    background-color: rgba(28, 37, 38, 0.8);
+  }
+
   &--is-scrolled {
-    padding: 5px 0;
-    background-color: rgba(28, 37, 38, 0.85);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+}
 
-    .site-header__logo {
-      background-color: rgba(28, 37, 38, 0.6);
-    }
+/* --- Logo Styles --- */
+.site-header__logo-wrapper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
 
+  @mixin atMedium {
+    left: 20%;
+    transform: translateX(-50%);
+  }
+}
+
+.site-header__logo {
+  transition: transform 0.3s ease-out, padding 0.3s ease-out,
+    background-color 0.3s ease-out;
+  transform: scale(0.8);
+  transform-origin: 50% 0;
+  background-color: $softBlack;
+  padding: 25px;
+
+  @mixin atMedium {
+    transform: scale(0.7);
+    padding: 30px 40px;
+  }
+
+  &--large {
+    transform: scale(1.2);
+    padding: 30px;
     @mixin atMedium {
-      background-color: $softBlack;
+      transform: scale(0.9);
+      padding: 40px 50px;
     }
+  }
+
+  .site-header--is-scrolled & {
+    background-color: rgba(28, 37, 38, 0.67);
+    transform: scale(0.6);
+    @mixin atMedium {
+      transform: scale(0.6);
+    }
+  }
+}
+
+/* --- Mobile Menu Icon --- */
+.site-header__menu-icon {
+  width: 20px;
+  height: 19px;
+  margin-right: 1rem;
+  cursor: pointer;
+  position: relative;
+  margin-left: auto;
+  z-index: 15;
+
+  &::before,
+  &::after,
+  &__middle {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 20px;
+    height: 3px;
+    background-color: $pureWhite;
+    transition: all 0.3s ease-out;
+  }
+  &::before {
+    top: 0;
+    transform-origin: 0 0;
+  }
+  &__middle {
+    top: 8px;
+    transform-origin: 0 50%;
+  }
+  &::after {
+    bottom: 0;
+    transform-origin: 0 100%;
   }
 
   @mixin atMedium {
-    background-color: rgba(28, 37, 38, 0.33);
-    padding: 20px 0;
+    display: none;
+  }
+}
+
+.site-header__menu-icon--close-x {
+  &::before {
+    transform: rotate(45deg) scaleX(1.25);
+  }
+  .site-header__menu-icon__middle {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  &::after {
+    transform: rotate(-45deg) scaleX(1.25) translateY(1px);
+  }
+}
+
+/* --- DESKTOP NAVIGATION STYLES --- */
+.site-header__nav-desktop {
+  display: none;
+  @mixin atMedium {
+    display: block;
   }
 
-  &__logo {
-    position: absolute;
-    top: 0;
-    left: 50%;
-
-    transition: transform 0.3s ease-out, padding 0.3s ease-out,
-      background-color 0.3s ease-out;
-    transform: translateX(-50%) scale(0.8);
-    transform-origin: 50% 0;
-    padding: 25px 36px;
-
-    background-color: $softBlack;
-
-    &--large {
-      transform: translateX(-50%) scale(1.2);
-      padding: 35px 46px;
-    }
-
-    @mixin atMedium {
-      left: auto;
-      transform: translateX(0) scale(0.8);
-
-      background-color: $softBlack;
-
-      &--large {
-        transform: translateX(0) scale(1.2);
-      }
-    }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
   }
 
-  &__menu-icon {
-    width: 20px;
-    height: 19px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    &::before,
-    &::after,
-    &__middle {
-      content: "";
-      position: absolute;
-      left: 0;
-      width: 20px;
-      height: 3px;
-      background-color: $pureWhite;
-      transition: all 0.3s ease-out;
-    }
-    &::before {
-      top: 0;
-      transform-origin: 0 0;
-    }
-    &__middle {
-      top: 8px;
-      transform-origin: 0 50%;
-    }
-    &::after {
-      bottom: 0;
-      transform-origin: 0 100%;
-    }
-    @mixin atMedium {
-      display: none;
-    }
+  li {
+    padding: 0 10px;
   }
 
-  &__menu-icon--close-x {
-    &::before {
-      transform: rotate(45deg) scaleX(1.25);
+  a {
+    color: $softWhite;
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 15px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease-out, border-radius 0.3s ease-out;
+    &:hover {
+      background-color: $deepRed;
+      border-radius: 4px;
     }
-    .site-header__menu-icon__middle {
-      opacity: 0;
-      transform: scaleX(0);
-    }
-    &::after {
-      transform: rotate(-45deg) scaleX(1.25) translateY(1px);
+    @mixin atLarge {
+      font-size: 1.1rem;
     }
   }
 }
 
-.mobile-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(28, 37, 38, 0.95);
+/* 
+  ==========================================================================
+   DESKTOP LOGIN/LOGOUT OVERRIDES
+  ========================================================================== 
+*/
 
-  /* ESSENTIAL FIX: The Overlay is below the header (z-index: 1) */
-  z-index: 1;
-
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0s 0.3s linear;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Styles for the Logged-IN content */
-.mobile-overlay__nav ul {
-  list-style: none;
-  padding: 0;
+.site-header__nav-desktop .form__group {
   margin: 0;
-  text-align: center;
-}
-.mobile-overlay__nav li {
-  padding: 1rem 0;
-}
-.mobile-overlay__nav .primary-nav__link {
-  font-size: 1.5rem;
 }
 
-/* Styles for the Logged-OUT form */
-.mobile-overlay__modal-inner {
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-
-  .section-title {
-    color: $pureWhite;
-    margin-bottom: 1.5rem;
-  }
-  .form-controls__group .form-controls__input {
-    background-color: $softWhite !important;
-    color: $softBlack !important;
-    border: 1px solid $pureWhite !important;
-    text-align: center;
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 1.1rem;
-    border-radius: 4px;
-    &::placeholder {
-      color: #888;
-    }
-  }
-  .form-controls__group {
-    margin-bottom: 1rem;
-  }
-}
-/* Styles for the desktop inline login form */
-.header-login-form {
-  /* This is the key: makes the form elements sit side-by-side */
+.site-header__nav-desktop form {
   display: flex;
-  align-items: center; /* Vertically aligns the inputs and button */
-  gap: 0.5rem; /* Adds a small space between each element */
+  align-items: center;
+  gap: 0.5rem;
 }
 
-/* This targets the individual groups inside the flex container */
-.header-login-form__group {
-  /* We don't want the default bottom margin from .form__group */
-  margin-bottom: 0;
+.site-header__nav-desktop .form__input {
+  border: none !important;
+  font-size: 1rem;
+  padding: 0.4rem 0.6rem;
+  width: 110px;
+}
+
+.site-header__nav-desktop .form__button {
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  margin: 0;
+  width: auto;
+  white-space: nowrap;
 }

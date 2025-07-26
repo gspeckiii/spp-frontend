@@ -1,19 +1,14 @@
 /* _form.css (Corrected and Final) */
 
 .form {
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto;
-  margin-top: 5rem;
-  margin-bottom: 2rem;
-  padding-top: 100px;
-  background-color: $pureBlack;
-  padding-bottom: 2rem;
-  border-radius: 10px;
-
+  padding-right: 1rem;
+  padding-left: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: $softBlack;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   @mixin atSmall {
+    justify-content: center;
     max-width: 540px;
   }
   @mixin atMedium {
@@ -35,6 +30,7 @@
 
   &__label {
     font-weight: 400;
+    font-size: 1.3rem;
     display: inline-block;
     margin-bottom: 0.5rem;
     color: $softWhite;
@@ -46,14 +42,10 @@
     padding: 0.5rem 1rem;
     font-size: 1.25rem;
     line-height: 1.5;
-    background-clip: padding-box;
-    border: 1px solid darken($softWhite, 20%); /* Default border, will be overridden */
-    border-radius: 0.3rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-
-    /* === THE FIX: Force background and text colors === */
-    background-color: $softBlack !important;
-    color: $softWhite !important;
+    /* This sets a default border, which is being overridden by autofill */
+    border: 1px solid $pureWhite;
+    background-color: $softBlack;
+    color: $softWhite;
 
     &::placeholder {
       color: rgba($softWhite, 0.7);
@@ -66,24 +58,28 @@
       box-shadow: 0 0 0 0.2rem rgba($pureWhite, 0.25);
     }
 
-    /* This is the magic part that overrides Chrome's yellow autofill */
+    /* This is the magic part that overrides Chrome's autofill styles */
     &:-webkit-autofill,
     &:-webkit-autofill:hover,
     &:-webkit-autofill:focus,
     &:-webkit-autofill:active {
+      border: 1px solid $pureWhite !important; /* <<< ADD THIS LINE */
       -webkit-box-shadow: 0 0 0 30px $softBlack inset !important;
       -webkit-text-fill-color: $softWhite !important;
     }
   }
 
-  /* ... all your other existing .form__validation-message styles are correct ... */
+  /* ... your other styles ... */
 
   &__button {
     display: block;
-    width: 100%;
-    padding: 0.75rem 1.25rem;
-    font-size: 1.25rem;
-    line-height: 1.5;
+
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    font-size: 1rem;
+    line-height: 1;
     border-radius: 0.3rem;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
       border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -95,6 +91,8 @@
     background-color: $deepRed;
     border-color: $deepRed;
     color: $pureWhite;
+    margin-right: 1rem;
+    margin-left: 1rem;
 
     &:hover {
       background-color: $darkRed;
@@ -108,19 +106,14 @@
   }
 }
 
-/* === THE FIX: Add specific border style for the modal view === */
-/*
-  This rule targets any .form__input that is a descendant of .mobile-overlay.
-  It will NOT apply to the form in the desktop header.
+/* 
+  The rules below are for context-specific overrides and are correct. 
+  The autofill fix above will work in tandem with these.
 */
 .mobile-overlay .form__input {
   border: 1px solid $softWhite !important;
 }
 
-/*
-  This rule ensures the desktop header inputs have NO border,
-  overriding the default border set in .form__input.
-*/
 .primary-nav--desktop .form__input {
   border: none !important;
 }
