@@ -1,12 +1,100 @@
-// app/components/PaymentForm.js
-
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  PaymentElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+
 import Page from "./Page";
 import DispatchContext from "../context/DispatchContext";
 import LoadingDotsIcon from "./LoadingDotsIcon";
-import { getOrderById, createPayment } from "../services/api";
+// Import the new function from your api service
+import { getOrderById, createPaymentIntentForOrder } from "../services/api";
 
+// Make sure to call `loadStripe` outside of a component’s render to avoid
+// recreating the `Stripe` object on every render.
+const stripePromise = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY);
+
+// --- A new, small component for the actual form ---
+// It MUST be a child of the <Elements> provider to use Stripe hooks.
+const CheckoutForm = ({ order }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const navigate = useNavigate();
+  const appDispatch = useContext(DispatchContext);
+
+  const [message, setMessage] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      // Stripe.js has not yet loaded.
+      return;
+    }
+
+    setIsProcessing(true);
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      // We handle the success case here manually, so we use `if_required`
+      // to avoid an unnecessary redirect for standard card payments.
+      redirect: "if_required",
+    });
+
+    if (error) {
+      if (error.type === "card_error" || error.type === "validation_error") {
+        setMessage(error.message);
+      } else {
+        setMessage("An unexpected error occurred.");
+      }
+    } else {
+      // Payment was successful! The webhook on your server will handle updating
+      // the database. The frontend's job is done.
+      appDispatch({
+        type: "flashMessage",
+        value: "Payment successful! Your order is being processed.",
+      });
+      // Redirect to a user dashboard, order history, or home page.
+      navigate("/");
+    }
+
+    setIsProcessing(false);
+  };
+
+  return (
+    <form id="payment-form" onSubmit={handleSubmit}>
+      {/* This is the magic component from Stripe that renders the entire payment form */}
+      <PaymentElement id="payment-element" />
+
+      <button
+        disabled={isProcessing || !stripe || !elements}
+        id="submit"
+        className="form__button"
+        style={{ marginTop: "1.5rem" }}
+      >
+        <span id="button-text">
+          {isProcessing
+            ? "Processing..."
+            : `Pay $${parseFloat(order.total_amount).toFixed(2)}`}
+        </span>
+      </button>
+
+      {/* Show any error or success messages */}
+      {message && (
+        <div id="payment-message" style={{ color: "red", marginTop: "1rem" }}>
+          {message}
+        </div>
+      )}
+    </form>
+  );
+};
+
+// --- The main PaymentForm component ---
 function PaymentForm() {
   const { orderId } = useParams();
   const navigate = useNavigate();
@@ -14,54 +102,45 @@ function PaymentForm() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [order, setOrder] = useState(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [clientSecret, setClientSecret] = useState("");
 
   useEffect(() => {
-    async function fetchOrder() {
+    async function fetchOrderAndCreateIntent() {
       try {
-        const response = await getOrderById(orderId);
-        setOrder(response.data);
-        setIsLoading(false);
+        // 1. Fetch order details from your server
+        const orderResponse = await getOrderById(orderId);
+        setOrder(orderResponse.data);
+
+        // 2. Create the Payment Intent on your server and get the client secret
+        const intentResponse = await createPaymentIntentForOrder(orderId);
+        setClientSecret(intentResponse.data.clientSecret);
       } catch (e) {
-        console.error("Could not fetch order for payment.", e);
+        console.error("Could not fetch order or create payment intent.", e);
         appDispatch({
           type: "flashMessage",
-          value: "Could not find order details.",
+          value:
+            "Could not initialize payment. Please try again or contact support.",
         });
         navigate("/");
+      } finally {
+        setIsLoading(false);
       }
     }
-    fetchOrder();
+    fetchOrderAndCreateIntent();
   }, [orderId, navigate, appDispatch]);
 
-  const handlePaymentSubmit = async () => {
-    setIsProcessing(true);
-    try {
-      await createPayment(orderId, {
-        payment_method_token: "tok_visa_payment_form_simulated",
-      });
-
-      appDispatch({
-        type: "flashMessage",
-        value: "Payment successful! Your order is being processed.",
-      });
-      navigate("/");
-    } catch (error) {
-      console.error(
-        "Payment failed.",
-        error.response ? error.response.data : error.message
-      );
-      appDispatch({
-        type: "flashMessage",
-        value: "Payment failed. Please try again.",
-      });
-      setIsProcessing(false);
-    }
+  // Options for the Stripe Elements provider
+  const appearance = {
+    theme: "stripe", // or 'night', 'flat'
+  };
+  const options = {
+    clientSecret,
+    appearance,
   };
 
   if (isLoading || !order) {
     return (
-      <Page title="Loading...">
+      <Page title="Loading Payment...">
         <LoadingDotsIcon />
       </Page>
     );
@@ -69,11 +148,10 @@ function PaymentForm() {
 
   return (
     <Page title="Complete Payment">
-      {/* Use the .form class as the main container */}
       <div className="form">
         <h2 className="form__heading">Confirm & Pay</h2>
 
-        {/* Order Summary Section */}
+        {/* Your existing Order Summary JSX remains the same */}
         <div className="payment-summary" style={{ marginBottom: "2rem" }}>
           <h4
             style={{ borderBottom: "1px solid #444", paddingBottom: "0.5rem" }}
@@ -111,40 +189,22 @@ function PaymentForm() {
           </p>
         </div>
 
-        {/* Payment Method Section */}
-        <div>
-          <h4
-            style={{ borderBottom: "1px solid #444", paddingBottom: "0.5rem" }}
-          >
-            Payment Method
-          </h4>
-          <div className="form__group">
-            <p style={{ color: "#ccc" }}>
-              This is a simulated payment gateway. Clicking "Pay" will complete
-              the order.
-            </p>
-            {/* In a real app, Stripe Elements or another payment UI would go here */}
-            <div
-              style={{
-                background: "#fff",
-                color: "#333",
-                padding: "1.5rem",
-                borderRadius: "8px",
-              }}
-            >
-               Using saved card ending in 4242
-            </div>
-          </div>
-          <button
-            onClick={handlePaymentSubmit}
-            disabled={isProcessing}
-            className="form__button"
-          >
-            {isProcessing
-              ? "Processing..."
-              : `Pay $${parseFloat(order.total_amount).toFixed(2)}`}
-          </button>
-        </div>
+        <h4
+          style={{
+            borderBottom: "1px solid #444",
+            paddingBottom: "0.5rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          Payment Method
+        </h4>
+
+        {/* Render the Stripe Elements form only when the clientSecret is available */}
+        {clientSecret && (
+          <Elements options={options} stripe={stripePromise}>
+            <CheckoutForm order={order} />
+          </Elements>
+        )}
       </div>
     </Page>
   );

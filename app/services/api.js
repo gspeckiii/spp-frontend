@@ -76,11 +76,22 @@ export const addProductImages = (productId, formData) => {
 };
 
 // --- Orders, Payments, Fulfillments ---
+// ... (keep all your existing functions)
+
+// --- Payments, Orders, Fulfillments ---
 export const createOrder = (orderData) => api.post("/orders", orderData);
 export const getAllOrders = () => api.get("/orders");
 export const getOrderById = (orderId) => api.get(`/orders/${orderId}`);
-export const createPayment = (orderId, paymentData) =>
-  api.post(`/orders/${orderId}/payments`, paymentData);
+
+// === NEW/MODIFIED FUNCTION ===
+// This function calls the new endpoint we created on the backend.
+export const createPaymentIntentForOrder = (orderId) =>
+  api.post(`/orders/${orderId}/create-payment-intent`);
+
+// This old function is now deprecated and can be removed or commented out.
+// The webhook on the backend handles creating the payment record.
+// export const createPayment = (orderId, paymentData) => ...
+
 export const createFulfillment = (orderId, fulfillmentData) =>
   api.post(`/orders/${orderId}/fulfillment`, fulfillmentData);
 
