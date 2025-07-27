@@ -2,7 +2,7 @@
 
 import React from "react";
 import Page from "./Page";
-
+import { Link } from "react-router-dom";
 function AboutEngineer() {
   return (
     <Page title="About The Engineer">
@@ -230,6 +230,15 @@ function AboutEngineer() {
             </ul>
           </div>
         </div>
+      </div>
+      <div className="container__wrapper--narrow">
+        <Link
+          className="form__button"
+          to="/"
+          style={{ display: "inline-block", width: "auto", margin: "2rem 0" }}
+        >
+          Collections
+        </Link>
       </div>
     </Page>
   );

@@ -1,3 +1,5 @@
+// CategorySlider.js (FINAL, WITH DYNAMIC SLIDER CONFIGURATION)
+
 import React, { useContext, useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import StateContext from "../context/StateContext";
@@ -6,6 +8,7 @@ import { Navigation } from "swiper/modules";
 import LoadingDotsIcon from "./LoadingDotsIcon";
 
 function CategorySlider() {
+  // ... all your state and data fetching logic is correct and unchanged ...
   const appState = useContext(StateContext);
   const { urls, categories } = appState;
   const [productCounts, setProductCounts] = useState({});
@@ -13,11 +16,8 @@ function CategorySlider() {
     () => categories.list || [],
     [categories.list]
   );
-
   useEffect(() => {
-    // This useEffect remains the same. It correctly fetches the counts for all categories.
     if (localCategories.length === 0 || !urls.api) return;
-
     const fetchProductCounts = async () => {
       const promises = localCategories.map(async (category) => {
         if (!category.cat_id) return [category.cat_id, 0];
@@ -41,78 +41,62 @@ function CategorySlider() {
           return [category.cat_id, 0];
         }
       });
-
       const results = await Promise.all(promises);
       const counts = Object.fromEntries(results);
       setProductCounts(counts);
     };
-
     fetchProductCounts();
   }, [localCategories, urls.api]);
 
-  if (categories.loading) {
+  if (categories.loading)
     return (
       <div className="swiper-container-wrapper">
         <LoadingDotsIcon />
       </div>
     );
-  }
-
-  // This check is fine. If there are no categories from the API, show this.
-  if (localCategories.length === 0) {
+  if (localCategories.length === 0)
     return (
       <div className="swiper-container-wrapper">No categories available</div>
     );
-  }
 
-  // ====================================================================
-  // === CHANGE IS HERE: Create the final list of categories to display ===
-  // ====================================================================
   const displayCategories = localCategories.filter((category) => {
-    // We will check three conditions to see if a category should be displayed.
-
-    // Condition 1: The category must have an image path.
     const hasImage = category.cat_img_path;
-
-    // Condition 2: The category must NOT be historic.
-    // (Assuming the property from your database is called 'historic' and is a boolean)
     const isNotHistoric = !category.historic;
-
-    // Condition 3: The category must have more than 0 products.
-    // We check the productCounts state we fetched earlier.
     const hasProducts = productCounts[category.cat_id] > 0;
-
-    // Only if all three conditions are true, we include it in our final list.
     return hasImage && isNotHistoric && hasProducts;
   });
 
-  // Now, we check if our FINAL list is empty. This could be because all categories
-  // had no products, or no images, etc.
-  if (displayCategories.length === 0) {
+  if (displayCategories.length === 0)
     return (
       <div className="swiper-container-wrapper">
-        {/* We can show a more specific message if we want */}
         No active categories to display at this time.
       </div>
     );
-  }
+
+  // ====================================================================
+  // === THE BUG FIX IS HERE ===
+  // ====================================================================
+  const numCategories = displayCategories.length;
+
+  const swiperProps = {
+    modules: [Navigation],
+    spaceBetween: 10,
+    className: "swiper",
+    navigation: numCategories > 1,
+    centeredSlides: numCategories < 3,
+    slidesPerView: 1,
+    breakpoints: {
+      730: { slidesPerView: Math.min(numCategories, 2), spaceBetween: 20 },
+      1024: { slidesPerView: Math.min(numCategories, 3), spaceBetween: 30 },
+    },
+  };
 
   return (
     <div className="swiper-container-wrapper">
-      <Swiper
-        modules={[Navigation]}
-        spaceBetween={10}
-        slidesPerView={1}
-        navigation
-        className="swiper"
-        breakpoints={{
-          730: { slidesPerView: 2, spaceBetween: 20 },
-          1024: { slidesPerView: 3, spaceBetween: 30 },
-        }}
-      >
-        {/* We now map over our new, filtered `displayCategories` list */}
+      <Swiper {...swiperProps}>
         {displayCategories.map((category) => (
           <SwiperSlide key={category.cat_id}>
+            {/* ... The content of your slide is unchanged ... */}
             <div className="swiper-slide__card">
               <img
                 src={
@@ -142,7 +126,6 @@ function CategorySlider() {
                     )}
                   </Link>
                 </div>
-
                 <div className="swiper-slide__footer">
                   {category.cat_vid ? (
                     <a
@@ -164,7 +147,6 @@ function CategorySlider() {
                     to={`/category/${category.cat_id}/products`}
                     className="swiper-slide__product-count-circle"
                   >
-                    {/* The count will always be greater than 0 here */}
                     {productCounts[category.cat_id]}
                   </Link>
                 </div>

@@ -1,8 +1,3 @@
-/* Change these lines: 
-@import "swiper.css";
-@import "navigation.css";
-*/
-
 @import "base/_variables";
 @import "base/_mixins";
 @import "base/_global";
@@ -12,22 +7,6 @@
 @import "modules/_mobile-overlay";
 @import "modules/_swiper";
 
-@import "modules/_large-hero";
-@import "modules/_btn";
-@import "modules/_wrapper";
-
-@import "modules/_headline";
-@import "modules/_row";
-@import "modules/_generic-content-container";
-@import "modules/_section-title";
-@import "modules/_feature-item";
-@import "modules/_testimonial";
-
-@import "modules/_reveal-item";
-
-@import "modules/_social-icons";
-@import "modules/_hipcamp";
-@import "modules/_form-controls";
 @import "modules/_flash-messages";
 @import "modules/_dashboard";
 @import "modules/_table-select";

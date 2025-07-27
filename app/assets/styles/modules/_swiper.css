@@ -1,16 +1,10 @@
 /*
  * ====================================================================
- * Swiper Custom Styles (Corrected Version)
- *
- * NOTE: All dangerous overrides for the core `.swiper` and 
- * `.swiper-slide` classes have been removed. This file now only 
- * styles the custom components *inside* the slides, which is the 
- * safe and correct approach.
+ * Swiper Custom Styles (FINAL, WITH COLLAPSE FIX)
  * ====================================================================
  */
 
 /* --- CORE STRUCTURAL STYLES --- */
-/* In your Swiper CSS file */
 
 .swiper-container-wrapper {
   display: flex;
@@ -20,17 +14,22 @@
   position: relative;
   z-index: 1;
   box-sizing: border-box;
-
-  /* This padding creates the space for the navigation arrows */
   padding-left: 1rem;
   padding-right: 1rem;
-
-  /* 
-    !!! THE FIX FOR "JACKED UP SWIPERS" !!!
-    The '100vw', 'margin-left', and 'transform' rules have all been DELETED.
-    The swiper now behaves as a normal block-level element.
-  */
 }
+
+/* 
+  !!! THIS IS THE FIX FOR THE COLLAPSING SLIDER BUG !!!
+  This rule targets the main Swiper element ONLY when it's inside our wrapper.
+  It forces the slider to take up the full available width, which gives
+  Swiper a stable container for its calculations, even when there are
+  only one or two slides. This fixes the bug for all sliders.
+*/
+.swiper-container-wrapper .swiper {
+  width: 100%;
+  min-width: 0; /* A flexbox safety net to prevent shrinking issues */
+}
+
 .swiper-slide__card {
   position: relative;
   display: flex;
@@ -40,7 +39,6 @@
   border-radius: 6px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 100%;
-  /* Use 100% height to fill the slide, especially at larger breakpoints */
   height: 100%;
   border: 10px solid $softBlack;
 }
@@ -52,14 +50,14 @@
   display: block;
   border-radius: 2px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0; /* Prevents image from being squished */
+  flex-shrink: 0;
 }
 
 /* === CONTENT & FOOTER STRUCTURE === */
 .swiper-slide__content {
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* This makes the content area fill the card's vertical space */
+  flex-grow: 1;
   padding: 1rem 0.5rem;
 }
 
@@ -75,14 +73,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1rem; /* This provides a minimum gap for shorter cards on mobile */
+  margin-top: 1rem;
 }
 .product-slide__footer {
   display: flex;
-  justify-content: center; /* NEW */
+  justify-content: center;
   align-items: center;
   margin-top: 1rem;
 }
+
 /* --- COMPONENT-SPECIFIC STRUCTURAL STYLES --- */
 .swiper-slide__youtube-icon {
   width: 32px;
@@ -138,10 +137,6 @@
     width: 40px;
     height: 28px;
   }
-  .product-slide__back-arrow {
-    width: 60px;
-    height: 60px;
-  }
   .swiper-slide__product-count-circle {
     min-width: 40px;
     height: 40px;
@@ -149,28 +144,15 @@
 }
 
 @mixin atMedium {
-  /*
-  *
-  * === THE DEFINITIVE ALIGNMENT SOLUTION ===
-  * This is the correct way to achieve equal-height slides
-  * and bottom-aligned footers.
-  *
-  */
-
-  /* 1. Tell the card to fill the slide container (already set in base style). */
   .swiper-slide__card {
     height: 100%;
   }
 
-  /* 2. Force the footer to the bottom of the card's content area. */
   .swiper-slide__footer,
   .product-slide__footer {
-    /* This overrides the mobile margin and consumes all available space above it,
-       pushing the footer to the very bottom of the .swiper-slide__content block. */
     margin-top: auto;
   }
 
-  /* Other sizing adjustments */
   .swiper-slide__card {
     border-width: 12px;
   }
@@ -200,12 +182,10 @@
     width: 48px;
     height: 34px;
   }
-  .product-slide__back-arrow {
-    width: 70px;
-    height: 70px;
-  }
   .swiper-slide__product-count-circle {
     min-width: 44px;
     height: 44px;
   }
 }
+
+/* NOTE: The broken .product-slide__back-arrow styles have been removed */

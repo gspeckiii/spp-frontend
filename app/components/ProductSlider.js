@@ -1,4 +1,4 @@
-// ProductSlider.js (FINAL, WITH DYNAMIC HEADING)
+// ProductSlider.js (FINAL, WITH DYNAMIC SLIDER CONFIGURATION)
 
 import React, { useState, useEffect, useMemo, useContext } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
@@ -9,42 +9,33 @@ import StateContext from "../context/StateContext";
 import LoadingDotsIcon from "./LoadingDotsIcon";
 
 function ProductSlider() {
-  const { id } = useParams(); // 'id' is the category ID
+  // ... all your existing state and useEffect hooks are correct and unchanged ...
+  const { id } = useParams();
   const appState = useContext(StateContext);
   const navigate = useNavigate();
   const { urls } = appState;
-
-  // --- NEW STATE FOR THE CATEGORY NAME ---
   const [categoryName, setCategoryName] = useState("");
-
   const [products, setProducts] = useState([]);
   const [productImages, setProductImages] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
   useEffect(() => {
-    // We update the document title dynamically once we have the category name.
     if (categoryName) {
       document.title = `${categoryName} Products | SPP`;
     } else {
       document.title = "Products | SPP";
     }
     window.scrollTo(0, 0);
-  }, [categoryName]); // Re-run this effect when the categoryName changes.
-
+  }, [categoryName]);
   useEffect(() => {
     if (!urls.api) return;
-
     const fetchCategoryAndProducts = async () => {
       setIsLoading(true);
       try {
-        // We now use Promise.all to fetch both data points at the same time.
         const [productsResponse, categoryResponse] = await Promise.all([
           fetch(`${urls.api}/products/category/${id}`),
           fetch(`${urls.api}/categories/${id}`),
         ]);
-
-        // Process Products
         if (productsResponse.ok) {
           const fetchedProducts = await productsResponse.json();
           setProducts(Array.isArray(fetchedProducts) ? fetchedProducts : []);
@@ -53,15 +44,12 @@ function ProductSlider() {
             `Failed to load products: ${productsResponse.statusText}`
           );
         }
-
-        // Process Category Name
         if (categoryResponse.ok) {
           const categoryData = await categoryResponse.json();
-          setCategoryName(categoryData.cat_name || "this"); // Set a fallback
+          setCategoryName(categoryData.cat_name || "this");
         } else {
-          setCategoryName("this"); // Set a fallback if the fetch fails
+          setCategoryName("this");
         }
-
         setError(null);
       } catch (err) {
         setError(err.message || "Failed to load page data");
@@ -70,11 +58,8 @@ function ProductSlider() {
       }
       setIsLoading(false);
     };
-
     fetchCategoryAndProducts();
   }, [id, urls.api]);
-
-  // All other useEffects and handlers are correct and remain unchanged.
   const memoizedProducts = useMemo(() => products, [products]);
   useEffect(() => {
     if (!urls.api || memoizedProducts.length === 0) return;
@@ -138,31 +123,49 @@ function ProductSlider() {
       </Page>
     );
 
-  // --- JSX CHANGES ARE HERE ---
+  // ====================================================================
+  // === THE BUG FIX IS HERE ===
+  // ====================================================================
+  const numProducts = products.length;
+
+  // We build a dynamic configuration object for Swiper.
+  const swiperProps = {
+    modules: [Navigation],
+    spaceBetween: 10,
+    className: "swiper",
+    // Only show navigation arrows if there is more than one slide
+    navigation: numProducts > 1,
+    // If there are fewer slides than the largest breakpoint (3), center them.
+    // This fixes the "pushed to the side" bug.
+    centeredSlides: numProducts < 3,
+    // Always show 1 slide on mobile
+    slidesPerView: 1,
+    breakpoints: {
+      // At 730px, show 2 slides, but no more than we actually have.
+      730: {
+        slidesPerView: Math.min(numProducts, 2),
+        spaceBetween: 20,
+      },
+      // At 1024px, show 3 slides, but no more than we actually have.
+      1024: {
+        slidesPerView: Math.min(numProducts, 3),
+        spaceBetween: 30,
+      },
+    },
+  };
+
   return (
     <>
-      {/* 
-        NEW DYNAMIC HEADING
-        We use the same animated heading class from the home page for consistency.
-      */}
       <h1 className="container__heading--animated">
         The {categoryName} Collection
       </h1>
 
       <div className="swiper-container-wrapper">
-        <Swiper
-          modules={[Navigation]}
-          spaceBetween={10}
-          slidesPerView={1}
-          navigation
-          className="swiper"
-          breakpoints={{
-            730: { slidesPerView: 2, spaceBetween: 20 },
-            1024: { slidesPerView: 3, spaceBetween: 30 },
-          }}
-        >
+        {/* We now pass our dynamic props object to the Swiper component */}
+        <Swiper {...swiperProps}>
           {products.map((product) => (
             <SwiperSlide key={product.id}>
+              {/* ... The content of your slide is unchanged ... */}
               <div className="swiper-slide__card">
                 <img
                   src={

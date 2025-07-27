@@ -1,25 +1,32 @@
-// Home.js (THE FINAL, CORRECTED VERSION)
+// Home.js (THE FINAL, CORRECTED VERSION WITH LOADING STATE)
 
-import React from "react";
-import Page from "./Page";
+import React, { useContext } from "react";
+import StateContext from "../context/StateContext"; // Import context
 import CategorySlider from "./CategorySlider";
+import LoadingDotsIcon from "./LoadingDotsIcon"; // Import the spinner
 
 function Home() {
+  // Access the global application state
+  const appState = useContext(StateContext);
+
   return (
     <>
-      {/* 
-        SECTION 1: The Animated Heading
-        Just like in HomeGuest, this is now separate and has no background.
-      */}
       <h1 className="container__heading--animated">Where Truth Takes Form</h1>
 
       {/* 
-        SECTION 2: The Full-Width Slider
-        This remains a direct child for full-width layout.
+        !!! THIS IS THE FIX !!!
+        We now check the loading state for categories BEFORE rendering the slider.
+        If it's loading, we show a centered spinner.
+        If it's not loading, we show the slider component.
+        This prevents the "No categories" text from ever flashing.
       */}
-      <CategorySlider />
-
-      {/* No other content is needed for the logged-in user's home page */}
+      {appState.categories.loading ? (
+        <div className="container__centering-wrapper">
+          <LoadingDotsIcon />
+        </div>
+      ) : (
+        <CategorySlider />
+      )}
     </>
   );
 }
