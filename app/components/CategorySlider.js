@@ -1,4 +1,4 @@
-// CategorySlider.js (FINAL, WITH DYNAMIC SLIDER CONFIGURATION)
+// CategorySlider.js (FINAL, SELF-CONTAINED, AND CORRECTED)
 
 import React, { useContext, useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
@@ -8,7 +8,6 @@ import { Navigation } from "swiper/modules";
 import LoadingDotsIcon from "./LoadingDotsIcon";
 
 function CategorySlider() {
-  // ... all your state and data fetching logic is correct and unchanged ...
   const appState = useContext(StateContext);
   const { urls, categories } = appState;
   const [productCounts, setProductCounts] = useState({});
@@ -16,10 +15,21 @@ function CategorySlider() {
     () => categories.list || [],
     [categories.list]
   );
+
+  // !!! THIS IS THE FIX, PART 1 !!!
+  // We add a new loading state specifically for the product counts.
+  const [countsLoading, setCountsLoading] = useState(true);
+
   useEffect(() => {
-    if (localCategories.length === 0 || !urls.api) return;
+    if (localCategories.length === 0 || !urls.api) {
+      setCountsLoading(false); // No categories to check, so we're done loading.
+      return;
+    }
+
     const fetchProductCounts = async () => {
+      setCountsLoading(true); // Start loading
       const promises = localCategories.map(async (category) => {
+        // ... (fetch logic is unchanged)
         if (!category.cat_id) return [category.cat_id, 0];
         try {
           const response = await fetch(
@@ -44,20 +54,41 @@ function CategorySlider() {
       const results = await Promise.all(promises);
       const counts = Object.fromEntries(results);
       setProductCounts(counts);
+      setCountsLoading(false); // Finish loading
     };
+
     fetchProductCounts();
   }, [localCategories, urls.api]);
 
-  if (categories.loading)
+  // This first check is for the main category list from the global state.
+  if (categories.loading) {
     return (
-      <div className="swiper-container-wrapper">
+      <div className="container__centering-wrapper">
         <LoadingDotsIcon />
       </div>
     );
-  if (localCategories.length === 0)
+  }
+
+  // !!! THIS IS THE FIX, PART 2 !!!
+  // We add a SECOND loading check. This one waits for our internal
+  // product count fetching to finish. This is the gatekeeper that
+  // prevents the text flash.
+  if (countsLoading) {
     return (
-      <div className="swiper-container-wrapper">No categories available</div>
+      <div className="container__centering-wrapper">
+        <LoadingDotsIcon />
+      </div>
     );
+  }
+
+  // This check is now safe. It runs only after all data is loaded.
+  if (localCategories.length === 0) {
+    return (
+      <div className="container__centering-wrapper">
+        No categories available
+      </div>
+    );
+  }
 
   const displayCategories = localCategories.filter((category) => {
     const hasImage = category.cat_img_path;
@@ -66,23 +97,23 @@ function CategorySlider() {
     return hasImage && isNotHistoric && hasProducts;
   });
 
-  if (displayCategories.length === 0)
+  // This check is also now safe.
+  if (displayCategories.length === 0) {
     return (
-      <div className="swiper-container-wrapper">
+      <div className="container__centering-wrapper">
         No active categories to display at this time.
       </div>
     );
+  }
 
-  // ====================================================================
-  // === THE BUG FIX IS HERE ===
-  // ====================================================================
   const numCategories = displayCategories.length;
-
   const swiperProps = {
     modules: [Navigation],
     spaceBetween: 10,
     className: "swiper",
-    navigation: numCategories > 1,
+    navigation:
+      numCategories >
+      (window.innerWidth >= 1024 ? 3 : window.innerWidth >= 730 ? 2 : 1),
     centeredSlides: numCategories < 3,
     slidesPerView: 1,
     breakpoints: {
@@ -96,7 +127,7 @@ function CategorySlider() {
       <Swiper {...swiperProps}>
         {displayCategories.map((category) => (
           <SwiperSlide key={category.cat_id}>
-            {/* ... The content of your slide is unchanged ... */}
+            {/* ... SwiperSlide content is unchanged ... */}
             <div className="swiper-slide__card">
               <img
                 src={

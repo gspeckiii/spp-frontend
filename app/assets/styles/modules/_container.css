@@ -5,11 +5,13 @@
    ========================================================================== */
 
 .container {
-  margin-left: 0.67rem;
-  margin-right: 0.67rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
   background-color: $softBlack;
   padding: 1rem;
   z-index: 1;
+  align-content: center;
+  margin-top: 1rem;
 
   @mixin atSmall {
     padding: 2rem;

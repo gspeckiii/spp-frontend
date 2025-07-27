@@ -33,6 +33,7 @@ import PaymentForm from "./PaymentForm.js";
 import Settings from "./Settings.js";
 import AdminOrder from "./admin/AdminOrder.js";
 import LoadingDotsIcon from "./LoadingDotsIcon.js";
+import Build from "./Build.js";
 
 export default function AppRoutes() {
   const appState = useContext(StateContext);
@@ -194,6 +195,7 @@ export default function AppRoutes() {
         <Route path="/about-history" element={<AboutHistory />} />
         <Route path="/about-family" element={<AboutFamily />} />
         <Route path="/about-raven" element={<AboutRaven />} />
+        <Route path="/about-build" element={<Build />} />
         <Route path="/terms" element={<Terms />} />
         <Route
           path="/home"

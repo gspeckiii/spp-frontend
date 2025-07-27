@@ -118,33 +118,28 @@ const config = {
   },
 };
 
+// in webpack.config.js
+
 if (currentTask === "dev" || currentTask === "webpackDev") {
   config.devtool = "source-map";
   config.devServer = {
     port: 3000,
-    static: [
-      {
-        directory: path.join(__dirname, "app"),
-        publicPath: "/",
-      },
-      // This is still fine to keep for dev server.
-      {
-        directory: path.join(__dirname, "app/assets"),
-        publicPath: "/assets",
-      },
-    ],
-    hot: false,
-    liveReload: true,
-    historyApiFallback: {
-      index: "/index.html",
-      rewrites: [
-        {
-          from: /^\/assets\/styles\/([^.]+)$/,
-          to: (context) => `/assets/styles/${context.match[1]}.css`,
-        },
-      ],
+    hot: false, // This is fine
+    liveReload: true, // This is fine
+
+    // === THE FIX ===
+    // We explicitly tell the server that the '/app' directory is the content base.
+    // This helps it resolve URLs against the file system correctly.
+    static: {
+      directory: path.join(__dirname, "app"),
     },
-    watchFiles: ["app/**/*.js", "app/**/*.jsx", "app/**/*.css"],
+
+    // This part is crucial. We tell the server how to handle URLs
+    // that don't match a physical file, which is what happens in a Single Page App.
+    historyApiFallback: true,
+
+    // We can often remove the complex rewrites. 'historyApiFallback: true'
+    // usually handles everything needed for a React app.
   };
 }
 

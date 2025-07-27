@@ -42,6 +42,9 @@ function AboutArtist() {
             <li>
               <Link to="/about-raven">Raven Marie Peck</Link>
             </li>
+            <li>
+              <Link to="/about-build">Custom Home</Link>
+            </li>
           </ul>
           <hr className="container__line-break" />
         </div>

@@ -135,14 +135,33 @@ function Header() {
             </ul>
           </nav>
         ) : (
-          <div className="mobile-overlay__modal-inner">
-            <h2 className="section-title section-title--green section-title--less-margin">
-              Sign In
-            </h2>
-            <div>
-              <HeaderLoggedOut closeModal={toggleOverlay} />
-            </div>
-          </div>
+          <nav className="mobile-overlay__nav">
+            <ul>
+              <li>
+                <Link to="/" onClick={toggleOverlay}>
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/about-artist" onClick={toggleOverlay}>
+                  Artist
+                </Link>
+              </li>
+              <li>
+                <Link to="/about-engineer" onClick={toggleOverlay}>
+                  Engineer
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" onClick={toggleOverlay}>
+                  Terms
+                </Link>
+              </li>
+              <li>
+                <HeaderLoggedOut closeModal={toggleOverlay} />
+              </li>
+            </ul>
+          </nav>
         )}
       </div>
     </header>
