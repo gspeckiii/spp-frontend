@@ -1,0 +1,226 @@
+/* ==========================================================================
+   Profile Order Page & Components
+   ========================================================================== */
+
+.profile-orders {
+  &__view-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &__view-button {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    background-color: transparent;
+    color: $softWhite;
+    cursor: pointer;
+    transition: background-color 0.2s ease-out;
+    font-size: 1rem;
+
+    &:not(:last-child) {
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    &--active {
+      background-color: $deepRed;
+      color: $pureWhite;
+      font-weight: 700;
+      &:hover {
+        background-color: $darkRed;
+      }
+    }
+  }
+
+  &__status-message {
+    text-align: center;
+    color: $softWhite;
+    font-size: 1.2rem;
+    padding: 2rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+  }
+
+  &__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+.order-card {
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  margin-bottom: 2rem;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  &__id {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  &__date {
+    margin: 0;
+    color: #ccc;
+    font-size: 0.9rem;
+  }
+
+  &__status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $pureWhite;
+
+    &--pending_payment,
+    &--unfulfilled {
+      background-color: #f0ad4e;
+    }
+    &--processing {
+      background-color: #5bc0de;
+    }
+    &--shipped {
+      background-color: #0275d8;
+    }
+    &--delivered,
+    &--completed,
+    &--succeeded {
+      background-color: #5cb85c;
+    }
+    &--cancelled,
+    &--failed,
+    &--declined {
+      background-color: #d9534f;
+    }
+    &--default {
+      background-color: #6c757d;
+    }
+  }
+
+  &__body {
+    padding: 1.5rem;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    &:last-child {
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+
+    @mixin atSmall {
+      flex-direction: row;
+      align-items: center;
+      gap: 1.5rem;
+    }
+  }
+
+  &__item-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    align-self: center;
+    margin-bottom: 1rem;
+    @mixin atSmall {
+      align-self: flex-start;
+      margin-bottom: 0;
+    }
+  }
+
+  &__item-details {
+    flex: 1;
+    text-align: center;
+    @mixin atSmall {
+      text-align: left;
+    }
+  }
+  &__item-name {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+  }
+  &__item-info {
+    margin: 0;
+    color: #ccc;
+  }
+
+  &__divider {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 1.5rem 0;
+  }
+
+  &__details-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    @mixin atMedium {
+      flex-direction: row;
+    }
+  }
+
+  &__shipping,
+  &__payment {
+    flex: 1;
+  }
+
+  &__subheading {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 0.5rem;
+  }
+
+  &__detail-text {
+    margin: 0 0 0.25rem 0;
+  }
+
+  &__footer {
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+
+    @mixin atSmall {
+      flex-direction: row;
+      justify-content: flex-end;
+    }
+
+    .form__button {
+      margin: 0;
+      width: 100%;
+      @mixin atSmall {
+        width: auto;
+      }
+    }
+  }
+}

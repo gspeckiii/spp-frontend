@@ -80,7 +80,7 @@ export const addProductImages = (productId, formData) => {
 
 // --- Payments, Orders, Fulfillments ---
 export const createOrder = (orderData) => api.post("/orders", orderData);
-export const getAllOrders = () => api.get("/orders");
+
 export const getOrderById = (orderId) => api.get(`/orders/${orderId}`);
 
 // === NEW/MODIFIED FUNCTION ===
@@ -95,4 +95,14 @@ export const createPaymentIntentForOrder = (orderId) =>
 export const createFulfillment = (orderId, fulfillmentData) =>
   api.post(`/orders/${orderId}/fulfillment`, fulfillmentData);
 
+// MODIFIED: Takes a filter for 'open' or 'closed' orders.
+export const getAllOrders = (statusFilter = "open") =>
+  api.get(`/orders?status=${statusFilter}`);
+
+// NEW: Function to cancel an order.
+export const cancelOrder = (orderId) => api.put(`/orders/${orderId}/cancel`);
+
+// NEW: This should exist, but let's define it clearly. It calls the endpoint we modified earlier.
+export const updateFulfillment = (orderId, fulfillmentData) =>
+  api.put(`/orders/${orderId}/fulfillment`, fulfillmentData);
 export default api;

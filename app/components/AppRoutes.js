@@ -34,7 +34,7 @@ import Settings from "./Settings.js";
 import AdminOrder from "./admin/AdminOrder.js";
 import LoadingDotsIcon from "./LoadingDotsIcon.js";
 import Build from "./Build.js";
-
+import ProfileOrder from "./ProfileOrder";
 export default function AppRoutes() {
   const appState = useContext(StateContext);
 
@@ -197,6 +197,13 @@ export default function AppRoutes() {
         <Route path="/about-raven" element={<AboutRaven />} />
         <Route path="/about-build" element={<Build />} />
         <Route path="/terms" element={<Terms />} />
+        {/* --- NEW ROUTE --- */}
+        <Route
+          path="/profile-orders"
+          element={appState.loggedIn ? <ProfileOrder /> : <HomeGuest />}
+        />
+
+        {/* ... (rest of your routes) */}
         <Route
           path="/home"
           element={appState.loggedIn ? <Home /> : <HomeGuest />}
