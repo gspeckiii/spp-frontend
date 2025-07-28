@@ -1,29 +1,41 @@
-import React, { useEffect, useState, useContext } from "react";
+// HeaderLoggedIn.js (FINAL, SIMPLIFIED)
+
+import React from "react";
 import { Link } from "react-router-dom";
-import DispatchContext from "../context/DispatchContext.js";
-import StateContext from "../context/StateContext.js";
+// We no longer need DispatchContext here
+
 function HeaderLoggedIn(props) {
-  const appDispatch = useContext(DispatchContext);
-  const appState = useContext(StateContext);
+  // --- THIS IS THE FIX, PART 2 ---
+  // The component receives the onLogOut function from its parent.
+  // When the button is clicked, it simply calls that function.
 
-  function handleLogOut() {
-    appDispatch({ type: "logOut" });
-
-    window.location = "/";
-  }
-  return (
-    <nav className="site-header__nav-desktop">
-      <ul>
+  if (props.isMobile) {
+    return (
+      <>
         <li>
-          <Link to="/profile-orders">Orders</Link>
+          <Link to="/profile-orders" onClick={props.closeModal}>
+            Profile
+          </Link>
         </li>
         <li>
-          <button onClick={handleLogOut} className="form__button">
+          <button onClick={props.onLogOut} className="form__button">
             Sign Out
           </button>
         </li>
-      </ul>
-    </nav>
+      </>
+    );
+  }
+
+  // Desktop view
+  return (
+    <>
+      <Link to="/profile-orders">Profile</Link>
+      <div className="form__group">
+        <button onClick={props.onLogOut} className="form__button">
+          Sign Out
+        </button>
+      </div>
+    </>
   );
 }
 

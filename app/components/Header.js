@@ -1,19 +1,21 @@
-// Header.js (FINAL, REFACTORED)
+// Header.js (THE FINAL, DEFINITIVE, AND CORRECT VERSION)
 
 import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import HeaderLoggedOut from "./HeaderLoggedOut";
 import HeaderLoggedIn from "./HeaderLoggedIn";
 import StateContext from "../context/StateContext";
+import DispatchContext from "../context/DispatchContext";
 
 function Header() {
   const appState = useContext(StateContext);
+  const appDispatch = useContext(DispatchContext);
+
+  // ... all your state and useEffect hooks are correct and unchanged ...
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 800);
   const [isInitialMobileLoad, setIsInitialMobileLoad] = useState(true);
-
-  // --- All your useEffect hooks for logic are correct and remain unchanged ---
   useEffect(() => {
     if (!isDesktop) {
       const timer = setTimeout(() => setIsInitialMobileLoad(false), 1000);
@@ -21,19 +23,16 @@ function Header() {
     }
     setIsInitialMobileLoad(false);
   }, []);
-
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth >= 800);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
   useEffect(() => {
     if (isOverlayOpen) {
       document.body.classList.add("overlay-is-open");
@@ -41,12 +40,17 @@ function Header() {
       document.body.classList.remove("overlay-is-open");
     }
   }, [isOverlayOpen]);
-
   const toggleOverlay = () => setIsOverlayOpen((prev) => !prev);
-
   const showLargeLogo =
     (isDesktop && !isScrolled) ||
     (!isDesktop && isInitialMobileLoad && !isScrolled);
+  function handleLogOut() {
+    setIsOverlayOpen(false);
+    setTimeout(() => {
+      appDispatch({ type: "logOut" });
+      window.location = "/";
+    }, 300);
+  }
 
   return (
     <header
@@ -70,22 +74,48 @@ function Header() {
         </div>
       </div>
 
-      {/* This is the desktop navigation. Class name is now simpler. */}
+      {/* --- DESKTOP NAVIGATION --- */}
       <nav className="site-header__nav-desktop">
         <ul>
-          <li>
-            <Link to="/about-artist">Artist</Link>
-          </li>
-          <li>
-            <Link to="/about-engineer">Engineer</Link>
-          </li>
-          <li>
-            {appState.loggedIn ? <HeaderLoggedIn /> : <HeaderLoggedOut />}
-          </li>
+          {/* 
+            !!! THIS IS THE DEFINITIVE FIX !!!
+            We ensure that BOTH branches of the conditional rendering return a
+            consistent set of <li> elements wrapped in a React Fragment <>.
+            This creates a stable and valid HTML structure.
+          */}
+          {appState.loggedIn ? (
+            <>
+              {/* Logged-in users see these links */}
+              <li>
+                <Link to="/about-artist">Artist</Link>
+              </li>
+              <li>
+                <Link to="/about-engineer">Engineer</Link>
+              </li>
+              <li>
+                <HeaderLoggedIn onLogOut={handleLogOut} />
+              </li>
+            </>
+          ) : (
+            <>
+              {/* Logged-out users see these links */}
+              <li>
+                <Link to="/about-artist">Artist</Link>
+              </li>
+              <li>
+                <Link to="/about-engineer">Engineer</Link>
+              </li>
+              <li>
+                <Link to="/register">Register</Link>
+              </li>
+              <li>
+                <HeaderLoggedOut />
+              </li>
+            </>
+          )}
         </ul>
       </nav>
 
-      {/* The mobile menu icon */}
       <div
         className={`site-header__menu-icon ${
           isOverlayOpen ? "site-header__menu-icon--close-x" : ""
@@ -95,12 +125,7 @@ function Header() {
         <div className="site-header__menu-icon__middle"></div>
       </div>
 
-      {/* 
-        !!! BUG FIX & REFACTOR !!!
-        The mobile overlay is now INSIDE the header. This isolates it from the
-        main page content and fixes the layout bug. We also use a more specific
-        className, and apply the "is-open" class directly.
-      */}
+      {/* --- MOBILE OVERLAY (This was already correct) --- */}
       <div
         className={`mobile-overlay ${
           isOverlayOpen ? "mobile-overlay--is-open" : ""
@@ -124,14 +149,11 @@ function Header() {
                   Engineer
                 </Link>
               </li>
-              <li>
-                <Link to="/terms" onClick={toggleOverlay}>
-                  Terms
-                </Link>
-              </li>
-              <li>
-                <HeaderLoggedIn />
-              </li>
+              <HeaderLoggedIn
+                isMobile={true}
+                onLogOut={handleLogOut}
+                closeModal={toggleOverlay}
+              />
             </ul>
           </nav>
         ) : (
@@ -153,12 +175,9 @@ function Header() {
                 </Link>
               </li>
               <li>
-                <Link to="/terms" onClick={toggleOverlay}>
-                  Terms
+                <Link to="/register" onClick={toggleOverlay}>
+                  Register
                 </Link>
-              </li>
-              <li>
-                <HeaderLoggedOut closeModal={toggleOverlay} />
               </li>
             </ul>
           </nav>

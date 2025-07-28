@@ -1,25 +1,20 @@
-/* _mobile-overlay.css (FINAL, CONSOLIDATED) */
+/* _mobile-overlay.css (FINAL, WITH SCOPED TITLE STYLES) */
 
 .mobile-overlay {
-  position: fixed; /* Stays fixed to the viewport */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(28, 37, 38, 0.95);
-
-  /* It sits *within* the header's z-index, but we can manage it here */
-  z-index: 5; /* Ensure it's above the logo */
-
+  z-index: 5;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease-out, visibility 0s 0.3s linear;
-
   display: flex;
   justify-content: center;
   align-items: center;
 
-  /* When the overlay should be visible */
   &--is-open {
     opacity: 1;
     visibility: visible;
@@ -27,7 +22,7 @@
   }
 }
 
-/* --- Mobile Navigation Menu Styles (MOVED FROM _primary-nav.css) --- */
+/* --- Mobile Navigation Menu Styles --- */
 .mobile-overlay__nav {
   ul {
     list-style: none;
@@ -51,14 +46,83 @@
   }
 }
 
-/* --- Mobile Login Form Styles --- */
+/* --- Mobile Login Modal Styles --- */
 .mobile-overlay__modal-inner {
   width: 90%;
   max-width: 400px;
   text-align: center;
+}
 
-  .section-title {
-    color: $pureWhite;
-    margin-bottom: 1.5rem;
+/* 
+  ==========================================================================
+   NEW SECTION TITLE STYLES (Scoped to the Mobile Overlay)
+  ========================================================================== 
+*/
+
+/* This is the base style for a title inside the mobile overlay */
+.mobile-overlay__section-title {
+  font-family: "Playfair Display", serif;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: $pureWhite;
+  margin-bottom: 2rem; /* Default margin */
+}
+
+/* Modifier to change the color */
+.mobile-overlay__section-title {
+  color: $pureWhite;
+}
+
+/* Modifier to reduce the bottom margin */
+.mobile-overlay__section-title--less-margin {
+  margin-bottom: 1.5rem;
+}
+
+/* 
+  The rules below are for context-specific overrides and are correct. 
+  The autofill fix above will work in tandem with these.
+*/
+.mobile-overlay .form__input {
+  border: 1px solid rgba($pureWhite, 0.5) !important;
+}
+/* _mobile-overlay.css - Add this new rule at the end */
+
+/* ... (all your existing, working CSS from the top) ... */
+
+/* 
+  --- NEW SEPARATOR STYLE ---
+  This styles the line that separates the navigation from the login form.
+*/
+.mobile-overlay__separator {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  margin: 1.5rem 0;
+}
+.mobile-overlay .form__button {
+  display: block; /* Ensures it takes its own line */
+
+  /* --- Visual Style --- */
+  background-color: $softBlack;
+  border: 2px solid $deepRed;
+  color: $softWhite;
+  font-size: 1.5rem; /* Matches the <a> link font size */
+  font-weight: 700;
+
+  /* --- Sizing & Positioning --- */
+  width: 100%; /* Makes the button fill the width of its container */
+  padding: 0.75rem 1rem; /* A comfortable padding for the larger font */
+  margin-top: 1.5rem; /* Space above the button */
+  align-content: center;
+  /* These ensure it doesn't inherit unwanted desktop styles */
+  margin-left: 0;
+  margin-right: 0;
+  white-space: normal;
+  font-family: "Playfair Display", serif;
+
+  &:hover {
+    background-color: $deepRed; /* On hover, fill with the border color */
+    color: $softWhite;
   }
 }

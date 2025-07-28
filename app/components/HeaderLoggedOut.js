@@ -1,5 +1,7 @@
+// /app/components/HeaderLoggedOut.js (RESTORED TO BE A LOGIN FORM)
+
 import React, { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import DispatchContext from "../context/DispatchContext";
 import { login } from "../services/api";
 
@@ -20,7 +22,6 @@ function HeaderLoggedOut({ closeModal }) {
           value: "You have successfully logged in!",
         });
         navigate("/");
-        // Close the modal only if the function is provided
         if (closeModal) closeModal();
       } else {
         appDispatch({
@@ -36,6 +37,7 @@ function HeaderLoggedOut({ closeModal }) {
     }
   }
 
+  // The component now correctly returns the login form.
   return (
     <form onSubmit={handleSubmit}>
       <div className="form__group">
@@ -58,7 +60,6 @@ function HeaderLoggedOut({ closeModal }) {
           autoComplete="current-password"
         />
       </div>
-
       <button type="submit" className="form__button">
         Sign In
       </button>

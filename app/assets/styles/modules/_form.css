@@ -44,7 +44,7 @@
     font-size: 1.25rem;
     line-height: 1.5;
     /* This sets a default border, which is being overridden by autofill */
-    border: 1px solid $pureWhite;
+    border: 1px solid $deepRed;
     background-color: $softBlack;
     color: $softWhite;
 
@@ -106,15 +106,72 @@
     }
   }
 }
+/* _form.css - Add these new rules at the end */
+
+/* ... (all your existing, working CSS from the top) ... */
 
 /* 
-  The rules below are for context-specific overrides and are correct. 
-  The autofill fix above will work in tandem with these.
+  ==========================================================================
+   NEW UTILITY STYLES FOR FORM BUTTONS
+  ========================================================================== 
 */
-.mobile-overlay .form__input {
-  border: 1px solid $softWhite !important;
+
+/* This wrapper will make the buttons sit side-by-side */
+.form__button-group {
+  display: flex;
+  justify-content: center; /* Center the buttons within the form */
+  align-items: center; /* Vertically align them */
+  gap: 1.5rem; /* Add space between them */
+  margin-top: 1.5rem;
 }
 
-.primary-nav--desktop .form__input {
-  border: none !important;
+/* 
+  A new modifier for secondary actions, like "Forgot Password".
+  It looks like a link but is spaced like a button.
+*/
+.form__button--secondary {
+  background: none;
+  border: none;
+  color: $lightRed;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 0;
+  margin: 0; /* Override default button margins */
+
+  &:hover {
+    background: none; /* Ensure no background on hover */
+    text-decoration: underline;
+  }
+}
+/* _form.css - Add these new rules at the end */
+
+/* ... (all your existing, working CSS from the top) ... */
+
+/* 
+  ==========================================================================
+   NEW STYLES FOR FORM FOOTER LINKS
+  ========================================================================== 
+*/
+
+/* A wrapper to provide spacing and alignment for the links below a form */
+.form__footer {
+  text-align: center;
+  margin-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.5rem;
+}
+
+/* The style for the individual helper links */
+.form__footer-link {
+  color: $softWhite;
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin: 0 1rem; /* Adds space between links if there are multiple */
+  transition: color 0.2s ease-out;
+
+  &:hover {
+    color: $lightRed;
+    text-decoration: underline;
+  }
 }

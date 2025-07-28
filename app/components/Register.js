@@ -1,5 +1,6 @@
-// Register.js (Final version with HTML restored)
-import { useNavigate } from "react-router-dom";
+// Register.js (FINAL, WITH FOOTER LINKS)
+
+import { useNavigate, Link } from "react-router-dom"; // Import Link
 import React, { useEffect, useContext } from "react";
 import { useImmerReducer } from "use-immer";
 import DispatchContext from "../context/DispatchContext";
@@ -12,6 +13,7 @@ import {
 } from "../services/api";
 
 function Register() {
+  // ... all your existing state, reducer, and useEffect logic is correct and unchanged ...
   const appDispatch = useContext(DispatchContext);
   const navigate = useNavigate();
   const initialState = {
@@ -32,10 +34,8 @@ function Register() {
     password: { value: "", hasErrors: false, message: "" },
     submitCount: 0,
   };
-
-  // This reducer logic is correct.
   function ourReducer(draft, action) {
-    switch (action.type) {
+    /* ... no changes ... */ switch (action.type) {
       case "usernameImmediately":
         draft.username.value = action.value;
         if (draft.username.value.length > 30) {
@@ -54,7 +54,6 @@ function Register() {
         }
         draft.username.hasErrors = false;
         return;
-
       case "usernameAfterDelay":
         if (action.value.length < 3) {
           draft.username.hasErrors = true;
@@ -64,7 +63,6 @@ function Register() {
           draft.username.checkCount++;
         }
         return;
-
       case "usernameUniqueResults":
         if (action.value) {
           draft.username.hasErrors = true;
@@ -74,12 +72,10 @@ function Register() {
           draft.username.isUnique = true;
         }
         return;
-
       case "emailImmediately":
         draft.email.value = action.value;
         draft.email.hasErrors = false;
         return;
-
       case "emailAfterDelay":
         if (!/^\S+@\S+$/.test(action.value)) {
           draft.email.hasErrors = true;
@@ -89,7 +85,6 @@ function Register() {
           draft.email.checkCount++;
         }
         return;
-
       case "emailUniqueResults":
         if (action.value) {
           draft.email.hasErrors = true;
@@ -99,7 +94,6 @@ function Register() {
           draft.email.isUnique = true;
         }
         return;
-
       case "passwordImmediately":
         draft.password.value = action.value;
         if (draft.password.value.length > 50) {
@@ -109,14 +103,12 @@ function Register() {
         }
         draft.password.hasErrors = false;
         return;
-
       case "passwordAfterDelay":
         if (action.value.length < 12) {
           draft.password.hasErrors = true;
           draft.password.message = "Password must be at least 12 characters.";
         }
         return;
-
       case "submitForm":
         if (
           !draft.username.hasErrors &&
@@ -130,10 +122,7 @@ function Register() {
         return;
     }
   }
-
   const [state, dispatch] = useImmerReducer(ourReducer, initialState);
-
-  // All useEffect hooks and the handleSubmit function are correct.
   useEffect(() => {
     if (state.username.value) {
       const delay = setTimeout(
@@ -144,7 +133,6 @@ function Register() {
       return () => clearTimeout(delay);
     }
   }, [state.username.value]);
-
   useEffect(() => {
     if (state.email.value) {
       const delay = setTimeout(
@@ -154,7 +142,6 @@ function Register() {
       return () => clearTimeout(delay);
     }
   }, [state.email.value]);
-
   useEffect(() => {
     if (state.password.value) {
       const delay = setTimeout(
@@ -165,7 +152,6 @@ function Register() {
       return () => clearTimeout(delay);
     }
   }, [state.password.value]);
-
   useEffect(() => {
     if (state.username.checkCount) {
       let didCancel = false;
@@ -187,7 +173,6 @@ function Register() {
       return () => (didCancel = true);
     }
   }, [state.username.checkCount]);
-
   useEffect(() => {
     if (state.email.checkCount) {
       let didCancel = false;
@@ -207,7 +192,6 @@ function Register() {
       return () => (didCancel = true);
     }
   }, [state.email.checkCount]);
-
   useEffect(() => {
     if (state.submitCount) {
       let didCancel = false;
@@ -224,10 +208,7 @@ function Register() {
               type: "flashMessage",
               value: "Congrats! Welcome to your new account.",
             });
-
-            // ================== 3. NAVIGATE on success ==================
             navigate("/home");
-            // ==========================================================
           }
         } catch (e) {
           if (!didCancel) {
@@ -242,7 +223,6 @@ function Register() {
       return () => (didCancel = true);
     }
   }, [state.submitCount, appDispatch, navigate]);
-
   function handleSubmit(e) {
     e.preventDefault();
     dispatch({ type: "usernameImmediately", value: state.username.value });
@@ -261,14 +241,13 @@ function Register() {
     dispatch({ type: "passwordAfterDelay", value: state.password.value });
     dispatch({ type: "submitForm" });
   }
-
   const validationErrors = [];
   if (state.username.hasErrors) validationErrors.push(state.username.message);
   if (state.email.hasErrors) validationErrors.push(state.email.message);
   if (state.password.hasErrors) validationErrors.push(state.password.message);
 
   return (
-    <Page title="resgister">
+    <Page title="Register">
       <div className="form">
         <FlashMessages messages={validationErrors} isValidationMessage={true} />
 
@@ -324,6 +303,11 @@ function Register() {
             Sign up
           </button>
         </form>
+        <div className="form__footer">
+          <Link to="/request-password-reset" className="form__footer-link">
+            Forgot Password?
+          </Link>
+        </div>
       </div>
     </Page>
   );
