@@ -27,14 +27,16 @@ import AdminProductImagePost from "./admin/AdminProductImagePost.js";
 import AdminProductImagePut from "./admin/AdminProductImagePut.js";
 import AdminProductImagePutSelect from "./admin/AdminProductImagePutSelect.js";
 import AdminCategoryImagePost from "./admin/AdminCategoryImagePost";
+import AdminOrder from "./admin/AdminOrder";
 import ProductSlider from "./ProductSlider";
 import OrderForm from "./OrderForm";
 import PaymentForm from "./PaymentForm.js";
 import Settings from "./Settings.js";
-import AdminOrder from "./admin/AdminOrder.js";
 import LoadingDotsIcon from "./LoadingDotsIcon.js";
 import Build from "./Build.js";
 import ProfileOrder from "./ProfileOrder";
+import OrderConfirmation from "./OrderConfirmation.js"; // Import the new component
+
 export default function AppRoutes() {
   const appState = useContext(StateContext);
 
@@ -170,6 +172,16 @@ export default function AppRoutes() {
             )
           }
         />
+        <Route
+          path="/admin-order"
+          element={
+            appState.loggedIn && appState.user.admin ? (
+              <AdminOrder />
+            ) : (
+              <HomeGuest />
+            )
+          }
+        />
         <Route path="/settings" element={<Settings />} />
         <Route path="/category/:id/products" element={<ProductSlider />} />
         <Route
@@ -190,6 +202,11 @@ export default function AppRoutes() {
           path="/payment/:orderId"
           element={appState.loggedIn ? <PaymentForm /> : <HomeGuest />}
         />
+        <Route
+          path="/order-confirmation/:orderId"
+          element={appState.loggedIn ? <OrderConfirmation /> : <HomeGuest />}
+        />
+
         <Route path="/about-artist" element={<AboutArtist />} />
         <Route path="/about-engineer" element={<AboutEngineer />} />
         <Route path="/about-history" element={<AboutHistory />} />

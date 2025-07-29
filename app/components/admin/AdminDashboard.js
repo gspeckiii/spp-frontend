@@ -24,6 +24,11 @@ function AdminDashboardContent() {
                 Lookup Categories to Edit
               </Link>
             </div>
+            <div className="dashboard__col">
+              <Link to="/admin-order" className="dashboard__button">
+                Manage Orders
+              </Link>
+            </div>
           </div>
         </div>
       </div>

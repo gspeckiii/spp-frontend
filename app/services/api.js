@@ -5,6 +5,10 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
+// ==========================================================
+// === REQUEST INTERCEPTOR (No Changes) =====================
+// ==========================================================
+// This interceptor adds the token to every outgoing request.
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("SPPtoken");
   if (token) {
@@ -12,6 +16,51 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// ==========================================================
+// === NEW: RESPONSE INTERCEPTOR FOR GLOBAL ERROR HANDLING ===
+// ==========================================================
+// This interceptor will check every API response for errors.
+api.interceptors.response.use(
+  // The first function handles successful responses - we just pass them through.
+  (response) => response,
+
+  // The second function handles all API errors.
+  (error) => {
+    // Check if the error is specifically for an expired token.
+    // This relies on the backend sending a 401 status and a specific error message.
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      error.response.data.error === "Token expired"
+    ) {
+      console.log("Axios Interceptor: Detected expired token. Forcing logout.");
+
+      // Perform a clean logout by removing all user data from localStorage.
+      // This is crucial to prevent the app from being in a broken state.
+      localStorage.removeItem("SPPtoken");
+      localStorage.removeItem("SPPusername");
+      localStorage.removeItem("SPPavatar");
+      localStorage.removeItem("SPPbio");
+      localStorage.removeItem("SPPadmin");
+      localStorage.removeItem("SPPuser_id");
+
+      // Redirect to the homepage. The GlobalStateProvider will re-initialize
+      // on page load and see that the user is no longer logged in.
+      // We add a query parameter to show a helpful message on the homepage.
+      window.location.href = "/?session_expired=true";
+    }
+
+    // For all other errors (like 404, 500, etc.), we don't handle them globally.
+    // We let them continue to the component's .catch() block so they can be
+    // handled on a case-by-case basis (e.g., showing a "Not Found" message).
+    return Promise.reject(error);
+  }
+);
+
+// ==========================================================
+// === ALL API SERVICE FUNCTIONS (No Changes) =================
+// ==========================================================
 
 // --- User & Authentication ---
 export const getUsers = () => api.get("/users");
@@ -35,7 +84,7 @@ export const checkEmailAvailability = (email) =>
   api.post("/users/checkRegEmail", { email });
 
 // --- Categories ---
-export const getAllCategories = () => api.get("/categories"); // Added for completeness
+export const getAllCategories = () => api.get("/categories");
 export const getCategoryById = (categoryId) =>
   api.get(`/categories/${categoryId}`);
 export const createCategory = (categoryData) =>
@@ -60,7 +109,6 @@ export const deleteProduct = (productId) =>
 export const getProductImages = (productId) =>
   api.get(`/images/product/${productId}`);
 export const getImageById = (imageId) => api.get(`/images/${imageId}`);
-
 export const updateImage = (imageId, imageData) =>
   api.put(`/images/${imageId}`, imageData);
 export const deleteImage = (imageId) => api.delete(`/images/${imageId}`);
@@ -76,33 +124,22 @@ export const addProductImages = (productId, formData) => {
 };
 
 // --- Orders, Payments, Fulfillments ---
-// ... (keep all your existing functions)
-
-// --- Payments, Orders, Fulfillments ---
 export const createOrder = (orderData) => api.post("/orders", orderData);
-
 export const getOrderById = (orderId) => api.get(`/orders/${orderId}`);
-
-// === NEW/MODIFIED FUNCTION ===
-// This function calls the new endpoint we created on the backend.
 export const createPaymentIntentForOrder = (orderId) =>
   api.post(`/orders/${orderId}/create-payment-intent`);
-
-// This old function is now deprecated and can be removed or commented out.
-// The webhook on the backend handles creating the payment record.
-// export const createPayment = (orderId, paymentData) => ...
-
 export const createFulfillment = (orderId, fulfillmentData) =>
   api.post(`/orders/${orderId}/fulfillment`, fulfillmentData);
-
-// MODIFIED: Takes a filter for 'open' or 'closed' orders.
 export const getAllOrders = (statusFilter = "open") =>
   api.get(`/orders?status=${statusFilter}`);
-
-// NEW: Function to cancel an order.
 export const cancelOrder = (orderId) => api.put(`/orders/${orderId}/cancel`);
-
-// NEW: This should exist, but let's define it clearly. It calls the endpoint we modified earlier.
 export const updateFulfillment = (orderId, fulfillmentData) =>
   api.put(`/orders/${orderId}/fulfillment`, fulfillmentData);
+
+// --- Admin ---
+export const adminGetAllOrders = (statusFilter = "open") =>
+  api.get(`/admin/orders?status=${statusFilter}`);
+export const adminUpdateFulfillment = (orderId, fulfillmentData) =>
+  api.put(`/admin/orders/${orderId}/fulfillment`, fulfillmentData);
+
 export default api;

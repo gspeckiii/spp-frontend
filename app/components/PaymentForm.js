@@ -60,7 +60,7 @@ const CheckoutForm = ({ order }) => {
         value: "Payment successful! Your order is being processed.",
       });
       // Redirect to a user dashboard, order history, or home page.
-      navigate("/");
+      navigate(`/order-confirmation/${order.order_id}`);
     }
 
     setIsProcessing(false);
