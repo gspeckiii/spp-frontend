@@ -1,4 +1,4 @@
-// AboutHistory.js (FINAL, WITH DYNAMIC SLIDER CONFIGURATION)
+// AboutHistory.js (FINAL, WITH COLLAPSIBLE DESCRIPTION)
 
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -8,15 +8,31 @@ import StateContext from "../context/StateContext";
 import LoadingDotsIcon from "./LoadingDotsIcon";
 
 function AboutHistory() {
-  // ... all your state and data fetching logic is correct and unchanged ...
   const appState = useContext(StateContext);
   const { list: historicProducts, loading, error } = appState.historicProducts;
   const { urls } = appState;
   const [productImages, setProductImages] = useState({});
+
+  // ====================================================================
+  // === NEW: State for tracking expanded descriptions ===
+  // ====================================================================
+  const [expanded, setExpanded] = useState({});
+
+  // ====================================================================
+  // === NEW: Handler to toggle the description for a specific product ===
+  // ====================================================================
+  const handleToggleDescription = (productId) => {
+    setExpanded((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
+  };
+
   useEffect(() => {
     document.title = "Historical Works | SPP";
     window.scrollTo(0, 0);
   }, []);
+
   useEffect(() => {
     if (!historicProducts || historicProducts.length === 0 || !urls.api) return;
     const fetchProductImages = async () => {
@@ -64,11 +80,7 @@ function AboutHistory() {
       </div>
     );
 
-  // ====================================================================
-  // === THE BUG FIX IS HERE ===
-  // ====================================================================
   const numProducts = historicProducts.length;
-
   const swiperProps = {
     modules: [Navigation],
     spaceBetween: 10,
@@ -85,12 +97,10 @@ function AboutHistory() {
   return (
     <>
       <h1 className="container__heading--animated">Historical Works</h1>
-
       <div className="swiper-container-wrapper">
         <Swiper {...swiperProps}>
           {historicProducts.map((product) => (
             <SwiperSlide key={product.id}>
-              {/* ... The content of your slide is unchanged ... */}
               <div className="swiper-slide__card">
                 <img
                   src={
@@ -105,13 +115,33 @@ function AboutHistory() {
                   }}
                 />
                 <div className="swiper-slide__content">
-                  <h3 className="swiper-slide__title">
-                    {product.prod_name || "Untitled"}
-                  </h3>
+                  <div className="swiper-slide__main-content">
+                    <h3 className="swiper-slide__title">
+                      {product.prod_name || "Untitled"}
+                    </h3>
+                    {/* === UPDATED: Description is now collapsible === */}
+                    <div
+                      className={`collapsible-content ${
+                        !expanded[product.id] ? "is-collapsed" : ""
+                      }`}
+                    >
+                      {product.prod_desc && (
+                        <p className="swiper-slide__description">
+                          {product.prod_desc}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {/* === NEW: Centered footer for the 'About' button === */}
                   {product.prod_desc && (
-                    <p className="swiper-slide__description">
-                      {product.prod_desc}
-                    </p>
+                    <div className="swiper-slide__footer swiper-slide__footer--centered">
+                      <button
+                        onClick={() => handleToggleDescription(product.id)}
+                        className="swiper-slide__about-button"
+                      >
+                        {expanded[product.id] ? "Hide" : "About"}
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -119,7 +149,6 @@ function AboutHistory() {
           ))}
         </Swiper>
       </div>
-
       <div className="container__wrapper--narrow">
         <Link
           className="form__button"

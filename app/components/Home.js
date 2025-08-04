@@ -6,7 +6,7 @@ import CategorySlider from "./CategorySlider";
 function Home() {
   return (
     <>
-      <h1 className="container__heading--animated">Where Truth Takes Form</h1>
+      <h1 className="container__heading--animated">Art Forms</h1>
 
       {/* 
         The CategorySlider now handles its own loading. We can just

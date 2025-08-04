@@ -1,4 +1,4 @@
-// ProductSlider.js (FINAL, WITH DYNAMIC SLIDER CONFIGURATION)
+// ProductSlider.js (FINAL, WITH COLLAPSIBLE DESCRIPTION)
 
 import React, { useState, useEffect, useMemo, useContext } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
@@ -9,7 +9,6 @@ import StateContext from "../context/StateContext";
 import LoadingDotsIcon from "./LoadingDotsIcon";
 
 function ProductSlider() {
-  // ... all your existing state and useEffect hooks are correct and unchanged ...
   const { id } = useParams();
   const appState = useContext(StateContext);
   const navigate = useNavigate();
@@ -19,6 +18,22 @@ function ProductSlider() {
   const [productImages, setProductImages] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // ====================================================================
+  // === NEW: State for tracking expanded descriptions ===
+  // ====================================================================
+  const [expanded, setExpanded] = useState({});
+
+  // ====================================================================
+  // === NEW: Handler to toggle the description for a specific product ===
+  // ====================================================================
+  const handleToggleDescription = (productId) => {
+    setExpanded((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
+  };
+
   useEffect(() => {
     if (categoryName) {
       document.title = `${categoryName} Products | SPP`;
@@ -27,6 +42,7 @@ function ProductSlider() {
     }
     window.scrollTo(0, 0);
   }, [categoryName]);
+
   useEffect(() => {
     if (!urls.api) return;
     const fetchCategoryAndProducts = async () => {
@@ -60,7 +76,9 @@ function ProductSlider() {
     };
     fetchCategoryAndProducts();
   }, [id, urls.api]);
+
   const memoizedProducts = useMemo(() => products, [products]);
+
   useEffect(() => {
     if (!urls.api || memoizedProducts.length === 0) return;
     const fetchProductImages = async () => {
@@ -92,6 +110,7 @@ function ProductSlider() {
     };
     fetchProductImages();
   }, [memoizedProducts, urls.api]);
+
   const handleOrderClick = (e, product) => {
     if (!appState.loggedIn) {
       e.preventDefault();
@@ -99,7 +118,6 @@ function ProductSlider() {
     }
   };
 
-  // Loading and error states are unchanged
   if (error)
     return (
       <Page title="Error">
@@ -123,30 +141,19 @@ function ProductSlider() {
       </Page>
     );
 
-  // ====================================================================
-  // === THE BUG FIX IS HERE ===
-  // ====================================================================
   const numProducts = products.length;
-
-  // We build a dynamic configuration object for Swiper.
   const swiperProps = {
     modules: [Navigation],
     spaceBetween: 10,
     className: "swiper",
-    // Only show navigation arrows if there is more than one slide
     navigation: numProducts > 1,
-    // If there are fewer slides than the largest breakpoint (3), center them.
-    // This fixes the "pushed to the side" bug.
     centeredSlides: numProducts < 3,
-    // Always show 1 slide on mobile
     slidesPerView: 1,
     breakpoints: {
-      // At 730px, show 2 slides, but no more than we actually have.
       730: {
         slidesPerView: Math.min(numProducts, 2),
         spaceBetween: 20,
       },
-      // At 1024px, show 3 slides, but no more than we actually have.
       1024: {
         slidesPerView: Math.min(numProducts, 3),
         spaceBetween: 30,
@@ -156,16 +163,11 @@ function ProductSlider() {
 
   return (
     <>
-      <h1 className="container__heading--animated">
-        The {categoryName} Collection
-      </h1>
-
+      <h1 className="container__heading--animated">{categoryName}</h1>
       <div className="swiper-container-wrapper">
-        {/* We now pass our dynamic props object to the Swiper component */}
         <Swiper {...swiperProps}>
           {products.map((product) => (
             <SwiperSlide key={product.id}>
-              {/* ... The content of your slide is unchanged ... */}
               <div className="swiper-slide__card">
                 <img
                   src={
@@ -181,24 +183,40 @@ function ProductSlider() {
                     <h3 className="swiper-slide__title">
                       {product.prod_name || "Unknown"}
                     </h3>
-                    {product.prod_desc && (
-                      <p className="swiper-slide__description">
-                        {product.prod_desc}
-                      </p>
-                    )}
-                    {productImages[product.id]?.img_desc && (
-                      <p className="swiper-slide__image-desc">
-                        {productImages[product.id].img_desc}
-                      </p>
-                    )}
+                    {/* === UPDATED: Description is now collapsible === */}
+                    <div
+                      className={`collapsible-content ${
+                        !expanded[product.id] ? "is-collapsed" : ""
+                      }`}
+                    >
+                      {product.prod_desc && (
+                        <p className="swiper-slide__description">
+                          {product.prod_desc}
+                        </p>
+                      )}
+                      {productImages[product.id]?.img_desc && (
+                        <p className="swiper-slide__image-desc">
+                          {productImages[product.id].img_desc}
+                        </p>
+                      )}
+                    </div>
                   </div>
+                  {/* === UPDATED: Footer layout with new button === */}
                   <div className="product-slide__footer">
+                    {product.prod_desc && (
+                      <button
+                        onClick={() => handleToggleDescription(product.id)}
+                        className="swiper-slide__about-button"
+                      >
+                        {expanded[product.id] ? "Hide" : "About"}
+                      </button>
+                    )}
                     {product.prod_cost && (
                       <Link
                         to={`/order/${product.id}`}
                         state={{ product: product }}
                         onClick={(e) => handleOrderClick(e, product)}
-                        className="product-slide__cost-button"
+                        className="swiper-slide__about-button"
                       >
                         ${parseFloat(product.prod_cost).toFixed(2)}
                       </Link>
@@ -210,7 +228,6 @@ function ProductSlider() {
           ))}
         </Swiper>
       </div>
-
       <div className="container__wrapper--narrow">
         <Link
           className="form__button"

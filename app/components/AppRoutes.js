@@ -12,6 +12,7 @@ import AboutEngineer from "./AboutEngineer.js";
 import AboutHistory from "./AboutHistory.js";
 import AboutFamily from "./AboutFamily.js";
 import AboutRaven from "./AboutRaven.js";
+import AboutMtb from "./AboutMtb.js";
 import Terms from "./Terms.js";
 import RequestPasswordReset from "./ResetPasswordRequest";
 import ResetPassword from "./ResetPassword";
@@ -208,6 +209,7 @@ export default function AppRoutes() {
         />
 
         <Route path="/about-artist" element={<AboutArtist />} />
+        <Route path="/about-mtb" element={<AboutMtb />} />
         <Route path="/about-engineer" element={<AboutEngineer />} />
         <Route path="/about-history" element={<AboutHistory />} />
         <Route path="/about-family" element={<AboutFamily />} />

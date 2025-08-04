@@ -1,4 +1,4 @@
-// CategorySlider.js (FINAL, SELF-CONTAINED, AND CORRECTED)
+// CategorySlider.js (FINAL, WITH COLLAPSIBLE DESCRIPTION)
 
 import React, { useContext, useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
@@ -15,21 +15,32 @@ function CategorySlider() {
     () => categories.list || [],
     [categories.list]
   );
-
-  // !!! THIS IS THE FIX, PART 1 !!!
-  // We add a new loading state specifically for the product counts.
   const [countsLoading, setCountsLoading] = useState(true);
+
+  // ====================================================================
+  // === NEW: State for tracking expanded descriptions ===
+  // ====================================================================
+  const [expanded, setExpanded] = useState({});
+
+  // ====================================================================
+  // === NEW: Handler to toggle the description for a specific category ===
+  // ====================================================================
+  const handleToggleDescription = (categoryId) => {
+    setExpanded((prev) => ({
+      ...prev,
+      [categoryId]: !prev[categoryId],
+    }));
+  };
 
   useEffect(() => {
     if (localCategories.length === 0 || !urls.api) {
-      setCountsLoading(false); // No categories to check, so we're done loading.
+      setCountsLoading(false);
       return;
     }
 
     const fetchProductCounts = async () => {
-      setCountsLoading(true); // Start loading
+      setCountsLoading(true);
       const promises = localCategories.map(async (category) => {
-        // ... (fetch logic is unchanged)
         if (!category.cat_id) return [category.cat_id, 0];
         try {
           const response = await fetch(
@@ -54,14 +65,13 @@ function CategorySlider() {
       const results = await Promise.all(promises);
       const counts = Object.fromEntries(results);
       setProductCounts(counts);
-      setCountsLoading(false); // Finish loading
+      setCountsLoading(false);
     };
 
     fetchProductCounts();
   }, [localCategories, urls.api]);
 
-  // This first check is for the main category list from the global state.
-  if (categories.loading) {
+  if (categories.loading || countsLoading) {
     return (
       <div className="container__centering-wrapper">
         <LoadingDotsIcon />
@@ -69,19 +79,6 @@ function CategorySlider() {
     );
   }
 
-  // !!! THIS IS THE FIX, PART 2 !!!
-  // We add a SECOND loading check. This one waits for our internal
-  // product count fetching to finish. This is the gatekeeper that
-  // prevents the text flash.
-  if (countsLoading) {
-    return (
-      <div className="container__centering-wrapper">
-        <LoadingDotsIcon />
-      </div>
-    );
-  }
-
-  // This check is now safe. It runs only after all data is loaded.
   if (localCategories.length === 0) {
     return (
       <div className="container__centering-wrapper">
@@ -97,7 +94,6 @@ function CategorySlider() {
     return hasImage && isNotHistoric && hasProducts;
   });
 
-  // This check is also now safe.
   if (displayCategories.length === 0) {
     return (
       <div className="container__centering-wrapper">
@@ -127,7 +123,6 @@ function CategorySlider() {
       <Swiper {...swiperProps}>
         {displayCategories.map((category) => (
           <SwiperSlide key={category.cat_id}>
-            {/* ... SwiperSlide content is unchanged ... */}
             <div className="swiper-slide__card">
               <img
                 src={
@@ -150,13 +145,32 @@ function CategorySlider() {
                     <h3 className="swiper-slide__title">
                       {category.cat_name || "Unknown"}
                     </h3>
+                  </Link>
+                  {/* === UPDATED: Subtitle/Description is now collapsible === */}
+                  <div
+                    className={`collapsible-content ${
+                      !expanded[category.cat_id] ? "is-collapsed" : ""
+                    }`}
+                  >
                     {category.cat_desc && (
                       <p className="swiper-slide__subtitle">
                         {category.cat_desc}
                       </p>
                     )}
-                  </Link>
+                  </div>
                 </div>
+                {/* === NEW: Centered footer for the 'About' button === */}
+                {category.cat_desc && (
+                  <div className="swiper-slide__footer swiper-slide__footer--centered">
+                    <button
+                      onClick={() => handleToggleDescription(category.cat_id)}
+                      className="swiper-slide__about-button"
+                    >
+                      {expanded[category.cat_id] ? "Hide" : "About"}
+                    </button>
+                  </div>
+                )}
+                {/* Original footer for YouTube/Product Count */}
                 <div className="swiper-slide__footer">
                   {category.cat_vid ? (
                     <a

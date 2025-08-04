@@ -1,5 +1,5 @@
 // =============================================================
-// FINAL, CORRECTED webpack.config.js
+// FINAL, CORRECTED webpack.config.js with CopyPlugin
 // You can replace your entire file with this.
 // =============================================================
 
@@ -12,6 +12,7 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HtmlWebpackHarddiskPlugin = require("html-webpack-harddisk-plugin");
 const fse = require("fs-extra");
+const CopyPlugin = require("copy-webpack-plugin"); // 1. Require the new plugin
 
 const postCSSPlugins = [
   require("postcss-import"),
@@ -20,16 +21,6 @@ const postCSSPlugins = [
   require("postcss-nested"),
   require("autoprefixer"),
 ];
-
-// REMOVED: The RunAfterCompile class is no longer needed.
-// Webpack will now handle all assets automatically.
-/*
-class RunAfterCompile {
-  apply(compiler) {
-    // ...
-  }
-}
-*/
 
 let cssConfig = {
   test: /\.css$/i,
@@ -42,7 +33,6 @@ let cssConfig = {
       options: {
         sourceMap: true,
         importLoaders: 1,
-        // CORRECT: The "url: false" line is GONE.
       },
     },
     {
@@ -72,11 +62,24 @@ const config = {
     }),
     htmlPlugin,
     new HtmlWebpackHarddiskPlugin(),
-    // REMOVED: new RunAfterCompile() is no longer in the plugins array.
+
+    // 2. Add the CopyPlugin to the plugins array.
+    // This will copy your entire images folder structure.
+    new CopyPlugin({
+      patterns: [
+        {
+          from: "app/assets/images", // Source directory
+          to: "assets/images", // Destination in the output folder (e.g., dist/assets/images)
+        },
+      ],
+    }),
   ],
   module: {
     rules: [
       cssConfig,
+      // This rule is still useful for images you `import` directly in JS or reference in CSS.
+      // Webpack will process them and place them in the output directory.
+      // The CopyPlugin handles everything else in the images folder.
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         type: "asset/resource",
@@ -106,40 +109,25 @@ const config = {
     clean: true,
   },
   mode: "development",
-  // CHANGED: This is the main fix for your path issues.
   resolve: {
-    // We only need node_modules here for Webpack's primary resolution.
     modules: ["node_modules"],
     extensions: [".js", ".jsx", ".css"],
-    // This ALIAS is the key. It creates a shortcut for your image paths.
     alias: {
       images: path.resolve(__dirname, "app/assets/images"),
     },
   },
 };
 
-// in webpack.config.js
-
 if (currentTask === "dev" || currentTask === "webpackDev") {
   config.devtool = "source-map";
   config.devServer = {
     port: 3000,
-    hot: false, // This is fine
-    liveReload: true, // This is fine
-
-    // === THE FIX ===
-    // We explicitly tell the server that the '/app' directory is the content base.
-    // This helps it resolve URLs against the file system correctly.
+    hot: false,
+    liveReload: true,
     static: {
       directory: path.join(__dirname, "app"),
     },
-
-    // This part is crucial. We tell the server how to handle URLs
-    // that don't match a physical file, which is what happens in a Single Page App.
     historyApiFallback: true,
-
-    // We can often remove the complex rewrites. 'historyApiFallback: true'
-    // usually handles everything needed for a React app.
   };
 }
 
@@ -157,6 +145,8 @@ if (currentTask === "build" || currentTask === "webpackBuild") {
     minimize: true,
     minimizer: ["...", new CssMinimizerPlugin()],
   };
+  // We can add CleanWebpackPlugin here for production builds.
+  // Although `output.clean: true` does most of the work, this is an explicit safeguard.
   config.plugins.push(
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({ filename: "styles.[chunkhash].css" })

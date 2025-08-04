@@ -45,6 +45,9 @@ function AboutArtist() {
             <li>
               <Link to="/about-build">Custom Home</Link>
             </li>
+            <li>
+              <Link to="/about-mtb">Cycling</Link>
+            </li>
           </ul>
           <hr className="container__line-break" />
         </div>

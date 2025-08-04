@@ -179,6 +179,9 @@ function Header() {
                   Register
                 </Link>
               </li>
+              <li>
+                <HeaderLoggedOut />
+              </li>
             </ul>
           </nav>
         )}

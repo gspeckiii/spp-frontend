@@ -1,6 +1,6 @@
 /*
  * ====================================================================
- * Swiper Custom Styles (FINAL, WITH COLLAPSE FIX)
+ *         Swiper Custom Styles (Complete and Final)
  * ====================================================================
  */
 
@@ -19,15 +19,12 @@
 }
 
 /* 
-  !!! THIS IS THE FIX FOR THE COLLAPSING SLIDER BUG !!!
-  This rule targets the main Swiper element ONLY when it's inside our wrapper.
-  It forces the slider to take up the full available width, which gives
-  Swiper a stable container for its calculations, even when there are
-  only one or two slides. This fixes the bug for all sliders.
+  Fixes the collapsing slider bug by ensuring the Swiper instance
+  always has a stable width to calculate from.
 */
 .swiper-container-wrapper .swiper {
   width: 100%;
-  min-width: 0; /* A flexbox safety net to prevent shrinking issues */
+  min-width: 0; /* A flexbox safety net */
 }
 
 .swiper-slide__card {
@@ -50,39 +47,101 @@
   display: block;
   border-radius: 2px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0;
+  flex-shrink: 0; /* Prevents image from shrinking */
 }
 
-/* === CONTENT & FOOTER STRUCTURE === */
+/* === CONTENT & COLLAPSIBLE SECTION === */
 .swiper-slide__content {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  flex-grow: 1; /* This is key to pushing the footer to the bottom */
   padding: 1rem 0.5rem;
 }
 
 .swiper-slide__main-content {
-  /* This block holds the main text content */
+  flex-grow: 1; /* Allows this container to take up space, pushing footers down */
 }
 
 .swiper-slide__link {
   text-decoration: none;
 }
 
-.swiper-slide__footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
-}
-.product-slide__footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1rem;
+/*
+ * NEW: Styles for the Collapsible Description
+ * This creates the expand/collapse animation.
+ */
+.collapsible-content {
+  transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
+  max-height: 500px; /* Set to a value larger than any expected description */
+  overflow: hidden;
+  opacity: 1;
 }
 
-/* --- COMPONENT-SPECIFIC STRUCTURAL STYLES --- */
+.collapsible-content.is-collapsed {
+  max-height: 0;
+  opacity: 0;
+}
+
+/* Base styles for text inside the collapsible area */
+.swiper-slide__subtitle,
+.swiper-slide__description,
+.swiper-slide__image-desc {
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+}
+.swiper-slide__title {
+  font-size: 1.5rem;
+  font-family: "Playfair Display", serif;
+  letter-spacing: 0.25em;
+}
+/* === FOOTER STRUCTURE & ALIGNMENT === */
+
+/* Base style for ALL footers */
+.swiper-slide__footer,
+.product-slide__footer {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+/* Default footer alignment (e.g., Category Slider YouTube/Count) */
+.swiper-slide__footer {
+  justify-content: space-between;
+}
+
+/* NEW: Modifier for centering the footer content (for 'About' buttons) */
+.swiper-slide__footer--centered {
+  justify-content: center;
+}
+
+/* Product Slider: "About" on left, "Cost" on right */
+.product-slide__footer {
+  justify-content: space-between;
+}
+
+/* === BUTTONS & ICONS === */
+
+/* NEW: General style for the 'About' button */
+.swiper-slide__about-button {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.4rem 1.2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.2s ease-out;
+  text-decoration: none;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.7);
+    color: #fff;
+  }
+}
+
 .swiper-slide__youtube-icon {
   width: 32px;
   height: auto;
@@ -115,8 +174,7 @@
 
 .product-slide__cost-button {
   background-color: $deepRed;
-  padding: 0.5rem 1.5rem;
-  border-radius: 50px;
+
   text-decoration: none;
   transition: background-color 0.2s ease-out;
   &:hover {
@@ -148,6 +206,7 @@
     height: 100%;
   }
 
+  /* This rule is now handled more robustly by flex-grow on the content containers, but is safe to keep */
   .swiper-slide__footer,
   .product-slide__footer {
     margin-top: auto;
@@ -187,5 +246,3 @@
     height: 44px;
   }
 }
-
-/* NOTE: The broken .product-slide__back-arrow styles have been removed */
