@@ -80,3 +80,23 @@
 .image-grid--landscape .image-grid__item {
   aspect-ratio: 16 / 9;
 }
+@mixin atMedium {
+  .image-grid--square {
+    /* Squares are more compact, so we can fit more per row */
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@mixin atLarge {
+  .image-grid--square {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+@mixin atXlarge {
+  .image-grid--square {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+/* This is the key: it forces the container to be a perfect square */
+.image-grid--square .image-grid__item {
+  aspect-ratio: 1 / 1;
+}
