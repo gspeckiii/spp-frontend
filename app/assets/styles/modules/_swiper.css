@@ -246,3 +246,8 @@
     height: 44px;
   }
 }
+.swiper-slide__about-button.is-disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.65;
+}

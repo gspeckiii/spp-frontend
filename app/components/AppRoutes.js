@@ -5,6 +5,8 @@ import { Routes, Route } from "react-router-dom";
 import StateContext from "../context/StateContext.js";
 
 // Import ALL components used in your routes
+import PrintfulProductSlider from "./PrintfulProductSlider.js";
+
 import Home from "./Home.js";
 import HomeGuest from "./HomeGuest.js";
 import AboutArtist from "./AboutArtist.js";
@@ -29,6 +31,7 @@ import AdminProductImagePut from "./admin/AdminProductImagePut.js";
 import AdminProductImagePutSelect from "./admin/AdminProductImagePutSelect.js";
 import AdminCategoryImagePost from "./admin/AdminCategoryImagePost";
 import AdminOrder from "./admin/AdminOrder";
+import AdminPrintfulSync from "./admin/AdminPrintfulSync.js";
 import ProductSlider from "./ProductSlider";
 import OrderForm from "./OrderForm";
 import PaymentForm from "./PaymentForm.js";
@@ -183,6 +186,16 @@ export default function AppRoutes() {
             )
           }
         />
+        <Route
+          path="/admin/printful-sync"
+          element={
+            appState.loggedIn && appState.user.admin ? (
+              <AdminPrintfulSync />
+            ) : (
+              <HomeGuest /> // Or a "Not Found" or "Forbidden" component
+            )
+          }
+        />
         <Route path="/settings" element={<Settings />} />
         <Route path="/category/:id/products" element={<ProductSlider />} />
         <Route
@@ -222,7 +235,7 @@ export default function AppRoutes() {
           element={appState.loggedIn ? <ProfileOrder /> : <HomeGuest />}
         />
 
-        {/* ... (rest of your routes) */}
+        <Route path="/printful-products" element={<PrintfulProductSlider />} />
         <Route
           path="/home"
           element={appState.loggedIn ? <Home /> : <HomeGuest />}

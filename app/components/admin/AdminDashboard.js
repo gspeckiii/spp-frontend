@@ -25,6 +25,11 @@ function AdminDashboardContent() {
               </Link>
             </div>
             <div className="dashboard__col">
+              <Link to="/admin/printful-sync" className="dashboard__button">
+                Sync Printful Products
+              </Link>
+            </div>
+            <div className="dashboard__col">
               <Link to="/admin-order" className="dashboard__button">
                 Manage Orders
               </Link>

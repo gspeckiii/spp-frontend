@@ -95,6 +95,7 @@ export const deleteCategory = (categoryId) =>
   api.delete(`/categories/${categoryId}`);
 
 // --- Products ---
+export const getPrintfulProducts = () => api.get("/products/printful");
 export const getProductsByCategory = (categoryId, filter = "current") =>
   api.get(`/products/category/${categoryId}?filter=${filter}`);
 export const getProductById = (productId) => api.get(`/products/${productId}`);
@@ -141,5 +142,5 @@ export const adminGetAllOrders = (statusFilter = "open") =>
   api.get(`/admin/orders?status=${statusFilter}`);
 export const adminUpdateFulfillment = (orderId, fulfillmentData) =>
   api.put(`/admin/orders/${orderId}/fulfillment`, fulfillmentData);
-
+export const syncPrintfulProducts = () => api.post("/printful/sync");
 export default api;
