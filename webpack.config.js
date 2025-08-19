@@ -1,18 +1,15 @@
-// =============================================================
-// FINAL, CORRECTED webpack.config.js with CopyPlugin
-// You can replace your entire file with this.
-// =============================================================
+// === FINAL, DEFINITIVE, AND CORRECT webpack.config.js ===
 
-const currentTask = process.env.npm_lifecycle_event;
+// This MUST be at the very top to load variables from your .env file
+require("dotenv").config();
+
 const path = require("path");
-const Dotenv = require("dotenv-webpack");
+const webpack = require("webpack");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = "mini-css-extract-plugin"; // Use string to avoid error if not installed
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const HtmlWebpackHarddiskPlugin = require("html-webpack-harddisk-plugin");
 const fse = require("fs-extra");
-const CopyPlugin = require("copy-webpack-plugin"); // 1. Require the new plugin
 
 const postCSSPlugins = [
   require("postcss-import"),
@@ -22,135 +19,115 @@ const postCSSPlugins = [
   require("autoprefixer"),
 ];
 
-let cssConfig = {
-  test: /\.css$/i,
-  use: [
-    currentTask === "build" || currentTask === "webpackBuild"
-      ? MiniCssExtractPlugin.loader
-      : "style-loader",
-    {
-      loader: "css-loader",
-      options: {
-        sourceMap: true,
-        importLoaders: 1,
-      },
-    },
-    {
-      loader: "postcss-loader",
-      options: {
-        sourceMap: true,
-        postcssOptions: {
-          plugins: postCSSPlugins,
-        },
-      },
-    },
-  ],
-};
+class RunAfterCompile {
+  apply(compiler) {
+    compiler.hooks.done.tap("Copy static assets", function () {
+      fse.copySync("./app/assets/images", "./dist/assets/images");
+    });
+  }
+}
 
-const htmlPlugin = new HtmlWebpackPlugin({
-  filename: "index.html",
-  template: "./app/index-template.html",
-  alwaysWriteToDisk: true,
+// --- THIS IS THE CRITICAL PLUGIN DEFINITION ---
+// We define it once, here, to ensure it's identical everywhere.
+const stripePlugin = new webpack.DefinePlugin({
+  "process.env.STRIPE_PUBLISHABLE_KEY": JSON.stringify(
+    process.env.STRIPE_PUBLISHABLE_KEY
+  ),
 });
 
-const config = {
-  entry: "./app/assets/scripts/App.js",
-  plugins: [
-    new Dotenv({
-      path: path.resolve(__dirname, ".env"),
-      systemvars: true,
-    }),
-    htmlPlugin,
-    new HtmlWebpackHarddiskPlugin(),
+// --- Webpack Configuration ---
+module.exports = (env, argv) => {
+  const isProduction = argv.mode === "production";
 
-    // 2. Add the CopyPlugin to the plugins array.
-    // This will copy your entire images folder structure.
-    new CopyPlugin({
-      patterns: [
-        {
-          from: "app/assets/images", // Source directory
-          to: "assets/images", // Destination in the output folder (e.g., dist/assets/images)
-        },
-      ],
-    }),
-  ],
-  module: {
-    rules: [
-      cssConfig,
-      // This rule is still useful for images you `import` directly in JS or reference in CSS.
-      // Webpack will process them and place them in the output directory.
-      // The CopyPlugin handles everything else in the images folder.
+  let cssRule = {
+    test: /\.css$/i,
+    use: [
+      "style-loader",
+      "css-loader",
       {
-        test: /\.(png|jpe?g|gif|svg)$/i,
-        type: "asset/resource",
-        generator: {
-          filename: "assets/images/[name][ext][query]",
-        },
-      },
-      {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: [
-              "@babel/preset-react",
-              ["@babel/preset-env", { targets: { node: "12" } }],
-            ],
-          },
-        },
+        loader: "postcss-loader",
+        options: { postcssOptions: { plugins: postCSSPlugins } },
       },
     ],
-  },
-  output: {
-    publicPath: "/",
-    filename: "bundled.js",
-    path: path.resolve(__dirname, "app"),
-    clean: true,
-  },
-  mode: "development",
-  resolve: {
-    modules: ["node_modules"],
-    extensions: [".js", ".jsx", ".css"],
-    alias: {
-      images: path.resolve(__dirname, "app/assets/images"),
+  };
+
+  let plugins = [
+    new HtmlWebpackPlugin({
+      filename: "index.html",
+      template: "./app/index-template.html",
+    }),
+    stripePlugin, // Add the plugin to the base array
+  ];
+
+  if (isProduction) {
+    // Modify the CSS rule for production
+    cssRule.use[0] = require(MiniCssExtractPlugin).loader;
+
+    // Add production-specific plugins
+    plugins.push(
+      new CleanWebpackPlugin(),
+      new (require(MiniCssExtractPlugin))({
+        filename: "styles.[chunkhash].css",
+      }),
+      new RunAfterCompile()
+    );
+  }
+
+  return {
+    entry: "./app/assets/scripts/App.js",
+    mode: isProduction ? "production" : "development",
+    devtool: isProduction ? undefined : "source-map",
+
+    output: {
+      publicPath: "/",
+      path: isProduction
+        ? path.resolve(__dirname, "dist")
+        : path.resolve(__dirname, "app"),
+      filename: isProduction ? "[name].[chunkhash].js" : "bundled.js",
+      chunkFilename: isProduction ? "[name].[chunkhash].js" : undefined,
     },
-  },
+
+    plugins: plugins, // Use the final plugins array
+
+    module: {
+      rules: [
+        cssRule,
+        {
+          test: /\.jsx?$/,
+          exclude: /node_modules/,
+          use: {
+            loader: "babel-loader",
+            options: { presets: ["@babel/preset-react", "@babel/preset-env"] },
+          },
+        },
+        {
+          test: /\.(png|jpe?g|gif|svg)$/i,
+          type: "asset/resource",
+          generator: { filename: "assets/images/[name][hash][ext]" },
+        },
+      ],
+    },
+
+    resolve: {
+      extensions: [".js", ".jsx"],
+      alias: { "~images": path.resolve(__dirname, "app/assets/images") },
+    },
+
+    devServer: isProduction
+      ? undefined
+      : {
+          port: 3000,
+          static: { directory: path.join(__dirname, "app") },
+          historyApiFallback: true,
+          hot: false,
+        },
+
+    optimization: isProduction
+      ? {
+          splitChunks: { chunks: "all" },
+          minimize: true,
+          minimizer: [`...`, new CssMinimizerPlugin()],
+        }
+      : undefined,
+  };
 };
-
-if (currentTask === "dev" || currentTask === "webpackDev") {
-  config.devtool = "source-map";
-  config.devServer = {
-    port: 3000,
-    hot: false,
-    liveReload: true,
-    static: {
-      directory: path.join(__dirname, "app"),
-    },
-    historyApiFallback: true,
-  };
-}
-
-if (currentTask === "build" || currentTask === "webpackBuild") {
-  config.mode = "production";
-  config.output = {
-    publicPath: "/",
-    filename: "[name].[chunkhash].js",
-    chunkFilename: "[name].[chunkhash].js",
-    path: path.resolve(__dirname, "dist"),
-    clean: true,
-  };
-  config.optimization = {
-    splitChunks: { chunks: "all" },
-    minimize: true,
-    minimizer: ["...", new CssMinimizerPlugin()],
-  };
-  // We can add CleanWebpackPlugin here for production builds.
-  // Although `output.clean: true` does most of the work, this is an explicit safeguard.
-  config.plugins.push(
-    new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin({ filename: "styles.[chunkhash].css" })
-  );
-}
-
-module.exports = config;
